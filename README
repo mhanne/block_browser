@@ -10,7 +10,7 @@ It is highly experimental, use at your own risk.
 * ruby (1.9.3, might work with older versions)
 * rubygems, bundler
 * rails 3.1.3
-* bitcoin-ruby (currently the 'debug_scripts' branch of my repo 'mhanne' on github)
+* bitcoin-ruby (currently the 'blockchain' branch of my repo 'mhanne' on github)
 
 == Setup
 
