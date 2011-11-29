@@ -1,0 +1,23 @@
+!!!
+
+%html
+  %head
+    %title BlockBrowser
+    = stylesheet_link_tag    "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+
+  %body
+    #header
+      %h1= link_to "BlockBrowser", root_path
+      %h2= "- #{@page_title}"
+    = yield
+    #footer
+      Network:
+      = Bitcoin.instance_eval { @network }
+      |
+      Blocks:
+      = Block.count
+      |
+      Transactions:
+      = Transaction.count

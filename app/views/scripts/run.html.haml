@@ -1,0 +1,31 @@
+%h3 Input Script
+
+%pre= Bitcoin::Script.new(@input.script).to_string
+
+%h3 Output Script
+
+%pre= Bitcoin::Script.new(@output.script).to_string
+
+%h3 Steps
+
+%style
+  td, th {border: 1px solid #ccc; vertical-align: bottom}
+  th {text-align: right}
+
+- i = 0
+%table#debug
+  %tr
+    %th Operation
+    %th Stack
+  - (@debug.size / 2).times do
+    %tr
+      %th{:width => "30%"}
+        %pre= @debug[i+1]
+      %td
+        %pre= raw @debug[i].join("<br />")
+    - i += 2
+  
+
+%h3 Result
+
+%pre= @result

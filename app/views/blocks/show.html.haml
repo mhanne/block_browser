@@ -1,0 +1,39 @@
+
+%table
+  %tr
+    %th Depth
+    %td= @block.depth
+  %tr
+    %th Hash
+    %td= hth(@block.block_hash)
+  %tr
+    %th Time
+    %td= format_time @block.when_created
+  %tr
+    %th Transactions
+    %td= @block.transactions.count
+  - if Block.attribute_names.include?("block_size")
+    %tr
+      %th Size
+      %td= @block.block_size
+  %tr
+    %th Total Value
+    %td= @block.total_value
+
+%h3 Transactions
+%table
+  %tr
+    %th ID
+    %th Hash
+    %th Time
+    - if Transaction.attribute_names.include?("transaction_size")
+      %th Size
+    %th Value
+  - @block.transactions.each do |transaction|
+    %tr
+      %td= transaction.id
+      %td= transaction_link transaction
+      %td= format_time transaction.when_found
+      - if Transaction.attribute_names.include?("transaction_size")
+        %td= transaction.transaction_size
+      %td= transaction.output_value
