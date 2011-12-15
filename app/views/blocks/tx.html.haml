@@ -72,7 +72,7 @@
       %td
         - if next_input = txout.get_next_in
           - tx_hash = next_input.get_tx.hash
-          = link_to(truncate(tx_hash, 24, '...'), transaction_path(tx_hash))
+          = link_to(truncate(tx_hash, 24, '...'), tx_path(tx_hash))
         - else
           not seen
 
