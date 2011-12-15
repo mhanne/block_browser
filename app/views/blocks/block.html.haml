@@ -1,0 +1,42 @@
+%table.details
+  %tr
+    %th Block
+    %th= @block.hash
+  %tr
+    %th Depth
+    %td= @block.depth
+  %tr
+    %th Prev Block
+    %td= block_link(@block.get_prev_block) rescue '-'
+  %tr
+    %th Next Block
+    %td= block_link(@block.get_next_block) rescue '-'
+  %tr
+    %th Time
+    %td= format_time @block.time
+  %tr
+    %th Transactions
+    %td= @block.tx.size
+  %tr
+    %th Size
+    %td= @block.to_payload.bytesize
+  %tr
+    %th Total Value
+    %td= format_amount(@block.tx.map(&:out).flatten.map(&:value).sum)
+  %tr
+    %th Formats
+    %td
+      = link_to "[json]", "/block/#{@block.hash}.json"
+      = link_to "[binary]", "/block/#{@block.hash}.bin"
+
+%h3 Transactions
+%table.list
+  %tr
+    %th Hash
+    %th Size
+    %th Value
+  - @block.tx.each do |tx|
+    %tr{:class => cycle('odd', 'even')}
+      %td= transaction_link tx
+      %td= tx.to_payload.bytesize
+      %td= format_amount(tx.out.map(&:value).sum)

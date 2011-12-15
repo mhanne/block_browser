@@ -49,8 +49,7 @@ end
 
 require 'bitcoin'
 
-Bitcoin::network = Rails.env == "development" ? :testnet : :bitcoin
+config = YAML::load(File.read(File.join(Rails.root, "config/application.yml")))
+Bitcoin::network = config["network"]
+STORE = Bitcoin::Storage.sequel(:db => config["database"])
 
-Bitcoin::Storage.connect YAML::load(File.read(File.join(Rails.root, "config/database.yml")))[Rails.env]
-
-include Bitcoin::Storage

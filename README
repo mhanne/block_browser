@@ -14,10 +14,25 @@ It is highly experimental, use at your own risk.
 
 == Setup
 
-You must have a blockchain SQL database according to the libbitcoin schema.
+You must have a blockchain database built by bitcoin-ruby.
 
-Edit `config/database.yml` to point to that database.
+Create `config/application.yml` to point to the database and set the network:
 
-bundle install
+ network: bitcoin
+ database: dummy
+ # database: sequel::sqlite:/
+ # database: sequel::postgres:/bitcoin
 
-rails s
+Also, add the corresponding db library to the `Gemfile`:
+
+ # gem 'sequel'
+ # gem 'sqlite3'
+ # gem 'pg'
+
+Then install the required gems
+
+ bundle install
+
+And start the server
+
+ rails s

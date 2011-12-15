@@ -1,10 +1,10 @@
 %h3 Input Script
 
-%pre= Bitcoin::Script.new(@input.script).to_string
+%pre= Bitcoin::Script.new(@txin.script_sig).to_string
 
 %h3 Output Script
 
-%pre= Bitcoin::Script.new(@output.script).to_string
+%pre= Bitcoin::Script.new(@txout.pk_script).to_string
 
 %h3 Steps
 

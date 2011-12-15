@@ -12,19 +12,27 @@ module ApplicationHelper
   end
 
   def block_link block, name = nil
-    block_hash = hth(block.block_hash)
+    block_hash = block.hash
     name ||= truncate(block_hash.sub(/^0*/, ''), 24, '...')
     link_to(name, block_path(block_hash))
   end
 
   def transaction_link transaction, name = nil
-    transaction_hash = hth(transaction.transaction_hash)
+    transaction_hash = transaction.hash
     name ||= truncate(transaction_hash, 24, '...')
-    link_to(name, transaction_path(transaction_hash))
+    link_to(name, tx_path(transaction_hash))
+  end
+
+  def address_link address
+    link_to(address, address_path(address))
   end
 
   def format_time time
-    time.strftime("%Y-%m-%d %H:%M")
+    Time.at(time).strftime("%Y-%m-%d %H:%M")
+  end
+
+  def format_amount amount
+    "%.8f" % (amount / 1e8)
   end
 
 end

@@ -1,23 +1,23 @@
-%table
+%table.list
   %tr
-    %th ID
     %th Depth
     %th Hash
     %th Time
     %th Tx
-    - if Block.attribute_names.include?("block_size")
-      %th Size
+    %th Size
     %th Total
 
   - @blocks.each do |block|
-    %tr
-      %td= block.id
+    %tr{:class => cycle('odd', 'even')}
       %td= block_link block, block.depth
       %td= block_link block
-      %td= format_time block.when_created
-      %td= block.transactions.count
-      - if Block.attribute_names.include?("block_size")
-        %td= block.block_size 
-      %td= block.total_value
+      %td= format_time block.time
+      %td= block.tx.size
+      %td= block.to_payload.bytesize
+      %td= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
 
-= will_paginate @blocks
+- if @blocks.first.depth < STORE.get_depth
+  = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
+
+- if @blocks.last.depth > 0
+  = link_to ">>", "?depth=#{@blocks.last.depth - 1}", :style => "float: right"

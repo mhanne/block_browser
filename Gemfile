@@ -1,18 +1,14 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.1.3'
-
+gem 'bitcoin-ruby', :git => 'git://github.com/lian/bitcoin-ruby.git', :require => "bitcoin"
 gem 'haml'
 gem 'sass'
-
 gem 'therubyracer'
 
-gem 'pg'
-
-gem 'bitcoin-ruby'
-
-gem 'log4r'
-gem 'pry'
+gem 'sequel'
+#gem 'sqlite3'
+#gem 'pg'
 
 gem 'will_paginate'
 

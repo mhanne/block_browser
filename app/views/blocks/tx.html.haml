@@ -1,0 +1,85 @@
+%table.details
+  %tr
+    %th Transaction
+    %th= @tx.hash
+  %tr
+    %th Block
+    %td= block_link @tx.get_block
+  %tr
+    %th Size
+    %td= @tx.to_payload.bytesize
+  %tr
+    %th Inputs
+    %td= @tx.in.size
+  %tr
+    %th Outputs
+    %td= @tx.out.size
+  %tr
+    %th Output Value
+    %td= format_amount(@tx.out.map(&:value).sum)
+  %tr
+    %th Formats
+    %td
+      = link_to "[json]", "/tx/#{@tx.hash}.json"
+      = link_to "[binary]", "/tx/#{@tx.hash}.bin"
+
+%h3 Inputs
+%table.list
+  %tr
+    %th IDX
+    %th Previous Output
+    %th Value
+    %th From Address
+    %th Script
+    %th Debug
+
+
+  - @tx.in.each_with_index do |txin, idx|
+    %tr{:class => cycle('odd', 'even')}
+      %td= idx
+      - if txin.coinbase?
+        %td generation
+        %td 50
+        %td -
+        %td= txin.script_sig.unpack("H*")[0]
+      - else
+        - prev_out = txin.get_prev_out
+        %td
+          = transaction_link(prev_out.get_tx)
+          = "/ #{txin.prev_out_index}"
+        %td= format_amount(prev_out.value) rescue "?"
+        %td
+          = address_link(prev_out.get_address)
+        %td
+          %pre
+            = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
+        %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
+
+
+%h3 Outputs
+%table.list
+  %tr
+    %th IDX
+    %th Next Input
+    %th Value
+    %th To Address
+    %th Script
+    %th Debug
+  - @tx.out.each_with_index do |txout, idx|
+    - script = Bitcoin::Script.new(txout.pk_script) rescue nil
+    %tr{:class => cycle('odd', 'even')}
+      %td= idx
+      %td
+        - if next_input = txout.get_next_in
+          - tx_hash = next_input.get_tx.hash
+          = link_to(truncate(tx_hash, 24, '...'), transaction_path(tx_hash))
+        - else
+          not seen
+
+      %td= format_amount(txout.value)
+      %td= address_link(script.get_address) rescue "?"
+      %td
+        %pre= script.to_string rescue "?"
+      %td
+        - if next_input
+          = link_to "Run Script", script_path("#{next_input.get_tx.hash}:#{next_input.tx_idx}")

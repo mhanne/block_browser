@@ -11,7 +11,23 @@
 
 td
   padding: 3px 5px
-        
+
+table.list
+  width: 100%
+
+  th
+    text-align: left
+
+  tr
+    &.odd td
+      background: #eee
+
+table.details
+  th
+    text-align: left
+  tr:nth-child(even)
+    td, th
+      background: #eee
 
 #footer
   margin-top: 20px
@@ -21,6 +37,7 @@ pre
   padding: 5px
   background: #ddd
   overflow: auto
+  width: 500px
 
 #debug
   width: 800px
