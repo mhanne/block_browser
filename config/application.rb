@@ -51,5 +51,6 @@ require 'bitcoin'
 
 config = YAML::load(File.read(File.join(Rails.root, "config/application.yml")))
 Bitcoin::network = config["network"]
-STORE = Bitcoin::Storage.sequel(:db => config["database"])
+backend, config = config["database"].split("::")
+STORE = Bitcoin::Storage.send(backend, :db => config)
 
