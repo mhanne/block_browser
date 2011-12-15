@@ -3,19 +3,22 @@
     %th Address
     %th= @address 
   %tr
-    %th Current Balance
-    %td= format_amount(STORE.get_balance(@address))
+    %th Transactions
+    %td= @txouts.size
   %tr
     %th Total Volume
     %td= format_amount(@txouts.map(&:value).sum)
+  %tr
+    %th Current Balance
+    %th= format_amount(STORE.get_balance(@address))
 
 %h3 Transactions
 
 %table.list
   %tr
     %th Tx
-    %th Kind
     %th Address
+    %th Kind
     %th Value
     %th Total
 
@@ -24,25 +27,29 @@
     - total += txout.value
     %tr{:class => cycle('odd', 'even')}
       %td= transaction_link(txout.get_tx)
-      %td= "<-"
       %td
-        - txout.get_tx.in.map(&:get_prev_out).each do |prev_out|
-          = address_link(prev_out.get_address)
-          (#{format_amount(txout.value)})
-          %br/
-      %td= format_amount(txout.value)
-      %td= format_amount(total)
+        - txout.get_tx.in.each do |txin|
+          - if txin.coinbase?
+            generation
+          - else
+            - prev_out = txin.get_prev_out
+            = address_link(prev_out.get_address)
+            (#{format_amount(txout.value)})
+            %br/
+      %td.incoming= "->"
+      %td.value= format_amount(txout.value)
+      %td.value= format_amount(total)
+
     - if txin = txout.get_next_in
       - total -= txout.value
-      %tr
+      %tr{:class => cycle('odd', 'even')}
         %td= transaction_link(txin.get_tx)
-        %td= "->"
         %td
           - txin.get_tx.out.each do |out|
             = address_link(out.get_address)
             (#{format_amount(out.value)})
             %br/
-
-        %td= format_amount(txout.value)
-        %td= format_amount(total)
+        %td.outgoing= "<-"
+        %td.value.outgoing= "- #{format_amount(txout.value)}"
+        %td.value= format_amount(total)
 
