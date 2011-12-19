@@ -49,7 +49,7 @@ end
 
 require 'bitcoin'
 
-config = YAML::load(File.read(File.join(Rails.root, "config/application.yml")))
+config = YAML::load_file(File.join(Rails.root, "config/application.yml"))
 Bitcoin::network = config["network"]
 backend, config = config["database"].split("::")
 STORE = Bitcoin::Storage.send(backend, :db => config)

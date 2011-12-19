@@ -4,7 +4,13 @@
     %th= @tx.hash
   %tr
     %th Block
-    %td= block_link @tx.get_block
+    %td
+      = link_to(@tx.get_block.hash, block_path(@tx.get_block.hash)) rescue "unconfirmed"
+  %tr
+    %th Confirmations
+    %td
+      = STORE.get_depth - @tx.get_block.depth
+      (At Depth: #{@tx.get_block.depth})
   %tr
     %th Size
     %td= @tx.to_payload.bytesize
@@ -14,9 +20,20 @@
   %tr
     %th Outputs
     %td= @tx.out.size
+  - if @tx.in.size == 1 && @tx.in[0].coinbase?
+    - input_value = 50*1e8 # TODO
+  - else
+    - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum
+  %tr
+    %th Input Value
+    %td= format_amount(input_value)
+  - output_value = @tx.out.map(&:value).sum
   %tr
     %th Output Value
-    %td= format_amount(@tx.out.map(&:value).sum)
+    %td= format_amount(output_value)
+  %tr
+    %th Fee
+    %td= format_amount(input_value - output_value)
   %tr
     %th Formats
     %td
@@ -43,18 +60,19 @@
         %td -
         %td= txin.script_sig.unpack("H*")[0]
       - else
-        - prev_out = txin.get_prev_out
-        %td
-          = transaction_link(prev_out.get_tx)
-          = "/ #{txin.prev_out_index}"
-        %td= format_amount(prev_out.value) rescue "?"
-        %td
-          = address_link(prev_out.get_address)
-        %td
-          %pre
-            = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
-        %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
-
+        - if prev_out = txin.get_prev_out
+          %td
+            = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
+            = "/ #{txin.prev_out_index}"
+          %td= format_amount(prev_out.value) rescue "?"
+          %td
+            = link_to(prev_out.get_address, address_path(prev_out.get_address))
+          %td
+            %pre
+              = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
+          %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
+        - else
+          %td{:colspan => 5} not seen
 
 %h3 Outputs
 %table.list
@@ -72,12 +90,12 @@
       %td
         - if next_input = txout.get_next_in
           - tx_hash = next_input.get_tx.hash
-          = link_to(truncate(tx_hash, 24, '...'), tx_path(tx_hash))
+          = link_to(truncate(tx_hash, :length => 16, :omission => '...'), tx_path(tx_hash))
         - else
           not seen
 
       %td= format_amount(txout.value)
-      %td= address_link(script.get_address) rescue "?"
+      %td= link_to(script.get_address, address_path(script.get_address)) rescue "?"
       %td
         %pre= script.to_string rescue "?"
       %td

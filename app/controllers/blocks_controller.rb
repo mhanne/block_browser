@@ -30,8 +30,9 @@ class BlocksController < ApplicationController
 
   def address
     @address = params[:id]
-    @pk_script = Bitcoin::Script.to_address_script(@address)
-    @txouts = STORE.get_txouts_for_pk_script(@pk_script)
+    @hash160 = Bitcoin.hash160_from_address(@address)
+    @txouts = STORE.get_txouts_for_hash160(@hash160)
+    @page_title = "Address Details"
   end
 
   def script
@@ -47,6 +48,5 @@ class BlocksController < ApplicationController
     end
     @page_title = "Script Details"
   end
-
 
 end
