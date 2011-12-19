@@ -13,7 +13,7 @@
     %td= format_amount(@txouts.map(&:value).sum)
   %tr
     %th Current Balance
-    %th= format_amount(STORE.get_balance(@address))
+    %th= format_amount(STORE.get_balance(Bitcoin.hash160_from_address(@address)))
 
 %h3 Transactions
 
@@ -64,8 +64,8 @@
           - else
             not yet
         %td
-          - txout.get_tx.out.each do |out|
-            = link_to(out.get_address, address_path(out.get_address))
+          - txout.get_next_in.get_tx.out.each do |txout|
+            = link_to(txout.get_address, address_path(txout.get_address))
             %br/
         %td.outgoing= "<-"
         %td.value.outgoing= "- #{format_amount(txout.value)}"
