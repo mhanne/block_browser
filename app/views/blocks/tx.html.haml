@@ -5,12 +5,18 @@
   %tr
     %th Block
     %td
-      = link_to(@tx.get_block.hash, block_path(@tx.get_block.hash)) rescue "unconfirmed"
+      - if block = @tx.get_block
+        = link_to(block.hash, block_path(block.hash))
+      - else
+        unconfirmed
   %tr
     %th Confirmations
     %td
-      = STORE.get_depth - @tx.get_block.depth
-      (At Depth: #{@tx.get_block.depth})
+      - if @tx.get_block
+        = STORE.get_depth - @tx.get_block.depth
+        (At Depth: #{@tx.get_block.depth})
+      - else
+        unconfirmed
   %tr
     %th Size
     %td= @tx.to_payload.bytesize
@@ -23,17 +29,17 @@
   - if @tx.in.size == 1 && @tx.in[0].coinbase?
     - input_value = 50*1e8 # TODO
   - else
-    - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum
+    - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum rescue '?'
   %tr
     %th Input Value
-    %td= format_amount(input_value)
+    %td= format_amount(input_value) rescue '?'
   - output_value = @tx.out.map(&:value).sum
   %tr
     %th Output Value
     %td= format_amount(output_value)
   %tr
     %th Fee
-    %td= format_amount(input_value - output_value)
+    %td= format_amount(input_value - output_value) rescue '?'
   %tr
     %th Formats
     %td
