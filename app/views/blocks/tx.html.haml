@@ -62,7 +62,7 @@
       %td= idx
       - if txin.coinbase?
         %td generation
-        %td 50
+        %td.value 50.00000000
         %td -
         %td= txin.script_sig.unpack("H*")[0]
       - else
@@ -70,7 +70,7 @@
           %td
             = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
             = "/ #{txin.prev_out_index}"
-          %td= format_amount(prev_out.value) rescue "?"
+          %td.value= format_amount(prev_out.value) rescue "?"
           %td
             = link_to(prev_out.get_address, address_path(prev_out.get_address))
           %td
@@ -100,7 +100,7 @@
         - else
           not seen
 
-      %td= format_amount(txout.value)
+      %td.value= format_amount(txout.value)
       %td= link_to(script.get_address, address_path(script.get_address)) rescue "?"
       %td
         %pre= script.to_string rescue "?"

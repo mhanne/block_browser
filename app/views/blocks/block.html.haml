@@ -53,4 +53,4 @@
           = tx.in.map{|i| Bitcoin::Script.new(i.get_prev_out.pk_script).get_address}.map{|a|link_to(a, address_path(a))}.join("<br/>").html_safe
       %td= tx.out.map(&:get_address).map{|a| link_to a, address_path(a)}.join("<br/>").html_safe
       %td= number_to_human_size tx.to_payload.bytesize
-      %td= format_amount(tx.out.map(&:value).sum)
+      %td.value= format_amount(tx.out.map(&:value).sum)

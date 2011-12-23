@@ -14,7 +14,7 @@
       %td= format_time block.time
       %td= block.tx.size
       %td= number_to_human_size block.to_payload.bytesize
-      %td= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
+      %td.value= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
 
 - if @blocks.first.depth < STORE.get_depth
   = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
