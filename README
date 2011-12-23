@@ -22,6 +22,8 @@ Create `config/application.yml` to point to the database and set the network:
  database: dummy
  # database: sequel::sqlite:/
  # database: sequel::postgres:/bitcoin
+ domain: example.com
+ donate: "19Ks8ikpVdLR5zfLSh8Krbg8duNYmDc3T3" # my address :P
 
 Also, add the corresponding db library to the `Gemfile`:
 

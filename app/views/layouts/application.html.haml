@@ -17,9 +17,24 @@
           = submit_tag "Search"
 
     = yield
+
     #footer
       Network:
-      = Bitcoin.instance_eval { @network }
+      - net = Bitcoin.instance_eval { @network }
+      %b= net
+      - if net == :bitcoin
+        = link_to "(testnet)", "http://test.#{BB_CONFIG['domain']}"
+      - else
+        = link_to "(bitcoin)", "http://#{BB_CONFIG['domain']}"
       |
       Blocks:
-      = STORE.get_depth
+      - head = STORE.get_head
+      = link_to head.depth, block_path(head.hash)
+      |
+      Code:
+      = link_to "bitcoin-ruby", "http://github.com/lian/bitcoin-ruby"
+      = "+"
+      = link_to "block_browser", "http://github.com/mhanne/block_browser"
+      |
+      Donate:
+      = link_to BB_CONFIG['donate'], address_path(BB_CONFIG['donate'])
