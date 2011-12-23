@@ -4,7 +4,9 @@ class BlocksController < ApplicationController
 
   def index
     @per_page = 10
-    depth = (params[:depth] || STORE.get_depth).to_i
+    depth = STORE.get_depth
+    depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
+    depth = @per_page  if depth < @per_page
     @blocks = []
     @per_page.times { @blocks << STORE.get_block_by_depth(depth); depth -= 1 }
     @page_title = "Recent Blocks"
