@@ -62,15 +62,49 @@ class BlocksController < ApplicationController
     @page_title = "Script Details"
   end
 
+  # search for given (part of) block/tx/address.
+  # also try to account for 'half bytes' when hex string is cut off.
   def search
     @id = params[:search]
     if Bitcoin.valid_address?(@id)
-      redirect_to address_path(@id)
+      return redirect_to address_path(@id)
+    elsif STORE.db.class.name =~ /Sequel/
+      if @id.size % 2 == 0
+        return  if search_block(@id)
+        return  if search_tx(@id)
+        t = @id.split; t.pop; t.shift; t = t.join
+        return  if search_block(t)
+        return  if search_tx(t)
+      else
+        return  if search_block(@id[0..-2])
+        return  if search_block(@id[1..-1])
+        return  if search_tx(@id[0..-2])
+        return  if search_tx(@id[1..-1])
+      end
     elsif @id =~ /^0000/
       redirect_to block_path(@id)
     else
       redirect_to tx_path(@id)
     end
+    render :text => "NOT FOUND"
+  end
+
+  private
+
+  def search_block(part)
+    blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
+    hash = STORE.db[:blk].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    redirect_to block_path(hash)
+  rescue
+    nil
+  end
+
+  def search_tx(part)
+    blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
+    hash = STORE.db[:tx].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    redirect_to tx_path(hash)
+  rescue
+    nil
   end
 
 end
