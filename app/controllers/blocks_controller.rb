@@ -62,4 +62,15 @@ class BlocksController < ApplicationController
     @page_title = "Script Details"
   end
 
+  def search
+    @id = params[:search]
+    if Bitcoin.valid_address?(@id)
+      redirect_to address_path(@id)
+    elsif @id =~ /^0000/
+      redirect_to block_path(@id)
+    else
+      redirect_to tx_path(@id)
+    end
+  end
+
 end
