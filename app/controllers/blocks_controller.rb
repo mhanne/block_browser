@@ -20,6 +20,7 @@ class BlocksController < ApplicationController
 
   def block
     @block = STORE.get_block(params[:id])
+    return render :text => "Block #{params[:id]} not found."  unless @block
     respond_to do |format|
       format.html { @page_title = "Block Details" }
       format.json { render :text => @block.to_json }
@@ -29,6 +30,7 @@ class BlocksController < ApplicationController
 
   def tx
     @tx = STORE.get_tx(params[:id])
+    return render :text => "Tx #{params[:id]} not found."  unless @tx
     respond_to do |format|
       format.html { @page_title = "Transaction Details" }
       format.json { render :text => @tx.to_json }
@@ -38,6 +40,9 @@ class BlocksController < ApplicationController
 
   def address
     @address = params[:id]
+    unless Bitcoin.valid_address?(@address)
+      return render :text => "Address #{params[:id]} is invalid."
+    end
     @hash160 = Bitcoin.hash160_from_address(@address)
     @txouts = STORE.get_txouts_for_hash160(@hash160)
     @page_title = "Address Details"
