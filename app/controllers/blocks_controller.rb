@@ -3,12 +3,18 @@ class BlocksController < ApplicationController
   layout 'application'
 
   def index
-    @per_page = 10
+    @per_page = 20
     depth = STORE.get_depth
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = @per_page  if depth < @per_page
     @blocks = []
-    @per_page.times { @blocks << STORE.get_block_by_depth(depth); depth -= 1 }
+    if STORE.db.class.name =~ /Sequel/
+      @blocks = STORE.db[:blk].order(:depth).limit(@per_page).map do |blk|
+        STORE.send(:wrap_block, blk)
+      end
+    else
+      @per_page.times { @blocks << STORE.get_block_by_depth(depth); depth -= 1 }
+    end
     @page_title = "Recent Blocks"
   end
 
