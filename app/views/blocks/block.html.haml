@@ -48,15 +48,4 @@
       %th Outputs
       %th Size
       %th Value
-    - @block.tx.each do |tx|
-      %tr{:class => cycle('odd', 'even')}
-        %td= link_to(truncate(tx.hash, :length => 16), tx_path(tx.hash))
-
-        %td
-          - if tx.in.size == 1 && tx.in[0].coinbase?
-            coinbase
-          - else
-            = tx.in.map{|i| Bitcoin::Script.new(i.get_prev_out.pk_script).get_address}.map{|a|link_to(a, address_path(a))}.join("<br/>").html_safe
-        %td= tx.out.map(&:get_address).map{|a| link_to a, address_path(a)}.join("<br/>").html_safe
-        %td= number_to_human_size tx.to_payload.bytesize
-        %td.value= format_amount(tx.out.map(&:value).sum)
+    = render :partial => 'tx', :collection => @block.tx

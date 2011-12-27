@@ -46,6 +46,7 @@ class BlocksController < ApplicationController
     @page_title = "Address Details"
   end
 
+  caches_page :script
   def script
     tx_hash, txin_idx = params[:id].split(":")
     @tx = STORE.get_tx(tx_hash)
@@ -85,6 +86,14 @@ class BlocksController < ApplicationController
       redirect_to tx_path(@id)
     end
     render :text => "NOT FOUND"
+  end
+
+  def unconfirmed
+    @tx = STORE.get_unconfirmed_tx
+    respond_to do |format|
+      format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
+      format.json { render :text => @tx.map(&:to_hash).to_json }
+    end
   end
 
   private

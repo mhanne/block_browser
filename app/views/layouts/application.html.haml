@@ -31,6 +31,8 @@
       - head = STORE.get_head
       = link_to head.depth, block_path(head.hash)
       |
+      = link_to "Unconfirmed Tx", unconfirmed_path
+      |
       Code:
       = link_to "bitcoin-ruby", "http://github.com/lian/bitcoin-ruby"
       = "+"

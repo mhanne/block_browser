@@ -7,7 +7,8 @@ BlockBrowser::Application.routes.draw do
   match 'script/:id' => 'blocks#script', :as => :script
   match 'address/:id' => 'blocks#address', :as => :address
   match 'search/:search' => 'blocks#search', :as => :search
-  match 'search/' => 'blocks#search', :as => :search
+  match 'search' => 'blocks#search', :as => :search
+  match 'unconfirmed' => 'blocks#unconfirmed', :as => :unconfirmed
 
   root :to => 'blocks#index'
 

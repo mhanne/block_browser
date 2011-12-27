@@ -1,0 +1,18 @@
+%tr{:class => cycle('odd', 'even')}
+  %td= link_to(truncate(tx.hash, :length => 16), tx_path(tx.hash))
+
+  %td
+    - if tx.in.size == 1 && tx.in[0].coinbase?
+      coinbase
+    - else
+      - tx.in.map do |i|
+        - prev_out = i.get_prev_out
+        - if prev_out
+          - addr = Bitcoin::Script.new(prev_out.pk_script).get_address
+          = link_to(addr, address_path(addr))
+        - else
+          not seen
+        %br/
+  %td= tx.out.map(&:get_address).map{|a| link_to a, address_path(a)}.join("<br/>").html_safe
+  %td= number_to_human_size tx.to_payload.bytesize
+  %td.value= format_amount(tx.out.map(&:value).sum)
