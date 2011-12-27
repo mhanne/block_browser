@@ -10,9 +10,9 @@
   - @blocks.each do |block_hash|
     - if STORE.db.class.name =~ /Sequel/
       - h = block_hash[:hash].unpack("H*")[0]
-      - cache("block/#{h}/list_item") do
-        - block = STORE.get_block(h)
-        %tr{:class => cycle('odd','even')}
+      %tr{:class => cycle('odd','even')}
+        - cache("block/#{h}/list_item") do
+          - block = STORE.get_block(h)
           %td= link_to(block.depth,block_path(block.hash))
           %td= link_to(block.hash, block_path(block.hash))
           %td= format_time block.time

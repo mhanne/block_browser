@@ -47,20 +47,21 @@
         = link_to "[json]", "/tx/#{@tx.hash}.json"
         = link_to "[binary]", "/tx/#{@tx.hash}.bin"
 
-- cache("tx/#{@tx.hash}/in") do
-  %h3 Inputs
-  %table.list
-    %tr
-      %th IDX
-      %th Previous Output
-      %th Value
-      %th From Address
-      %th Script
-      %th Debug
+%h3 Inputs
+%table.list
+  %tr
+    %th IDX
+    %th Previous Output
+    %th Value
+    %th From Address
+    %th Script
+    %th Debug
 
 
-    - @tx.in.each_with_index do |txin, idx|
-      %tr{:class => cycle('odd', 'even')}
+  - @tx.in.each_with_index do |txin, idx|
+    %tr{:class => cycle('odd', 'even')}
+      - prev_out = txin.get_prev_out
+      - cache("tx/#{@tx.hash}/in/#{idx}/#{!!prev_out}") do
         %td= idx
         - if txin.coinbase?
           %td generation
@@ -68,7 +69,7 @@
           %td -
           %td= txin.script_sig.unpack("H*")[0]
         - else
-          - if prev_out = txin.get_prev_out
+          - if prev_out
             %td
               = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
               = "/ #{txin.prev_out_index}"
@@ -82,22 +83,23 @@
           - else
             %td{:colspan => 5} not seen
 
-- cache("tx/#{@tx.hash}/out") do
-  %h3 Outputs
-  %table.list
-    %tr
-      %th IDX
-      %th Next Input
-      %th Value
-      %th To Address
-      %th Script
-      %th Debug
-    - @tx.out.each_with_index do |txout, idx|
-      - script = Bitcoin::Script.new(txout.pk_script) rescue nil
-      %tr{:class => cycle('odd', 'even')}
+%h3 Outputs
+%table.list
+  %tr
+    %th IDX
+    %th Next Input
+    %th Value
+    %th To Address
+    %th Script
+    %th Debug
+  - @tx.out.each_with_index do |txout, idx|
+    - script = Bitcoin::Script.new(txout.pk_script) rescue nil
+    - next_input = txout.get_next_in
+    %tr{:class => cycle('odd', 'even')}
+      - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
         %td= idx
         %td
-          - if next_input = txout.get_next_in
+          - if next_input
             - tx_hash = next_input.get_tx.hash
             = link_to(truncate(tx_hash, :length => 16, :omission => '...'), tx_path(tx_hash))
           - else
