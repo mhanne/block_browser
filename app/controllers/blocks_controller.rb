@@ -43,7 +43,13 @@ class BlocksController < ApplicationController
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
     @txouts = STORE.get_txouts_for_hash160(@hash160)
-    @page_title = "Address Details"
+    respond_to do |format|
+      format.html { @page_title = "Address Details" }
+      format.json do
+        render(:text => @txouts.map {|o| [o, o.get_next_in]}
+          .flatten.compact.map(&:get_tx).to_json)
+      end
+    end
   end
 
   caches_page :script
