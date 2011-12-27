@@ -7,17 +7,26 @@
     %th Size
     %th Total
 
-  - @blocks.each do |block|
-    %tr{:class => cycle('odd', 'even')}
-      %td= link_to(block.depth, block_path(block.hash))
-      %td= link_to(block.hash, block_path(block.hash))
-      %td= format_time block.time
-      %td= block.tx.size
-      %td= number_to_human_size block.to_payload.bytesize
-      %td.value= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
+  - @blocks.each do |block_hash|
+    - if STORE.db.class.name =~ /Sequel/
+      - h = block_hash[:hash].unpack("H*")[0]
+      - cache("block/#{h}/list_item") do
+        - block = STORE.get_block(h)
+        %tr{:class => cycle('odd','even')}
+          %td= link_to(block.depth,block_path(block.hash))
+          %td= link_to(block.hash, block_path(block.hash))
+          %td= format_time block.time
+          %td= block.tx.size
+          %td= number_to_human_size block.to_payload.bytesize
+          %td.value= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
 
-- if @blocks.first.depth < STORE.get_depth
-  = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
-
-- if @blocks.last.depth > 0
-  = link_to ">>", "?depth=#{@blocks.last.depth - 1}", :style => "float: right"
+- if STORE.db.class.name =~ /Sequel/
+  - if @blocks.first[:depth] < STORE.get_depth
+    = link_to "<<", "?depth=#{@blocks.first[:depth] + @per_page}", :style => "float: left"
+  - if @blocks.all.last[:depth] > 0
+    = link_to ">>", "?depth=#{@blocks.all.last[:depth] - 1}", :style => "float: right"
+- else
+  - if @blocks.first.depth < STORE.get_depth
+    = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
+  - if @blocks.last.depth > 0
+    = link_to ">>", "?depth=#{@blocks.last.depth - 1}", :style => "float: right"

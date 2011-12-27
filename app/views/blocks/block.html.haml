@@ -1,14 +1,15 @@
 %table.details
-  %tr
-    %th Block
-    %th= @block.hash
-  %tr
-    %th Depth
-    %td= @block.depth
-  %tr
-    %th Prev Block
-    - @prev_block = @block.get_prev_block
-    %td= link_to(@prev_block.hash, block_path(@prev_block.hash)) rescue '-'
+  - cache("block/#{@block.hash}/details_1") do
+    %tr
+      %th Block
+      %th= @block.hash
+    %tr
+      %th Depth
+      %td= @block.depth
+    %tr
+      %th Prev Block
+      - @prev_block = @block.get_prev_block
+      %td= link_to(@prev_block.hash, block_path(@prev_block.hash)) rescue '-'
   %tr
     %th Next Block
     - @next_block = @block.get_next_block
@@ -16,44 +17,46 @@
       %td= link_to(@next_block.hash, block_path(@next_block.hash))
     - else
       %td not seen
-  %tr
-    %th Merkle Root
-    %td= @block.mrkl_root.unpack("H*")[0]
-  %tr
-    %th Time
-    %td= format_time @block.time
-  %tr
-    %th Transactions
-    %td= @block.tx.size
-  %tr
-    %th Size
-    %td= number_to_human_size @block.to_payload.bytesize
-  %tr
-    %th Total Value
-    %td= format_amount(@block.tx.map(&:out).flatten.map(&:value).sum)
-  %tr
-    %th Formats
-    %td
-      = link_to "[json]", "/block/#{@block.hash}.json"
-      = link_to "[binary]", "/block/#{@block.hash}.bin"
-
-%h3 Transactions
-%table.list
-  %tr
-    %th Hash
-    %th Inputs
-    %th Outputs
-    %th Size
-    %th Value
-  - @block.tx.each do |tx|
-    %tr{:class => cycle('odd', 'even')}
-      %td= link_to(truncate(tx.hash, :length => 16), tx_path(tx.hash))
-
+  - cache("block/#{@block.hash}/details_2") do
+    %tr
+      %th Merkle Root
+      %td= @block.mrkl_root.unpack("H*")[0]
+    %tr
+      %th Time
+      %td= format_time @block.time
+    %tr
+      %th Transactions
+      %td= @block.tx.size
+    %tr
+      %th Size
+      %td= number_to_human_size @block.to_payload.bytesize
+    %tr
+      %th Total Value
+      %td= format_amount(@block.tx.map(&:out).flatten.map(&:value).sum)
+    %tr
+      %th Formats
       %td
-        - if tx.in.size == 1 && tx.in[0].coinbase?
-          coinbase
-        - else
-          = tx.in.map{|i| Bitcoin::Script.new(i.get_prev_out.pk_script).get_address}.map{|a|link_to(a, address_path(a))}.join("<br/>").html_safe
-      %td= tx.out.map(&:get_address).map{|a| link_to a, address_path(a)}.join("<br/>").html_safe
-      %td= number_to_human_size tx.to_payload.bytesize
-      %td.value= format_amount(tx.out.map(&:value).sum)
+        = link_to "[json]", "/block/#{@block.hash}.json"
+        = link_to "[binary]", "/block/#{@block.hash}.bin"
+
+- cache("block/#{@block.hash}/tx") do
+  %h3 Transactions
+  %table.list
+    %tr
+      %th Hash
+      %th Inputs
+      %th Outputs
+      %th Size
+      %th Value
+    - @block.tx.each do |tx|
+      %tr{:class => cycle('odd', 'even')}
+        %td= link_to(truncate(tx.hash, :length => 16), tx_path(tx.hash))
+
+        %td
+          - if tx.in.size == 1 && tx.in[0].coinbase?
+            coinbase
+          - else
+            = tx.in.map{|i| Bitcoin::Script.new(i.get_prev_out.pk_script).get_address}.map{|a|link_to(a, address_path(a))}.join("<br/>").html_safe
+        %td= tx.out.map(&:get_address).map{|a| link_to a, address_path(a)}.join("<br/>").html_safe
+        %td= number_to_human_size tx.to_payload.bytesize
+        %td.value= format_amount(tx.out.map(&:value).sum)

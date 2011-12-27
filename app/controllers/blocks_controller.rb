@@ -9,9 +9,7 @@ class BlocksController < ApplicationController
     depth = @per_page  if depth < @per_page
     @blocks = []
     if STORE.db.class.name =~ /Sequel/
-      @blocks = STORE.db[:blk].filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse.map do |blk|
-        STORE.send(:wrap_block, blk)
-      end
+      @blocks = STORE.db[:blk].select(:hash, :depth).filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse
     else
       @per_page.times { @blocks << STORE.get_block_by_depth(depth); depth -= 1 }
     end
