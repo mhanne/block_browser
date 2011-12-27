@@ -12,7 +12,10 @@
   %tr
     %th Next Block
     - @next_block = @block.get_next_block
-    %td= link_to(@next_block.hash, block_path(@next_block.hash)) rescue '-'
+    - if @next_block
+      %td= link_to(@next_block.hash, block_path(@next_block.hash))
+    - else
+      %td not seen
   %tr
     %th Merkle Root
     %td= @block.mrkl_root.unpack("H*")[0]
