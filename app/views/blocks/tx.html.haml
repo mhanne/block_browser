@@ -74,8 +74,11 @@
               = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
               = "/ #{txin.prev_out_index}"
             %td.value= format_amount(prev_out.value) rescue "?"
-            %td
-              = link_to(prev_out.get_address, address_path(prev_out.get_address))
+            - if prev_out.get_address
+              %td
+                = link_to(prev_out.get_address, address_path(prev_out.get_address))
+            - else
+              %td unknown
             %td
               %pre
                 = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
@@ -106,7 +109,10 @@
             not seen
 
         %td.value= format_amount(txout.value)
-        %td= link_to(script.get_address, address_path(script.get_address)) rescue "?"
+        - if script.get_address
+          %td= link_to(script.get_address, address_path(script.get_address))
+        - else
+          %td unknown
         %td
           %pre= script.to_string rescue "?"
         %td
