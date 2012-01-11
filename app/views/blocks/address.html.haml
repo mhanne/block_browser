@@ -29,45 +29,43 @@
   - total = 0
   - @txouts.each do |txout|
     - tx = txout.get_tx
-    - cache("addr/#{@address}/out/#{tx.hash}") do
+    %tr{:class => cycle('odd', 'even')}
+      %td= link_to(tx.hash, tx_path(tx.hash))
+      %td
+        - if block = tx.get_block
+          = link_to(block.depth, block_path(block.hash))
+        - else
+          not yet
+      - total += txout.value
+      %td
+        - txout.get_tx.in.each do |txin|
+          - if txin.coinbase?
+            generation
+          - else
+            - prev_out = txin.get_prev_out
+            - if prev_out
+              = link_to(prev_out.get_address, address_path(prev_out.get_address))
+            - else
+              unknown
+            %br/
+        %td.incoming= "->"
+        %td.value= format_amount(txout.value)
+        %td.value= format_amount(total)
+    - if next_in = txout.get_next_in
+      - tx = next_in.get_tx
       %tr{:class => cycle('odd', 'even')}
+        - total -= txout.value
         %td= link_to(tx.hash, tx_path(tx.hash))
         %td
           - if block = tx.get_block
             = link_to(block.depth, block_path(block.hash))
           - else
             not yet
-        - total += txout.value
-        %td
-          - txout.get_tx.in.each do |txin|
-            - if txin.coinbase?
-              generation
-            - else
-              - prev_out = txin.get_prev_out
-              - if prev_out
-                = link_to(prev_out.get_address, address_path(prev_out.get_address))
-              - else
-                unknown
-              %br/
-          %td.incoming= "->"
-          %td.value= format_amount(txout.value)
-          %td.value= format_amount(total)
-    - if next_in = txout.get_next_in
-      - tx = next_in.get_tx
-      - cache("addr/#{@address}/in/#{tx.hash}") do
-        %tr{:class => cycle('odd', 'even')}
-          - total -= txout.value
-          %td= link_to(tx.hash, tx_path(tx.hash))
-          %td
-            - if block = tx.get_block
-              = link_to(block.depth, block_path(block.hash))
-            - else
-              not yet
 
-          %td
-            - txout.get_next_in.get_tx.out.each do |txout|
-              = link_to(txout.get_address, address_path(txout.get_address))
-              %br/
-          %td.outgoing= "<-"
-          %td.value.outgoing= "- #{format_amount(txout.value)}"
-          %td.value= format_amount(total)
+        %td
+          - txout.get_next_in.get_tx.out.each do |txout|
+            = link_to(txout.get_address, address_path(txout.get_address))
+            %br/
+        %td.outgoing= "<-"
+        %td.value.outgoing= "- #{format_amount(txout.value)}"
+        %td.value= format_amount(total)
