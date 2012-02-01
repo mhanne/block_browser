@@ -9,7 +9,10 @@
     %tr
       %th Prev Block
       - @prev_block = @block.get_prev_block
-      %td= link_to(@prev_block.hash, block_path(@prev_block.hash)) rescue '-'
+      - if @prev_block
+        %td= link_to(@prev_block.hash, block_path(@prev_block.hash))
+      - else
+        %td= @block.prev_block.unpack("H*")[0]
   %tr
     %th Next Block
     - @next_block = @block.get_next_block

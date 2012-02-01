@@ -6,7 +6,7 @@ class BlocksController < ApplicationController
     @per_page = 20
     depth = STORE.get_depth
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
-    depth = @per_page  if depth < @per_page
+    depth = (@per_page - 1)  if depth < @per_page
     @blocks = []
     if STORE.db.class.name =~ /Sequel/
       @blocks = STORE.db[:blk].select(:hash, :depth).filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse
