@@ -23,7 +23,7 @@
   - cache("block/#{@block.hash}/details_2") do
     %tr
       %th Merkle Root
-      %td= @block.mrkl_root.unpack("H*")[0]
+      %td= @block.mrkl_root.reverse.unpack("H*")[0]
     %tr
       %th Time
       %td= format_time @block.time
