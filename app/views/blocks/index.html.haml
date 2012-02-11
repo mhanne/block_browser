@@ -1,4 +1,4 @@
-%table.list
+%table#blocks.list
   %tr
     %th Depth
     %th Hash
@@ -6,19 +6,14 @@
     %th Tx
     %th Size
     %th Total
-
-  - @blocks.each do |block_hash|
-    - if STORE.db.class.name =~ /Sequel/
-      - h = block_hash[:hash].unpack("H*")[0]
-      %tr{:class => cycle('odd','even')}
-        - cache("block/#{h}/list_item") do
-          - block = STORE.get_block(h)
-          %td= link_to(block.depth,block_path(block.hash))
-          %td= link_to(block.hash, block_path(block.hash))
-          %td= format_time block.time
-          %td= block.tx.size
-          %td= number_to_human_size block.to_payload.bytesize
-          %td.value= format_amount(block.tx.map(&:out).flatten.map(&:value).sum)
+  %tbody.blocks
+    - @blocks.each do |block_hash|
+      - if STORE.db.class.name =~ /Sequel/
+        - h = block_hash[:hash].unpack("H*")[0]
+        %tr{:class => cycle('odd','even')}
+          - cache("block/#{h}/list_item") do
+            - block = STORE.get_block(h)
+            = render :partial => "blk", :object => block
 
 - if STORE.db.class.name =~ /Sequel/
   - if @blocks.first[:depth] < STORE.get_depth

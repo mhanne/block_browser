@@ -20,3 +20,4 @@ end
 
 gem 'jquery-rails'
 
+gem 'em-websocket'
