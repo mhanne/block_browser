@@ -7,49 +7,63 @@ include ActionView::Helpers::NumberHelper
 include ApplicationHelper
 include Rails.application.routes.url_helpers
 
+def compile_block_haml(block)
+  ctx = OpenStruct.new(:blk => block)
+  template = File.read(File.join(Rails.root, "app/views/blocks/_blk.html.haml"))
+  res = Haml::Engine.new(template).render(ctx)
+  "<tr>#{res.gsub!("\n", '')}</tr>"
+end
 
-HOST = "0.0.0.0"
-PORT = "8080"
-SERVER = "127.0.0.1:9999"
+class BitcoinConnection < EM::Connection
+  def initialize(host, port, channel)
+    @host, @port, @channel = host, port, channel
+    @buf = BufferedTokenizer.new("\x00")
+    send_data(["monitor", ''].to_json)
+    puts "bitcoin server connected"
+  end
 
-EM.run do
-  CHANNEL = EM::Channel.new
-
-  EM.connect(*SERVER.split(":")) do |connection|
-    connection.send_data(["monitor", ''].to_json)
-    def connection.receive_data(data)
-      (@buf ||= BufferedTokenizer.new("\x00")).extract(data).each do |packet|
-        cmd, result = JSON.load(packet)
-        next  unless cmd == "monitor"
-        begin
+  def receive_data(data)
+    @buf.extract(data).each do |packet|
+      cmd, result = JSON.load(packet)
+      next  unless cmd == "monitor"
+      begin
+        puts "#{result[0]}: #{result[1]['hash']} #{result[2]}"
         if result[0] == "block"
-          p result
           block = STORE.get_block(result[1]["hash"])
-          ctx = OpenStruct.new(:blk => block)
-          template = File.read(File.join(Rails.root, "app/views/blocks/_blk.html.haml"))
-          res = Haml::Engine.new(template).render(ctx)
-          CHANNEL.push "<tr>#{res.gsub!("\n", '')}</tr>"
+          @channel.push compile_block_haml(block)
         end
-          rescue
-          p $!
-          puts *$@
-          end
+      rescue
+        p $!
+        puts *$@
       end
     end
   end
 
-  p 'running'
-
-  EventMachine::WebSocket.start(:host => HOST, :port => PORT) do |ws|
-    puts "client connected"
-
-    ws.onopen do
-      sid = CHANNEL.subscribe {|msg| ws.send msg.to_json }
+  def unbind
+    puts "bitcoin server disconnected"
+    EM.defer do
+      sleep 10
+      EM.connect(@host, @port, self.class, @host, @port, @channel)
     end
-
-    ws.onclose { puts "Connection closed" }
-
   end
 
-  puts "websocket listening on #{HOST}:#{PORT}"
+end
+
+EM.run do
+  ws_host, ws_port = BB_CONFIG["websocket"].split(":")
+  bc_host, bc_port = BB_CONFIG["command"].split(":")
+
+  channel = EM::Channel.new
+
+  EM.connect(bc_host, bc_port, BitcoinConnection, bc_host, bc_port, channel)
+
+  EventMachine::WebSocket.start(:host => ws_host, :port => ws_port) do |ws|
+    ws.onopen do |*a|
+      puts "websocket client connected"
+      sid = channel.subscribe {|msg| ws.send msg.to_json }
+    end
+    ws.onclose { puts "websocket client disconnected" }
+  end
+
+  puts "websocket listening on #{ws_host}:#{ws_port}"
 end

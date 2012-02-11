@@ -16,7 +16,8 @@ It is highly experimental, use at your own risk.
 
 You need blockchain database built by bitcoin-ruby.
 
-Create `config/application.yml` to point to the database and set the network:
+Create `config/application.yml` to point to the database and set the network,
+websocket url and bitcoin command socket:
 
  network: bitcoin
  database: dummy
@@ -24,6 +25,8 @@ Create `config/application.yml` to point to the database and set the network:
  # database: sequel::postgres:/bitcoin
  domain: example.com
  donate: "19Ks8ikpVdLR5zfLSh8Krbg8duNYmDc3T3" # my address :P
+ websocket: "127.0.0.1:8000"
+ command: "127.0.0.1:9999"
 
 Also, add the corresponding db library to the `Gemfile`:
 
@@ -38,3 +41,7 @@ Then install the required gems
 And start the server
 
  rails s
+
+And the websocket server
+
+ rails runner lib/websocket.rb
