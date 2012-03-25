@@ -61,10 +61,12 @@
             = link_to(block.depth, block_path(block.hash))
           - else
             not yet
-
         %td
-          - txout.get_next_in.get_tx.out.each do |txout|
-            = link_to(txout.get_address, address_path(txout.get_address))
+          - txout.get_next_in.get_tx.out.map(&:get_addresses).each do |addrs|
+            - if addrs.is_a?(Array)
+              = addrs.map{|a| link_to(a, address_path(a))}.join("<br/>").html_safe
+            - else
+              = link_to(addrs, address_path(addrs))
             %br/
         %td.outgoing= "<-"
         %td.value.outgoing= "- #{format_amount(txout.value)}"

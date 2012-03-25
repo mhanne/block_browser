@@ -51,6 +51,7 @@
 %table.list
   %tr
     %th IDX
+    %th Type
     %th Previous Output
     %th Value
     %th From Address
@@ -65,20 +66,24 @@
         %td= idx
         - if txin.coinbase?
           %td generation
+          %td none
           %td.value 50.00000000
           %td -
           %td= txin.script_sig.unpack("H*")[0]
         - else
           - if prev_out
+            %td= prev_out.type
             %td
               = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
               = "/ #{txin.prev_out_index}"
             %td.value= format_amount(prev_out.value) rescue "?"
             - if prev_out.get_address
               %td
-                = link_to(prev_out.get_address, address_path(prev_out.get_address))
+                - prev_out.get_addresses.each do |address|
+                  = link_to(address, address_path(address))
+                  %br
             - else
-              %td unknown
+              %td not seen
             %td
               %pre
                 = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
@@ -90,6 +95,7 @@
 %table.list
   %tr
     %th IDX
+    %th Type
     %th Next Input
     %th Value
     %th To Address
@@ -101,6 +107,7 @@
     %tr{:class => cycle('odd', 'even')}
       - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
         %td= idx
+        %td= txout.type
         %td
           - if next_input
             - tx_hash = next_input.get_tx.hash
@@ -109,10 +116,17 @@
             not seen
 
         %td.value= format_amount(txout.value)
-        - if script.get_address
-          %td= link_to(script.get_address, address_path(script.get_address))
-        - else
-          %td unknown
+        %td
+          - case script.type
+          - when :pubkey, :hash160
+            - addr = txout.get_address
+            = link_to(addr, address_path(addr))
+          - when :multisig
+            - addrs = script.get_multisig_addresses
+            multisig (#{script.get_signatures_required} of #{addrs.size})
+            - addrs.each do |address|
+              = link_to(address, address_path(address))
+              %br
         %td
           %pre= script.to_string rescue "?"
         %td
