@@ -14,53 +14,25 @@ def compile_block_haml(block)
   "<tr>#{res.gsub!("\n", '')}</tr>"
 end
 
-class BitcoinConnection < EM::Connection
-  def initialize(host, port, channel)
-    @host, @port, @channel = host, port, channel
-    @buf = BufferedTokenizer.new("\x00")
-    send_data(["monitor", ''].to_json)
-    puts "bitcoin server connected"
-  end
-
-  def receive_data(data)
-    @buf.extract(data).each do |packet|
-      cmd, result = JSON.load(packet)
-      next  unless cmd == "monitor"
-      begin
-        puts "#{result[0]}: #{result[1]['hash']} #{result[2]}"
-        if result[0] == "block"
-          block = STORE.get_block(result[1]["hash"])
-          @channel.push compile_block_haml(block)
-        end
-      rescue
-        p $!
-        puts *$@
-      end
-    end
-  end
-
-  def unbind
-    puts "bitcoin server disconnected"
-    EM.defer do
-      sleep 10
-      EM.connect(@host, @port, self.class, @host, @port, @channel)
-    end
-  end
-
-end
-
 EM.run do
   ws_host, ws_port = BB_CONFIG["websocket"].split(":")
   bc_host, bc_port = BB_CONFIG["command"].split(":")
 
-  channel = EM::Channel.new
+  CHANNEL = EM::Channel.new
 
-  EM.connect(bc_host, bc_port, BitcoinConnection, bc_host, bc_port, channel)
+  Bitcoin::Network::CommandClient.connect(bc_host, bc_port) do
+    on_connected { p 'c'; request("monitor", "block") }
+    on_block do |blk|
+      block = STORE.get_block(blk['hash'])
+      p block.hash
+      CHANNEL.push compile_block_haml(block)
+    end
+  end
 
   EventMachine::WebSocket.start(:host => ws_host, :port => ws_port) do |ws|
     ws.onopen do |*a|
       puts "websocket client connected"
-      sid = channel.subscribe {|msg| ws.send msg.to_json }
+      sid = CHANNEL.subscribe {|msg| ws.send msg.to_json }
     end
     ws.onclose { puts "websocket client disconnected" }
   end
