@@ -73,6 +73,9 @@ class BlocksController < ApplicationController
     @id = params[:search]
     if Bitcoin.valid_address?(@id)
       return redirect_to address_path(@id)
+    elsif @id.to_i.to_s == @id
+      block = STORE.get_block_by_depth(@id.to_i)
+      return redirect_to(block_path(block.hash))  if block
     elsif STORE.db.class.name =~ /Sequel/
       if @id.size % 2 == 0
         return  if search_block(@id)
