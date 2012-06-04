@@ -1,0 +1,35 @@
+%h3 About
+
+%p
+  This is a #{link_to "bitcoin", "http://bitcoin.org"} blockchain browser written in ruby
+  using the #{link_to "bitcoin-ruby", "http://github.com/lian/bitcoin-ruby"} library.
+%p
+  The code is open source and available at
+  #{link_to "block_browser", "http://github.com/mhanne/block_browser"}.
+
+%p
+  Donate to #{link_to BB_CONFIG['donate'], address_path(BB_CONFIG['donate'])} if you like the project.
+
+%h3 Statistics
+
+%table.details
+  %tr
+    %th Blocks
+    %td
+      - head = STORE.get_head
+      = link_to head.depth, block_path(head.hash)
+  %tr
+    %th Transactions
+    %td= STORE.db[:tx].count
+  %tr
+    %th Unconfirmed
+    %td= link_to STORE.db[:unconfirmed].count, unconfirmed_path
+  %tr
+    %th Inputs
+    %td= STORE.db[:txin].count
+  %tr
+    %th Outputs
+    %td= STORE.db[:txout].count
+  %tr
+    %th Addresses
+    %td= STORE.db[:addr].count

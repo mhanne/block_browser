@@ -47,7 +47,7 @@ class BlocksController < ApplicationController
       format.html { @page_title = "Address Details" }
       format.json do
         render(:text => @txouts.map {|o| [o, o.get_next_in]}
-          .flatten.compact.map(&:get_tx).to_json)
+            .flatten.compact.map(&:get_tx).to_json)
       end
     end
   end
@@ -103,6 +103,10 @@ class BlocksController < ApplicationController
       format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
       format.json { render :text => @tx.map(&:to_hash).to_json }
     end
+  end
+
+  def about
+    @page_title = "About"
   end
 
   private

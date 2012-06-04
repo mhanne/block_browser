@@ -10,6 +10,7 @@ BlockBrowser::Application.routes.draw do
   match 'search' => 'blocks#search', :as => :search
   match 'unconfirmed' => 'blocks#unconfirmed', :as => :unconfirmed
 
+  match 'about' => 'blocks#about', :as => :about
   root :to => 'blocks#index'
 
 end
