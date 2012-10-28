@@ -1,5 +1,9 @@
+require 'timeout'
+
 class BlocksController < ApplicationController
 
+  around_filter :timeout
+  
   layout 'application'
 
   def index
@@ -127,4 +131,11 @@ class BlocksController < ApplicationController
     nil
   end
 
+  def timeout
+    begin
+      Timeout.timeout(BB_CONFIG['timeout']) { yield }
+    rescue Timeout::Error
+      return render text: "Request took too long."
+    end
+  end
 end
