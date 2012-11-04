@@ -26,6 +26,10 @@ EM.run do
       block = STORE.get_block(blk['hash'])
       p block.hash
       CHANNEL.push compile_block_haml(block)
+      # TODO: fix caching properly
+      cache_dir = File.join(Rails.root, "tmp/cache/")
+      FileUtils.rm_rf cache_dir
+      FileUtils.mkdir cache_dir
     end
   end
 
