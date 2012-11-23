@@ -11,4 +11,8 @@ module ApplicationHelper
     "%.8f" % (amount / 1e8)
   end
 
+  def calculate_reward depth
+    ((50.0 / (2 ** (depth / Bitcoin::Validation::REWARD_DROP.to_f).floor)) * 1e8).to_i
+  end
+
 end
