@@ -18,6 +18,10 @@
       - else
         unconfirmed
   - cache("tx/#{@tx.hash}/details") do
+    - if Bitcoin.namecoin?
+      %tr
+        %th Version
+        %td= @tx.ver == 0x7100 ? "Namecoin" : "Bitcoin"
     %tr
       %th Size
       %td= @tx.to_payload.bytesize
@@ -127,6 +131,15 @@
             - addrs.each do |address|
               = link_to(address, address_path(address))
               %br
+          - if script.is_namecoin?
+            - name = txout.get_name
+            - if name.name
+              #{link_to(name.name, "/name/#{name.name}")}: #{name.value || name.hash}
+            - else
+              Hash: #{name.hash}
+            %br
+            - addr = txout.get_address
+            = link_to(addr, address_path(addr))
         %td
           %pre= script.to_string rescue "?"
         %td

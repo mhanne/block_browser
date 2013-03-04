@@ -1,0 +1,38 @@
+%table.details
+  %tr
+    %th Name
+    %th= @name
+  %tr
+    %th Value
+    %td
+      %pre= @current.value
+  %tr
+    %th Owner
+    %td
+      - addr = @current.get_txout.get_address
+      = link_to addr, address_path(addr)
+  %tr
+    %th Expires In
+    %td #{@current.expires_in} blocks
+  %tr
+    %th Operations
+    %td= @names.count
+
+%h3 History
+
+%table.list
+  %tr
+    %th Block
+    %th Tx
+    %th Type
+    %th Hash / Value
+    %th Address
+
+  - @names.reverse.each do |name|
+    %tr{:class => cycle('odd', 'even')}
+      %td= link_to(name.get_block.depth, block_path(name.get_block.hash))  if name.get_block
+      %td= link_to(truncate(name.get_tx.hash, :length => 16), tx_path(name.get_tx.hash))
+      %td= name.get_txout.type
+      %td
+        %pre= name.get_txout.type == :name_new ? name.hash : name.value
+      %td= link_to addr, address_path(addr)

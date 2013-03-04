@@ -23,14 +23,12 @@
     = yield
 
     #footer
-      Network:
-      - net = Bitcoin.instance_eval { @network }
-      %b= net
-      |
-      - if net == :bitcoin
-        = link_to "view testnet", "http://test.#{BB_CONFIG['domain']}"
-      - else
-        = link_to "view bitcoin", "http://#{BB_CONFIG['domain']}"
+      Networks:
+      - BB_CONFIG['networks'].each do |name, url|
+        - if Bitcoin.network_name == name.to_sym
+          %b= name
+        - else
+          = link_to name, url
       |
       Blocks:
       - head = STORE.get_head

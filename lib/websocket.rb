@@ -21,7 +21,7 @@ EM.run do
   CHANNEL = EM::Channel.new
 
   Bitcoin::Network::CommandClient.connect(bc_host, bc_port) do
-    on_connected { p 'c'; request("monitor", "block") }
+    on_connected { request("monitor", "block") }
     on_block do |blk|
       block = STORE.get_block(blk['hash'])
       p block.hash

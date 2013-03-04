@@ -3,7 +3,7 @@ require 'timeout'
 class BlocksController < ApplicationController
 
   around_filter :timeout
-  
+
   layout 'application'
 
   def index
@@ -56,6 +56,13 @@ class BlocksController < ApplicationController
     end
   end
 
+  def name
+    @name = "#{params[:prefix]}/#{params[:name]}"
+    @names = STORE.name_history(@name)
+    @current = @names.last
+    return render text: "NOT FOUND"  unless @current
+  end
+
   caches_page :script
   def script
     tx_hash, txin_idx = params[:id].split(":")
@@ -73,26 +80,31 @@ class BlocksController < ApplicationController
 
   # search for given (part of) block/tx/address.
   # also try to account for 'half bytes' when hex string is cut off.
+  # TODO: currently it just looks for whole hashes/addrs
   def search
     @id = params[:search]
+
     if Bitcoin.valid_address?(@id)
       return redirect_to address_path(@id)
     elsif @id.to_i.to_s == @id
       block = STORE.get_block_by_depth(@id.to_i)
       return redirect_to(block_path(block.hash))  if block
     elsif STORE.db.class.name =~ /Sequel/
-      if @id.size % 2 == 0
-        return  if search_block(@id)
-        return  if search_tx(@id)
-        t = @id.split; t.pop; t.shift; t = t.join
-        return  if search_block(t)
-        return  if search_tx(t)
-      else
-        return  if search_block(@id[0..-2])
-        return  if search_block(@id[1..-1])
-        return  if search_tx(@id[0..-2])
-        return  if search_tx(@id[1..-1])
-      end
+      return  if search_block(@id)
+      return  if search_tx(@id)
+      return  if search_name(@id)
+      # if @id.size % 2 == 0
+      #   return  if search_block(@id)
+      #   return  if search_tx(@id)
+      #   t = @id.split; t.pop; t.shift; t = t.join
+      #   return  if search_block(t)
+      #   return  if search_tx(t)
+      # else
+      #   return  if search_block(@id[0..-2])
+      #   return  if search_block(@id[1..-1])
+      #   return  if search_tx(@id[0..-2])
+      #   return  if search_tx(@id[1..-1])
+      # end
     elsif @id =~ /^0000/
       redirect_to block_path(@id)
     else
@@ -116,17 +128,27 @@ class BlocksController < ApplicationController
   private
 
   def search_block(part)
-    blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
-    hash = STORE.db[:blk].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    # blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
+    # hash = STORE.db[:blk].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    hash = STORE.db[:blk][hash: part.htb.to_sequel_blob][:hash].hth
     redirect_to block_path(hash)
   rescue
     nil
   end
 
   def search_tx(part)
-    blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
-    hash = STORE.db[:tx].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    # blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
+    # hash = STORE.db[:tx].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
+    hash = STORE.db[:tx][hash: part.htb.to_sequel_blob][:hash].hth
     redirect_to tx_path(hash)
+  rescue
+    nil
+  end
+
+  def search_name(part)
+    return nil  unless Bitcoin.namecoin?
+    name = STORE.db[:names][:name => "d/bitcoin"]
+    redirect_to name_path(*part.split("/"))  if name.any?
   rescue
     nil
   end
