@@ -12,7 +12,7 @@
         %td= name.get_txout.type
         %td
           - if name.name
-            = link_to(name.name, name_path(*name.name.split("/")))
+            = link_to(name.name, name_path(name.name))
           - else
             = name.hash
 

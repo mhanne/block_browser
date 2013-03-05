@@ -134,7 +134,7 @@
           - if script.is_namecoin?
             - name = txout.get_name
             - if name.name
-              #{link_to(name.name, "/name/#{name.name}")}: #{name.value || name.hash}
+              #{link_to(name.name, name_path(name.name))}: #{name.value || name.hash}
             - else
               Hash: #{name.hash}
             %br
