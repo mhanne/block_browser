@@ -53,5 +53,6 @@
       in #{blocks = drop - (STORE.get_depth % drop)} blocks -
       - seconds = blocks * 10 * 60
       = (Time.now + seconds).strftime("%Y-%m-%d %H:%M")
-      %br/
-      (#{(Time.at(seconds) - 1.day).utc.strftime("%d days, %H hours, %M minutes")})
+      - if seconds < 2592000
+        %br/
+        (#{(Time.at(seconds) - 1.day).utc.strftime("%d days, %H hours, %M minutes")})
