@@ -8,6 +8,7 @@ class BlocksController < ApplicationController
 
   def index
     @per_page = 20
+    STORE.instance_eval { @head = nil }
     depth = STORE.get_depth
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = (@per_page - 1)  if depth < @per_page
