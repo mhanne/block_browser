@@ -57,7 +57,7 @@ class BlocksController < ApplicationController
   end
 
   def name
-    @name = "#{params[:prefix]}/#{params[:name]}"
+    @name = params[:name]
     @names = STORE.name_history(@name)
     @current = @names.last
     return render text: "NOT FOUND"  unless @current
@@ -119,6 +119,15 @@ class BlocksController < ApplicationController
       format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
       format.json { render :text => @tx.map(&:to_hash).to_json }
     end
+  end
+
+  def names
+    @per_page = 20
+    @page = (params[:page] || 1).to_i
+    @offset = @per_page * (@page - 1)
+    @max = STORE.db[:names].count
+    @names = STORE.db[:names].order(:txout_id).reverse.limit(@per_page, @offset)
+    @names = @names.map {|n| STORE.wrap_name(n) }
   end
 
   def about

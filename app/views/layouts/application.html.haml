@@ -34,4 +34,7 @@
       - head = STORE.get_head
       = link_to head.depth, block_path(head.hash)
       |
+      - if Bitcoin.namecoin?
+        = link_to "Recent Names", names_path
+        |
       = link_to "About", about_url

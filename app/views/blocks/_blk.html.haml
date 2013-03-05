@@ -1,7 +1,7 @@
 %td
   %a{:href => block_path(blk.hash)}= blk.depth
 %td
-  %a{:href => block_path(blk.hash)}= blk.hash
+  %a{:href => block_path(blk.hash)}= truncate(blk.hash, :length => 16)
 %td= format_time blk.time
 %td= blk.tx.size
 %td= number_to_human_size blk.to_payload.bytesize
