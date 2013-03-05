@@ -7,8 +7,8 @@ gem 'sass'
 gem 'therubyracer'
 
 gem 'sequel'
-#gem 'sqlite3'
-#gem 'pg'
+gem 'sqlite3'
+gem 'pg'
 
 gem 'will_paginate'
 
