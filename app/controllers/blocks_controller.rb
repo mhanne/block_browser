@@ -157,8 +157,8 @@ class BlocksController < ApplicationController
 
   def search_name(part)
     return nil  unless Bitcoin.namecoin?
-    name = STORE.db[:names][:name => "d/bitcoin"]
-    redirect_to name_path(*part.split("/"))  if name.any?
+    name = STORE.name_show(part)
+    redirect_to name_path(name.name)  if name
   rescue
     nil
   end
