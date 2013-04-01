@@ -18,3 +18,4 @@ config/application.yml
 config/database.yml
 
 public/assets
+public/block_browser-*.tar.bz2

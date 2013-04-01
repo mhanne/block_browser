@@ -45,3 +45,7 @@ And start the server
 And the websocket server
 
  rails runner lib/websocket.rb
+
+== License
+
+This software is released under the terms of the GNU Affero General Public License, version 3. See COPYING for more information or see http://www.gnu.org/licenses/.

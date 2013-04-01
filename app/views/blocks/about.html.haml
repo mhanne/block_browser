@@ -5,10 +5,16 @@
   using the #{link_to "bitcoin-ruby", "http://github.com/lian/bitcoin-ruby"} library.
 %p
   The code is open source and available at
-  #{link_to "block_browser", "http://github.com/mhanne/block_browser"}.
+  = link_to "block_browser", "http://github.com/mhanne/block_browser"
+  under the terms of the GNU AGPL license.
 
 %p
-  Donate to #{link_to BB_CONFIG['donate'], address_path(BB_CONFIG['donate'])} if you like the project.
+  This instance is currently running git commit #{`git rev-parse HEAD`.strip}.
+  %br/
+  The current code is also available for direct download here: #{link_to "/source", source_path}.
+
+%p
+  You can donate to #{link_to BB_CONFIG['donate'], address_path(BB_CONFIG['donate'])} to support the owner of this node.
 
 %h3 Statistics
 

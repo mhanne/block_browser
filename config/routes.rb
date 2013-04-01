@@ -13,6 +13,7 @@ BlockBrowser::Application.routes.draw do
   match 'name/*name' => 'blocks#name', :as => :name, :constraints => /.*/
 
   match 'about' => 'blocks#about', :as => :about
+  match 'source' => 'blocks#source', :as => :source
   root :to => 'blocks#index'
 
 end
