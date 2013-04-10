@@ -32,7 +32,7 @@
       %th Outputs
       %td= @tx.out.size
     - if @tx.in.size == 1 && @tx.in[0].coinbase?
-      - input_value = 50*1e8 # TODO
+      - input_value = Bitcoin.block_creation_reward(@tx.get_block.depth)
     - else
       - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum rescue '?'
     %tr
@@ -71,7 +71,7 @@
         - if txin.coinbase?
           %td generation
           %td none
-          %td.value 50.00000000
+          %td.value= format_amount(Bitcoin.block_creation_reward(@tx.get_block.depth))
           %td -
           %td= txin.script_sig.unpack("H*")[0]
         - else
