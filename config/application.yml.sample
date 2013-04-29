@@ -1,0 +1,11 @@
+network: bitcoin
+command: "127.0.0.1:9999"
+domain: "localhost"
+websocket: "127.0.0.1:8000"
+database: "sequel::postgres:/bitcoin"
+donate: 1NqPo22Jhthd5Suget1rgs9EEoFGuDTZ9S
+timeout: 30
+
+networks:
+  bitcoin: "http://webbtc.com"
+  namecoin: "http://namecoin.webbtc.com"
