@@ -7,7 +7,7 @@
   %tbody.blocks
     - @names.each do |name|
       %tr{:class => cycle('odd', 'even')}
-        %td= link_to(name.get_block.depth, block_path(name.get_block.hash))
+        %td= link_to(name.get_block.depth, block_path(name.get_block.hash))  if name.get_block
         %td= link_to(truncate(name.get_tx.hash, :length => 16), tx_path(name.get_tx.hash))
         %td= name.get_txout.type
         %td
@@ -21,14 +21,3 @@
 
 - if @offset + @per_page < @max
   = link_to ">>", names_path(:page => @page + 1), :style => "float: right"
-
--# - if STORE.db.class.name =~ /Sequel/
--#   - if @blocks.first[:depth] < STORE.get_depth
--#     = link_to "<<", "?depth=#{@blocks.first[:depth] + @per_page}", :style => "float: left"
--#   - if @blocks.all.last[:depth] > 0
--#     = link_to ">>", "?depth=#{@blocks.all.last[:depth] - 1}", :style => "float: right"
--# - else
--#   - if @blocks.first.depth < STORE.get_depth
--#     = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
--#   - if @blocks.last.depth > 0
--#     = link_to ">>", "?depth=#{@blocks.last.depth - 1}", :style => "float: right"
