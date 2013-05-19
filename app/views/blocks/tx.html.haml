@@ -131,7 +131,7 @@
             - addrs.each do |address|
               = link_to(address, address_path(address))
               %br
-          - if script.is_namecoin?
+          - if Bitcoin.namecoin? && script.is_namecoin?
             - name = txout.get_name
             - if name.name
               #{link_to(name.name, name_path(name.name))}: #{name.value || name.hash}
