@@ -47,13 +47,25 @@ class BlocksController < ApplicationController
       return render :text => "Address #{params[:id]} is invalid."
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
-    @txouts = STORE.get_txouts_for_hash160(@hash160)
+
+    @addr = STORE.db[:addr][hash160: @hash160.to_sequel_blob]
+    return render text: "Address not found."  unless @addr
+
+    @addr_data = { address: @address, hash160: @hash160,
+      tx_in_sz: 0, tx_out_sz: 0, btc_in: 0, btc_out: 0 }
+
+    @addr_txouts = STORE.db[:addr_txout].where(addr_id: @addr[:id])
+
+    if @addr_txouts.count > (BB_CONFIG['max_addr_txouts'] || 100)
+      return render text: "Too many outputs for this address (#{@addr_txouts.count})"
+    end
+
     respond_to do |format|
-      format.html { @page_title = "Address Details" }
-      format.json do
-        render(:text => @txouts.map {|o| [o, o.get_next_in]}
-            .flatten.compact.map(&:get_tx).to_json)
+      format.html do
+        @page_title = "Address #{@address}"
+        @tx_list = render_to_string partial: "address_tx"
       end
+      format.json { render text: address_json(@addr_data, @addr_txouts) }
     end
   end
 
@@ -176,6 +188,40 @@ class BlocksController < ApplicationController
     redirect_to name_path(name.name)  if name
   rescue
     nil
+  end
+
+  def address_json(addr_data, addr_txouts)
+    transactions = {}
+    addr_txouts.each do |addr_txout|
+      txout = STORE.db[:txout][id: addr_txout[:txout_id]]
+      next  unless tx_data = tx_data_from_id(txout[:tx_id])
+      addr_data[:tx_in_sz] += 1
+      addr_data[:btc_in] += txout[:value]
+      transactions[tx_data['hash']] = tx_data
+      txin = STORE.db[:txin][prev_out: tx_data['hash'].htb.reverse.to_sequel_blob,
+                             prev_out_index: txout[:tx_idx]]
+      next  unless txin && tx_data = tx_data_from_id(txin[:tx_id])
+      addr_data[:tx_out_sz] += 1
+      addr_data[:btc_out] += txout[:value]
+      transactions[tx_data['hash']] = tx_data
+    end
+    addr_data[:balance] = addr_data[:btc_in] - addr_data[:btc_out]
+    addr_data[:tx_sz] = transactions.size
+    addr_data[:transactions] = transactions
+    JSON.pretty_generate(addr_data)
+  end
+
+  def tx_data_from_id tx_id
+    tx = STORE.get_tx_by_id(tx_id)
+    blk_tx = STORE.db[:blk_tx][tx_id: tx.id]
+    blk = STORE.db[:blk][id: blk_tx[:blk_id], chain: 0]
+    return nil  unless blk
+
+    data = tx.to_hash
+    data['block'] = blk[:hash].hth
+    data['blocknumber'] = blk[:depth]
+    data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")
+    data
   end
 
   def timeout
