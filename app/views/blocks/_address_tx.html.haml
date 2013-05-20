@@ -46,12 +46,15 @@
         %td= link_to(tx.hash, tx_path(tx.hash))
         %td= link_to(blk[:depth], block_path(blk[:hash].hth))
         %td
-          - txout.get_next_in.get_tx.out.map(&:get_addresses).each do |addrs|
-            - if addrs.is_a?(Array)
-              = addrs.map{|a| link_to(a, address_path(a))}.join("<br/>").html_safe
-            - else
-              = link_to(addrs, address_path(addrs))
-            %br/
+
+          %table.tx_outs
+            - txout.get_next_in.get_tx.out.map do |o|
+              %tr
+                %td
+                  - o.get_addresses.map do |addr|
+                    = link_to(addr, address_path(addr))
+                    %br/
+                %td (#{format_amount o.value})
         %td.outgoing= "<-"
         %td.value.outgoing= "- #{format_amount(txout.value)}"
         %td.value= format_amount(@addr_data[:btc_in] - @addr_data[:btc_out])
