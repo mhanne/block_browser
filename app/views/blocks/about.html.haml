@@ -16,44 +16,53 @@
 %p
   You can donate to #{link_to BB_CONFIG['donate'], address_path(BB_CONFIG['donate'])} to support the owner of this node.
 
+%br/
+
 %h3 Statistics
+
+- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
 
 %table.details
   %tr
-    %th Total Blocks
+    %th Blocks
+    - b = stats['blocks']
+    %td #{b['main']} (#{b['side']} side, #{b['orphan']} orphan, #{b['total']} total)
+
+  %tr
+    %th Transactions
+    %td #{stats['txs']} (#{stats['txins']} inputs, #{stats['txouts']} outputs)
+
+  %tr
+    %th Addresses
     %td
-      - head = STORE.get_head
-      = link_to head.depth, block_path(head.hash)
-  -# %tr
-  -#   %th Transactions
-  -#   %td= STORE.db[:tx].count
-  -# %tr
-  -#   %th Unconfirmed
-  -#   %td= link_to STORE.db[:unconfirmed].count, unconfirmed_path
-  -# %tr
-  -#   %th Inputs
-  -#   %td= STORE.db[:txin].count
-  -# %tr
-  -#   %th Outputs
-  -#   %td= STORE.db[:txout].count
-  -# %tr
-  -#   %th Addresses
-  -#   %td= STORE.db[:addr].count
+      #{stats['addrs']}
+      - if Bitcoin.namecoin?
+        (#{stats['names']} Names)
+
+  %tr
+    %th Blockchain Size
+    %td= number_to_human_size b['size']
 
   %tr
     %th Total Coins
-    %td
-      - total = 0
-      - (STORE.get_depth + 1).times {|i| total += calculate_reward(i + 1) }
-      = format_amount total
+    %td= format_amount stats['coins']
+
+  %tr
+    %th Last Update
+    %td= format_time stats['time']
+
+%br/
+
+%h3 Block Reward
+
+%table.details
 
   %tr
     %th Current Reward
-    %td
-      = format_amount calculate_reward(STORE.get_depth)
+    %td= format_amount calculate_reward(STORE.get_depth)
 
   %tr
-    %th Reward Drop
+    %th Next Halving
     %td
       - drop = Bitcoin::Validation::REWARD_DROP
       in #{blocks = drop - (STORE.get_depth % drop)} blocks -
