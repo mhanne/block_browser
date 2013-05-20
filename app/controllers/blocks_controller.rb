@@ -19,7 +19,7 @@ class BlocksController < ApplicationController
 
   def block
     @block = STORE.get_block(params[:id])
-    return render :text => "Block #{params[:id]} not found."  unless @block
+    return render_error("Block #{params[:id]} not found.")  unless @block
     respond_to do |format|
       format.html { @page_title = "Block Details" }
       format.json { render :text => @block.to_json }
@@ -29,7 +29,7 @@ class BlocksController < ApplicationController
 
   def tx
     @tx = STORE.get_tx(params[:id])
-    return render :text => "Tx #{params[:id]} not found."  unless @tx
+    return render_error("Tx #{params[:id]} not found.")  unless @tx
     respond_to do |format|
       format.html { @page_title = "Transaction Details" }
       format.json { render :text => @tx.to_json }
@@ -40,7 +40,7 @@ class BlocksController < ApplicationController
   def address
     @address = params[:id]
     unless Bitcoin.valid_address?(@address)
-      return render :text => "Address #{params[:id]} is invalid."
+      return render_error("Address #{params[:id]} is invalid.")
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
 
@@ -49,10 +49,9 @@ class BlocksController < ApplicationController
 
     @addr_txouts = STORE.db[:addr].where(hash160: @hash160.to_sequel_blob)
       .join(:addr_txout, addr_id: :id)
-    return render text: "Address not found."  unless @addr_txouts.any?
 
     if @addr_txouts.count > (BB_CONFIG['max_addr_txouts'] || 100)
-      return render text: "Too many outputs for this address (#{@addr_txouts.count})"
+      return render_error("Too many outputs for this address (#{@addr_txouts.count})")
     end
 
     respond_to do |format|
@@ -68,7 +67,7 @@ class BlocksController < ApplicationController
     @name = params[:name]
     @names = STORE.name_history(@name)
     @current = @names.last
-    return render text: "NOT FOUND"  unless @current
+    return render_error("Name #{@name} not found.")  unless @current
   end
 
   caches_page :script
@@ -118,7 +117,7 @@ class BlocksController < ApplicationController
     else
       redirect_to tx_path(@id)
     end
-    render :text => "NOT FOUND"
+    render_error("Nothing matches #{@id}.")
   end
 
   def unconfirmed
@@ -222,8 +221,14 @@ class BlocksController < ApplicationController
     begin
       Timeout.timeout(BB_CONFIG['timeout']) { yield }
     rescue Exception => e
-      return render text: "Request took too long."  if e.message == "execution expired"
+      return render_error("Request took too long.")  if e.message == "execution expired"
       raise e
     end
   end
+
+  def render_error error
+    @error = error
+    render template: "blocks/error"
+  end
+
 end
