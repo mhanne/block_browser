@@ -55,8 +55,15 @@ table.details
     td, th
       background: #eee
 
-table.tx_outs td
-  vertical-align: top
+table.tx_outs, table.tx_ins
+  margin: 0px
+
+  td
+    vertical-align: top
+    padding: 0px 0px 5px
+
+  tr:last-child td
+    padding: 0px
 
 #footer
   margin-top: 20px

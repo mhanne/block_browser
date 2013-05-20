@@ -1,7 +1,7 @@
 %tr{:class => cycle('odd', 'even')}
   %td= link_to(truncate(tx.hash, :length => 16), tx_path(tx.hash))
   %td
-    %table.tx_ins
+    %table.tx_ins{cellpadding: 0, cellspacing: 0}
       - if tx.in.size == 1 && tx.in[0].coinbase?
         %tr
           %td coinbase
@@ -19,12 +19,13 @@
               %td not seen
 
   %td
-    %table.tx_outs
+    %table.tx_outs{cellpadding: 0, cellspacing: 0}
       - tx.out.map do |o|
         %tr
           %td
             - o.get_addresses.map do |addr|
               = link_to(addr, address_path(addr))
+              %br/
           %td (#{format_amount o.value})
   %td= number_to_human_size tx.to_payload.bytesize
   %td.value= format_amount(tx.out.map(&:value).sum)
