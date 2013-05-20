@@ -31,12 +31,12 @@ EM.run do
       block = STORE.get_block(blk['hash'])
       log.info { "new block: #{block.depth} #{block.hash}" }
       CHANNEL.push ["new_block", {depth: block.depth, json: block.to_hash,
-                      partial: compile_block_haml(block)}]
+                      partial: compile_block_haml(STORE.db[:blk][id: block.id])}]
       log.debug { "pushed block #{block.depth}" }
       # TODO: fix caching properly
       cache_dir = File.join(Rails.root, "tmp/cache/")
       FileUtils.rm_rf cache_dir
-      FileUtils.mkdir cache_dir
+      FileUtils.mkdir_p cache_dir
     end
   end
 
