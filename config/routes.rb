@@ -23,6 +23,8 @@ BlockBrowser::Application.routes.draw do
   match 'api/address' => 'api#address', :as => :address_api
   match 'api/relay' => 'api#relay', :as => :relay_api
 
+  match 'graphs' => 'blocks#graphs', :as => :graphs
+
   match 'about' => 'blocks#about', :as => :about
   match 'stats' => 'blocks#stats', :as => :stats
   match 'source' => 'blocks#source', :as => :source

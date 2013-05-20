@@ -22,3 +22,4 @@ public/block_browser-*.tar.bz2
 public/stats.json
 public/node_*.png
 public/node_*.html
+public/graphs
