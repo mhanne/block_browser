@@ -14,6 +14,8 @@ def compile_block_haml(block)
   "<tr>#{res.gsub!("\n", '')}</tr>"
 end
 
+File.open(File.join(Rails.root, "tmp/pids/websocket.pid"), "w") {|f| f.write Process.pid }
+
 EM.run do
   ws_host, ws_port = BB_CONFIG["websocket"].split(":")
   bc_host, bc_port = BB_CONFIG["command"].split(":")
@@ -21,13 +23,16 @@ EM.run do
   CHANNEL = EM::Channel.new
   CLIENTS = {}
 
+  log = Bitcoin::Logger.create(:websocket, :debug)
+
   Bitcoin::Network::CommandClient.connect(bc_host, bc_port) do
     on_connected { request("monitor", "block") }
     on_block do |blk|
       block = STORE.get_block(blk['hash'])
-      puts "new block: #{block.hash}"
+      log.info { "new block: #{block.depth} #{block.hash}" }
       CHANNEL.push ["new_block", {depth: block.depth, json: block.to_hash,
                       partial: compile_block_haml(block)}]
+      log.debug { "pushed block #{block.depth}" }
       # TODO: fix caching properly
       cache_dir = File.join(Rails.root, "tmp/cache/")
       FileUtils.rm_rf cache_dir
@@ -37,20 +42,22 @@ EM.run do
 
   EventMachine::WebSocket.start(:host => ws_host, :port => ws_port) do |ws|
     sid = nil
+
     ws.onopen do
       port, host = *Socket.unpack_sockaddr_in(ws.get_peername)
-      puts "websocket client connected: #{host}:#{port}"
+      log.info { "websocket client connected: #{host}:#{port}" }
       sid = CHANNEL.subscribe {|msg| ws.send msg.to_json }
       CLIENTS[sid] = [host, port]
       CHANNEL.push ["client_count", CLIENTS.size]
     end
     ws.onclose do
-      puts "websocket client disconnected"#: #{host}:#{port}"
+      host, port = *CLIENTS[sid]
+      log.info { "websocket client disconnected: #{host}:#{port}" }
       CHANNEL.unsubscribe(sid)
       CLIENTS.delete(sid)
       CHANNEL.push ["client_count", CLIENTS.size]
     end
   end
 
-  puts "websocket listening on #{ws_host}:#{ws_port}"
+    log.info { "websocket listening on #{ws_host}:#{ws_port}" }
 end
