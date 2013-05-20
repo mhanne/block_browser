@@ -1,7 +1,9 @@
 source 'http://rubygems.org'
 
+gem 'thin'
+
 gem 'rails', '3.1.3'
-gem 'bitcoin-ruby', :git => 'git://github.com/mhanne/bitcoin-ruby.git', :branch => 'namecoin', :require => "bitcoin"
+gem 'bitcoin-ruby', :git => 'git://github.com/mhanne/bitcoin-ruby.git', :require => "bitcoin"
 gem 'haml'
 gem 'sass'
 gem 'therubyracer'

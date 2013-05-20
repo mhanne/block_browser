@@ -1,11 +1,8 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby.git
-  revision: 50625f7cf1c231be9d3e31ee773a0eb665c61119
-  branch: namecoin
+  revision: a28049c875232ad06a6e473be9964db6a7d7ffff
   specs:
     bitcoin-ruby (0.0.1)
-      eventmachine
-      rake (>= 0.8.0)
 
 GEM
   remote: http://rubygems.org/
@@ -48,6 +45,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.1.3)
+    daemons (1.1.9)
     em-websocket (0.3.6)
       addressable (>= 2.1.1)
       eventmachine (>= 0.12.9)
@@ -112,6 +110,10 @@ GEM
     sqlite3 (1.3.5)
     therubyracer (0.9.9)
       libv8 (~> 3.3.10)
+    thin (1.5.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     thor (0.14.6)
     tilt (1.3.3)
     treetop (1.4.10)
@@ -139,5 +141,6 @@ DEPENDENCIES
   sequel
   sqlite3
   therubyracer
+  thin
   uglifier (>= 1.0.3)
   will_paginate
