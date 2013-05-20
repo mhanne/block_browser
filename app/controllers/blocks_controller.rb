@@ -221,8 +221,9 @@ class BlocksController < ApplicationController
   def timeout
     begin
       Timeout.timeout(BB_CONFIG['timeout']) { yield }
-    rescue Timeout::Error
-      return render text: "Request took too long."
+    rescue Exception => e
+      return render text: "Request took too long."  if e.message == "execution expired"
+      raise e
     end
   end
 end
