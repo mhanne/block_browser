@@ -5,16 +5,16 @@
   %tr
     %th Block
     %td
-      - if block = @tx.get_block
-        = link_to(block.hash, block_path(block.hash))
+      - if blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
+        = link_to(blk[:hash].hth, block_path(blk[:hash].hth))
       - else
         unconfirmed
   %tr
     %th Confirmations
     %td
-      - if @tx.get_block
-        = STORE.get_depth - @tx.get_block.depth
-        (At Depth: #{@tx.get_block.depth})
+      - if blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
+        = STORE.get_depth - blk[:depth]
+        (At Depth: #{blk[:depth]})
       - else
         unconfirmed
   - cache("tx/#{@tx.hash}/details") do

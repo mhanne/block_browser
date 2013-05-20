@@ -7,13 +7,10 @@
     %th Size
     %th Total
   %tbody.blocks
-    - @blocks.each do |block_hash|
-      - if STORE.db.class.name =~ /Sequel/
-        - h = block_hash[:hash].unpack("H*")[0]
-        %tr{:class => cycle('odd','even')}
-          - cache("block/#{h}/list_item") do
-            - block = STORE.get_block(h)
-            = render :partial => "blk", :object => block
+    - @blocks.each do |block|
+      %tr{:class => cycle('odd','even')}
+        - cache("block/#{block[:hash].hth}/list_item") do
+          = render :partial => "blk", :object => block
 
 - if STORE.db.class.name =~ /Sequel/
   - if @blocks.first[:depth] < STORE.get_depth

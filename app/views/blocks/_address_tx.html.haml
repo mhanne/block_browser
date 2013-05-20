@@ -10,11 +10,11 @@
   - @addr_txouts.each do |addr_txout|
     - txout = STORE.wrap_txout(STORE.db[:txout][id: addr_txout[:txout_id]])
     - tx = txout.get_tx
-    - blk_tx = STORE.db[:blk_tx][tx_id: tx.id]
-    - blk = STORE.db[:blk][id: blk_tx[:blk_id], chain: 0]
+    - blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).first
     - next  unless blk 
     - @addr_data[:tx_in_sz] += 1
     - @addr_data[:btc_in] += txout.value
+
     %tr{:class => cycle('odd', 'even')}
       %td= link_to(tx.hash, tx_path(tx.hash))
       %td= link_to(blk[:depth], block_path(blk[:hash].hth))
@@ -30,17 +30,18 @@
             - else
               unknown
             %br/
+
         %td.incoming= "->"
         %td.value= format_amount(txout.value)
         %td.value= format_amount(@addr_data[:btc_in] - @addr_data[:btc_out])
 
     - if next_in = txout.get_next_in
       - tx = next_in.get_tx
-      - blk_tx = STORE.db[:blk_tx][tx_id: tx.id]
-      - blk = STORE.db[:blk][id: blk_tx[:blk_id], chain: 0]
+      - blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).first
       - next  unless blk 
       - @addr_data[:tx_out_sz] += 1
       - @addr_data[:btc_out] += txout.value
+
       %tr{:class => cycle('odd', 'even')}
         %td= link_to(tx.hash, tx_path(tx.hash))
         %td= link_to(blk[:depth], block_path(blk[:hash].hth))

@@ -5,13 +5,15 @@
       coinbase
     - else
       - tx.in.map do |i|
-        - prev_out = i.get_prev_out
+        - prev_tx = STORE.db[:tx][hash: i.prev_out.reverse.to_sequel_blob]
+        - prev_out = STORE.db[:txout][tx_id: prev_tx[:id], tx_idx: i.prev_out_index]
         - if prev_out
-          - addr = Bitcoin::Script.new(prev_out.pk_script).get_address
+          - addr = Bitcoin::Script.new(prev_out[:pk_script]).get_address
           = link_to(addr, address_path(addr))
         - else
           not seen
         %br/
+
   %td= tx.out.map(&:get_addresses).map{|addrs| addrs.map {|a| a ? link_to(a, address_path(a)) : "?"}}.join("<br/>").html_safe
   %td= number_to_human_size tx.to_payload.bytesize
   %td.value= format_amount(tx.out.map(&:value).sum)

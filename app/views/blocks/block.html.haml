@@ -8,16 +8,12 @@
       %td= @block.depth
     %tr
       %th Prev Block
-      - @prev_block = @block.get_prev_block
-      - if @prev_block
-        %td= link_to(@prev_block.hash, block_path(@prev_block.hash))
-      - else
-        %td= @block.prev_block.unpack("H*")[0]
+      %td= link_to @block.prev_block.reverse_hth, block_path(@block.prev_block.reverse_hth)
   %tr
     %th Next Block
-    - @next_block = @block.get_next_block
-    - if @next_block
-      %td= link_to(@next_block.hash, block_path(@next_block.hash))
+    - blk = STORE.db[:blk][prev_hash: @block.hash.htb.to_sequel_blob]
+    - if blk
+      %td= link_to(blk[:hash].hth, block_path(blk[:hash].hth))
     - else
       %td not seen
   - cache("block/#{@block.hash}/details_2") do

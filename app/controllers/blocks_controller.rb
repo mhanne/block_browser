@@ -13,11 +13,7 @@ class BlocksController < ApplicationController
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = (@per_page - 1)  if depth < @per_page
     @blocks = []
-    if STORE.db.class.name =~ /Sequel/
-      @blocks = STORE.db[:blk].select(:hash, :depth).filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse
-    else
-      @per_page.times { @blocks << STORE.get_block_by_depth(depth); depth -= 1 }
-    end
+    @blocks = STORE.db[:blk].filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse
     @page_title = "Recent Blocks"
   end
 
@@ -48,13 +44,12 @@ class BlocksController < ApplicationController
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
 
-    @addr = STORE.db[:addr][hash160: @hash160.to_sequel_blob]
-    return render text: "Address not found."  unless @addr
-
     @addr_data = { address: @address, hash160: @hash160,
       tx_in_sz: 0, tx_out_sz: 0, btc_in: 0, btc_out: 0 }
 
-    @addr_txouts = STORE.db[:addr_txout].where(addr_id: @addr[:id])
+    @addr_txouts = STORE.db[:addr].where(hash160: @hash160.to_sequel_blob)
+      .join(:addr_txout, addr_id: :id)
+    return render text: "Address not found."  unless @addr_txouts.any?
 
     if @addr_txouts.count > (BB_CONFIG['max_addr_txouts'] || 100)
       return render text: "Too many outputs for this address (#{@addr_txouts.count})"
@@ -213,8 +208,7 @@ class BlocksController < ApplicationController
 
   def tx_data_from_id tx_id
     tx = STORE.get_tx_by_id(tx_id)
-    blk_tx = STORE.db[:blk_tx][tx_id: tx.id]
-    blk = STORE.db[:blk][id: blk_tx[:blk_id], chain: 0]
+    blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
 
     data = tx.to_hash
