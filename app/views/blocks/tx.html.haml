@@ -132,7 +132,7 @@
               = link_to(address, address_path(address))
               %br
           - if Bitcoin.namecoin? && script.is_namecoin?
-            - name = txout.get_name
+            - name = txout.get_namecoin_name
             - if name.name
               #{link_to(name.name, name_path(name.name))}: #{name.value || name.hash}
             - else
