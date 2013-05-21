@@ -137,6 +137,34 @@ class BlocksController < ApplicationController
     @names = @names.map {|n| STORE.wrap_name(n) }
   end
 
+  def relay_tx
+    @page_title = "Relay Transaction"
+    if request.post? && @input = params[:tx]
+      begin
+        if @input =~ /^[0-9a-f]+$/i
+          @tx = Bitcoin::P::Tx.new(@input.htb)
+        elsif !!JSON.parse(@input)
+          @tx = Bitcoin::P::Tx.from_json(@input)
+        end
+      rescue
+        return @error = "Error decoding transaction."
+      end
+
+      if (tx = STORE.db[:tx][hash: @tx.hash.htb.to_sequel_blob]) &&
+        STORE.db[:blk_tx].where(tx_id: tx[:id]).join(:blk, id: :blk_id).where(chain: 0).any?
+        return @error = "Transaction is already confirmed."
+      end
+
+      @wait = (params[:wait] || BB_CONFIG['relay_wait_default']).to_f
+      @wait = BB_CONFIG['relay_wait_max']  if @wait > BB_CONFIG['relay_wait_max']
+
+      @result = node_command(:relay_tx, @tx.to_payload.hth, BB_CONFIG['relay_send'], @wait)
+      render_error(@result["error"])  if @result["error"]
+    end
+  rescue $!
+    @error = $!
+  end
+
   def about
     @page_title = "About"
   end
@@ -210,7 +238,7 @@ class BlocksController < ApplicationController
     blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
 
-    data = tx.to_hash
+    data = tx.to_hash(with_address: true)
     data['block'] = blk[:hash].hth
     data['blocknumber'] = blk[:depth]
     data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")
@@ -229,6 +257,17 @@ class BlocksController < ApplicationController
   def render_error error
     @error = error
     render template: "blocks/error"
+  end
+
+  def node_command cmd, *args
+    s = TCPSocket.new(*BB_CONFIG["command"].split(":"))
+    s.write([cmd.to_s, args].to_json + "\x00")
+    buf = ""
+    while b = s.read(1)
+      break  if b == "\x00"
+      buf << b
+    end
+    res = JSON.parse(buf)[1]
   end
 
 end

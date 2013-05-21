@@ -8,7 +8,7 @@ module ApplicationHelper
   end
 
   def format_amount amount
-    "%.8f" % (amount / 1e8)
+    "%.8f" % ((amount || 0) / 1e8)
   end
 
   def calculate_reward depth

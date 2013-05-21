@@ -1,0 +1,18 @@
+
+- if @error
+  %h3 Error
+  .error= @error
+
+- if @result
+  %h3 Response
+  .success Transaction #{@result["hash"]} has been relayed and propagated through approximately #{"%.2f" % @result["propagation"]["percent"]}% of the network.
+
+%h3 Relay
+
+Enter a transaction in hex or json format to relay to the network.
+
+= form_tag(relay_tx_path) do
+  = text_area_tag :tx, @input, style: "width: 100%; height: 500px"
+  %br
+  Wait #{text_field_tag :wait, 3, size: 3} seconds for transaction to propagate.
+  = submit_tag "Relay"

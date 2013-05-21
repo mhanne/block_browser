@@ -7,6 +7,10 @@ donate: 1NqPo22Jhthd5Suget1rgs9EEoFGuDTZ9S
 timeout: 30
 max_addr_txouts: 100
 
+relay_wait_default: 3
+relay_wait_max: 10
+relay_send: 3
+
 networks:
   bitcoin: "http://webbtc.com"
   namecoin: "http://namecoin.webbtc.com"
