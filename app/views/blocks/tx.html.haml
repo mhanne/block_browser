@@ -106,9 +106,10 @@
     %th Script
     %th Debug
   - @tx.out.each_with_index do |txout, idx|
-    - next_input = txout.get_next_in
+    - next_input = STORE.db[:txin][prev_out: @tx.hash.htb.reverse.to_sequel_blob, prev_out_index: idx]
     %tr{:class => cycle('odd', 'even')}
       - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
+        - next_input = STORE.wrap_txin(next_input)
         - script = Bitcoin::Script.new(txout.pk_script) rescue nil
         %td= idx
         %td= txout.type
