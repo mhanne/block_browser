@@ -106,10 +106,10 @@
     %th Script
     %th Debug
   - @tx.out.each_with_index do |txout, idx|
-    - script = Bitcoin::Script.new(txout.pk_script) rescue nil
     - next_input = txout.get_next_in
     %tr{:class => cycle('odd', 'even')}
       - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
+        - script = Bitcoin::Script.new(txout.pk_script) rescue nil
         %td= idx
         %td= txout.type
         %td
