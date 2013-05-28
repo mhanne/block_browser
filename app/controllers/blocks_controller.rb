@@ -159,7 +159,7 @@ class BlocksController < ApplicationController
       @wait = BB_CONFIG['relay_wait_max']  if @wait > BB_CONFIG['relay_wait_max']
 
       @result = node_command(:relay_tx, @tx.to_payload.hth, BB_CONFIG['relay_send'], @wait)
-      render_error(@result["error"])  if @result["error"]
+      return(@error, @details = @result["error"], @result["details"])  if @result["error"]
     end
   rescue $!
     @error = $!

@@ -1,15 +1,51 @@
 
 - if @error
-  %h3 Error
-  .error= @error
+  .error
+    %h3 Error: #{@error}
 
-- if @result
+    - if @details
+      - failed_check = @details[0]
+      Rule "#{failed_check}" failed to validate:
+      - case failed_check.to_sym
+      - when :hash
+        Claimed hash (#{@details[1][0]}) doesn't match hash of data (#{@details[1][1]}).
+      - when :lists
+        Must have at least one input (has #{@details[1][0]})
+        and one output (has #{@details[1][1]})
+      - when :max_size
+        Transaction size (#{@details[1][0]} bytes) may not be larger than #{@details[1][1]} bytes.
+      - when :output_values
+        Total output value (#{@details[1][0]}) may not exceed #{@details[1][1]}.
+      - when :inputs
+        Input #{@details[1][0]} is a coinbase, which is not allowed outside of a block.
+      - when :lock_time
+        Lock time #{@details[1][0]} may not exceed #{@details[1][1]}.
+      - when :prev_out
+        %ul
+          - @details[1].each do |hash, idx|
+            %li Prev out #{hash}:#{idx} not found.
+      - when :signatures
+        %ul
+          - @details[1].each do |idx|
+            %li Input signature #{idx} invalid.
+      - when :spent
+        %ul
+          - @details[1].each do |idx|
+            - txin = @tx.in[idx]
+            - prev_hash = txin.prev_out.reverse_hth
+            - prev_idx = @tx.in[idx].prev_out_index
+            %li Previous output #{link_to("#{prev_hash}:#{prev_idx}", tx_path(prev_hash, anchor: "out#{prev_idx}"))} already spent.
+      - when :output_sum
+        Sum of all outputs (#{@details[1][0]}) may not exceed sum of all inputs (#{@details[1][1]}).
+      - else
+        Unknown error, details: #{@details}
+
+- elsif @result
   %h3 Response
   .success Transaction #{@result["hash"]} has been relayed and propagated through approximately #{"%.2f" % @result["propagation"]["percent"]}% of the network.
 
-%h3 Relay
-
-Enter a transaction in hex or json format to relay to the network.
+%br/
+Enter a transaction to validate and relay to the network. Supported formats are hex and json.
 
 = form_tag(relay_tx_path) do
   = text_area_tag :tx, @input, style: "width: 100%; height: 500px"
