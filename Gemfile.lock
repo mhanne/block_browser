@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby.git
-  revision: 3a5b8e861b60c7a3d7df156ea90341df5eeb61a8
+  revision: 53a1ea18209eeb5d5acce90f86e41a0c18e6fdbb
   specs:
     bitcoin-ruby (0.0.1)
 
@@ -102,7 +102,7 @@ GEM
       railties (~> 3.1.0)
       sass (~> 3.1.10)
       tilt (~> 1.3.2)
-    sequel (3.30.0)
+    sequel (3.48.0)
     sprockets (2.0.3)
       hike (~> 1.2)
       rack (~> 1.0)
