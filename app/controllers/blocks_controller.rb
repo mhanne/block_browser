@@ -138,7 +138,6 @@ class BlocksController < ApplicationController
   end
 
   def relay_tx
-    @page_title = "Relay Transaction"
     if request.post? && @input = params[:tx]
       begin
         if @input =~ /^[0-9a-f]+$/i
@@ -147,22 +146,41 @@ class BlocksController < ApplicationController
           @tx = Bitcoin::P::Tx.from_json(@input)
         end
       rescue
-        return @error = "Error decoding transaction."
+        @error = "Error decoding transaction."
       end
 
-      if (tx = STORE.db[:tx][hash: @tx.hash.htb.to_sequel_blob]) &&
-        STORE.db[:blk_tx].where(tx_id: tx[:id]).join(:blk, id: :blk_id).where(chain: 0).any?
-        return @error = "Transaction is already confirmed."
+      unless @error
+        if (tx = STORE.db[:tx][hash: @tx.hash.htb.to_sequel_blob]) &&
+          STORE.db[:blk_tx].where(tx_id: tx[:id]).join(:blk, id: :blk_id).where(chain: 0).any?
+          @error = "Transaction is already confirmed."
+        end
       end
 
-      @wait = (params[:wait] || BB_CONFIG['relay_wait_default']).to_f
-      @wait = BB_CONFIG['relay_wait_max']  if @wait > BB_CONFIG['relay_wait_max']
+      unless @error
+        @wait = (params[:wait] || BB_CONFIG['relay_wait_default']).to_f
+        @wait = BB_CONFIG['relay_wait_max']  if @wait > BB_CONFIG['relay_wait_max']
 
-      @result = node_command(:relay_tx, @tx.to_payload.hth, BB_CONFIG['relay_send'], @wait)
-      return(@error, @details = @result["error"], @result["details"])  if @result["error"]
+        @result = node_command(:relay_tx, @tx.to_payload.hth, BB_CONFIG['relay_send'], @wait)
+        @error, @details = @result["error"], @result["details"]  if @result["error"]
+      end
     end
-  rescue $!
-    @error = $!
+    respond_to do |format|
+      format.json do
+        if @error
+          res = { error: @error }
+          res[:details] = @details  if @details
+        else
+          res = @result
+        end
+        render(text: JSON.pretty_generate(res))
+      end
+      format.html
+    end
+  rescue Exception => ex
+    respond_to do |format|
+      format.json { render(json: { error: $!.message }) }
+      format.html { @error = $! }
+    end
   end
 
   def about
