@@ -1,0 +1,67 @@
+%h3 Statistics
+
+- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
+
+%table.details
+  %tr
+    %th Blocks
+    - b = stats['blocks']
+    %td #{b['main']} (#{b['side']} side, #{b['orphan']} orphan, #{b['total']} total)
+
+  %tr
+    %th Transactions
+    %td #{stats['txs']} (#{stats['txins']} inputs, #{stats['txouts']} outputs)
+
+  %tr
+    %th Addresses
+    %td
+      #{stats['addrs']}
+      - if Bitcoin.namecoin?
+        (#{stats['names']} Names)
+
+  %tr
+    %th Blockchain Size
+    %td= number_to_human_size b['size']
+
+  %tr
+    %th Total Coins
+    %td= format_amount stats['coins']
+
+  %tr
+    %th Last Update
+    %td= format_time stats['time']
+
+%br/
+
+%h3 Block Reward
+
+%table.details
+
+  %tr
+    %th Current Reward
+    %td= format_amount calculate_reward(STORE.get_depth)
+
+  %tr
+    %th Next Halving
+    %td
+      - drop = Bitcoin::Validation::REWARD_DROP
+      in #{blocks = drop - (STORE.get_depth % drop)} blocks -
+      - seconds = blocks * 10 * 60
+      = (Time.now + seconds).strftime("%Y-%m-%d %H:%M")
+      - if seconds < 2592000
+        %br/
+        (#{(Time.at(seconds) - 1.day).utc.strftime("%d days, %H hours, %M minutes")})
+
+%br/
+
+%h3 Time Since Last Block
+
+= image_tag "/node_tslb_testnet3-day.png"
+= image_tag "/node_tslb_testnet3-week.png"
+
+%br/
+
+%h3 Connections
+
+= image_tag "/node_connections_testnet3-day.png"
+= image_tag "/node_connections_testnet3-week.png"

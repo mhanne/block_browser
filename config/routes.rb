@@ -15,6 +15,7 @@ BlockBrowser::Application.routes.draw do
   match 'relay_tx' => 'blocks#relay_tx', :as => :relay_tx
 
   match 'about' => 'blocks#about', :as => :about
+  match 'stats' => 'blocks#stats', :as => :stats
   match 'source' => 'blocks#source', :as => :source
   root :to => 'blocks#index'
 

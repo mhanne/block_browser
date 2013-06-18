@@ -19,4 +19,6 @@ config/database.yml
 
 public/assets
 public/block_browser-*.tar.bz2
-/public/stats.json
+public/stats.json
+public/node_*.png
+public/node_*.html
