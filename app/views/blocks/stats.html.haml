@@ -56,12 +56,10 @@
 
 %h3 Time Since Last Block
 
-= image_tag "/node_tslb_testnet3-day.png"
-= image_tag "/node_tslb_testnet3-week.png"
+= image_tag "/node_tslb_#{Bitcoin.network_name}-day.png"
+= image_tag "/node_tslb_#{Bitcoin.network_name}-week.png"
 
-%br/
+%h3 Connections To Bitcoin Network
 
-%h3 Connections
-
-= image_tag "/node_connections_testnet3-day.png"
-= image_tag "/node_connections_testnet3-week.png"
+= image_tag "/node_connections_#{Bitcoin.network_name}-day.png"
+= image_tag "/node_connections_#{Bitcoin.network_name}-week.png"
