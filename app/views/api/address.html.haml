@@ -1,0 +1,78 @@
+- @page_title = "Address API"
+
+%h2 Addresses
+
+%p Get transactions relevant to an address.
+
+%pre= "GET /address/<address>.json"
+
+%h3 Response
+
+%p Returns information for this address, and a list of all transactions relevant to it.
+
+%table.details
+  %tr
+    %th Field
+    %th Description
+    %th Example
+  %tr
+    %th address
+    %td the given address
+    %td "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3"
+  %tr
+    %th hash160
+    %td decoded hash160 of the address
+    %td "fc916f213a3d7f1369313d5fa30f6168f9446a2d"
+  %tr
+    %th tx_in_sz
+    %td number of transactions that send money to this address
+    %td 1
+  %tr
+    %th tx_out_sz
+    %td number of transactions that received money from this address
+    %td 1
+  %tr
+    %th btc_in
+    %td total bitcoins received by this address
+    %td 1000000000
+  %tr
+    %th btc_out
+    %td total bitcoins sent by this address
+    %td 1000000000
+  %tr
+    %th balance
+    %td total bitcoins currently available to spend by this address
+    %td 0
+  %tr
+    %th tx_sz
+    %td total number of transactions
+    %td 2
+  %tr
+    %th transactions
+    %td dictionary of transactions.
+    %td
+      see #{link_to "Tx API", tx_api_path}.
+      every tx also includes the following extra data:
+  %tr
+    %th.level1 block
+    %td hash of the block the transaction appears in
+    %td "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee"
+  %tr
+    %th.level1 blocknumber
+    %td block height in the chain
+    %td 170
+  %tr
+    %th.level1 time
+    %td block timestamp
+    %td "2009-01-12 04:30:25"
+
+%h3 Error
+
+%p When the address is invalid, the response will include an "error" message.
+
+
+%h3 Example
+
+.example
+  %pre= "curl http://webbtc.com/address/1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3.json"
+  %pre= render partial: "addr_1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3.json"

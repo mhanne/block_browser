@@ -1,0 +1,24 @@
+- @page_title = "API"
+
+%p
+  The API allows you to get blocks and transactions by hash,
+  query the history of an address, and relay your own transactions to the network.
+
+%p
+  Blocks and Transactions are available in raw binary format (.bin) or the inofficial json format established by #{link_to "blockexplorer.com", "http://blockexplorer.com"} (.json).
+
+%h3= link_to "Blocks", block_api_path
+
+Get a block by hash in either .json or .bin format.
+
+%h3= link_to "Transactions", tx_api_path
+
+Get a transaction by hash in either .json or .bin format.
+
+%h3= link_to "Address", address_api_path
+
+Get transactions relevant to an address.
+
+%h3= link_to "Relay", relay_api_path
+
+Relay a transaction to the network.

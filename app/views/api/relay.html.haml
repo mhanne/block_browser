@@ -1,0 +1,59 @@
+- @page_title = "Relay API"
+
+%h2 Relay
+
+%p Relay a transaction to the network and estimate propagation.
+
+%pre= "POST /relay_tx"
+
+%h3 Parameters
+
+%p
+  Receives the transaction to be relayed,
+  and optionally the number of seconds to wait before estimating propagation.
+
+%table.details
+  %tr
+    %th tx
+    %td The transaction to relay, in json, binary or hex format
+  %tr
+    %th wait
+    %td
+      Time to wait before estimating propagation through the network, in seconds
+      (default #{BB_CONFIG['relay_wait_default']}, max #{BB_CONFIG['relay_wait_max']})
+
+%h3 Response
+
+%p Returns the tx hash and propagation information.
+
+%table.details
+  %tr
+    %th success
+    %td Whether tx was successfully relayed (true or false)
+  %tr
+    %th hash
+    %td The transaction hash
+  %tr
+    %th propagation
+    %td Details on propagation estimation
+  %tr
+    %th.level1 sent
+    %td How many peers the transaction was sent to
+  %tr
+    %th.level1 received
+    %td How many peers the transaction was received from
+  %tr
+    %th.level1 percent
+    %td Estimated propagation of the transaction through the network
+
+%h3 Error
+
+%p If there is an error relaying the transaction, the response will include an "error" message.
+
+%p If the transaction is invalid, the response will also include a "detail" field with information about the validation error.
+
+%h3 Example
+
+#api_relay_example.example
+  %pre= 'curl http://test.webbtc.com/relay_tx.json -X POST -d "wait=10&tx=01000000012d57d1c110cf889ad672e624ff084b3e743203031b983cba28fc15a648a7192b000000008c493046022100e72836cba6fff6617d512f979099ef5136a0a8fdd9e368e723d9661b96dbc26e0221008d99e812c3b0b98bc40d8513b0745ee7a5d5f9809ba7c8008b79812925160a0501410401cb2ad43221c2aae6ec0a8abf10e9d28d6b4ba688a9f0414c2db883935726c95f3f2a67bbe8a981917392d7b77ed5570d58b622d654c989eb9f06e814e78796ffffffff02c0d45407000000001976a914b4b69e5f4e517afcba6a42cffc0ccea72483c4b088acc05ead33000000001976a9147768b30bc24d198e332ec6e62c73c56b511f93ac88ac00000000"'
+  %pre= "{\n  \"success\": true,\n  \"hash\": \"5dd3213d18222db85dda31b7d3c1d7f1da5edfd4b9ed9aee4d9eef037f08d1df\",\n  \"propagation\": {\n    \"received\": 28,\n    \"sent\": 1,\n    \"percent\": 80.0\n  }\n}"

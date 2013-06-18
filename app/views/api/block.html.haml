@@ -1,0 +1,68 @@
+- @page_title = "Block API"
+
+%h2 Blocks
+
+%p Get a block by hash in either .json or .bin format.
+
+%pre= "GET /block/<hash>.<format>"
+
+
+%h3 Response
+
+%p Returns the block including all its transactions.
+
+%table.details
+  %tr
+    %th Field
+    %th Description
+    %th Example
+  %tr
+    %th hash
+    %td Hash of the block header
+    %td "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee"
+  %tr
+    %th ver
+    %td Block Version
+    %td 1
+  %tr
+    %th prev_block
+    %td Hash of the previous block this one builds upon
+    %td "000000002a22cfee1f2c846adbd12b3e183d4f97683f85dad08a79780a84bd55"
+  %tr
+    %th mrkl_root
+    %td Merkle Root used to connect transactions to the block header
+    %td "7dac2c5666815c17a3b36427de37bb9d2e2c5ccec3f8633eb91a4205cb4c10ff"
+  %tr
+    %th time
+    %td Unix Timestamp when the block was created. Note: This may vary up to a few hours!
+    %td 1231731025
+  %tr
+    %th bits
+    %td Encoded difficulty target this block satisfies
+    %td 486604799
+  %tr
+    %th nonce
+    %td Number-to-be-used-once; This value is incremented when mining
+    %td 1889418792
+  %tr
+    %th n_tx
+    %td Number of transactions included in this block
+    %td 2
+  %tr
+    %th size
+    %td Size of the block in bytes
+    %td 490
+  %tr
+    %th tx
+    %td List of transactions
+    %td see #{link_to "Tx API", tx_api_path}
+
+%h3 Error
+
+%p When there is no block with the specified hash, the response will include an "error" message.
+
+%h3 Example
+
+.example
+  %pre= "curl http://webbtc.com/block/00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee.json"
+  %pre= render partial: "block_170.json"

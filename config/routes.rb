@@ -14,6 +14,12 @@ BlockBrowser::Application.routes.draw do
 
   match 'relay_tx' => 'blocks#relay_tx', :as => :relay_tx
 
+  match 'api' => 'api#index', :as => :api
+  match 'api/block' => 'api#block', :as => :block_api
+  match 'api/tx' => 'api#tx', :as => :tx_api
+  match 'api/address' => 'api#address', :as => :address_api
+  match 'api/relay' => 'api#relay', :as => :relay_api
+
   match 'about' => 'blocks#about', :as => :about
   match 'stats' => 'blocks#stats', :as => :stats
   match 'source' => 'blocks#source', :as => :source

@@ -1,0 +1,87 @@
+- @page_title = "Tx API"
+
+%h2 Transactions
+
+%p Get a transaction by hash in either .json or .bin format.
+
+%pre= "GET /tx/<hash>.<format>"
+
+%h3 Response
+
+%p Returns the transaction.
+
+%table.details
+  %tr
+    %th Field
+    %th Description
+    %th Example
+  %tr
+    %th hash
+    %td Hash of the transaction
+    %td "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"
+  %tr
+    %th ver
+    %td Transaction Protocol Version
+    %td 1
+  %tr
+    %th vin_sz
+    %td Number of inputs
+    %td 1
+  %tr
+    %th vout_sz
+    %td Number of outputs
+    %td 2
+  %tr
+    %th lock_time
+    %td Time until the transaction is locked (not allowed to be accepted into a block)
+    %td 0
+  %tr
+    %th size
+    %td Size of the transaction in bytes.
+    %td 275
+  %tr
+    %th in
+    %td
+      Inputs to this transaction
+    %td
+  %tr
+    %th.level1 prev_out
+    %td Reference to the previous output that this input spends
+    %td
+  %tr
+    %th.level2 hash
+    %td Hash of the previous transaction
+    %td "0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9"
+  %tr
+    %th.level2 n
+    %td Index of the output in the previous transaction
+    %td 0
+  %tr
+    %th.level1 scriptSig
+    %td Signature Script satisfying the requirements of the previous outputs Pubkey Script.
+    %td
+      %pre "304402204e45e16932b8af514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5fb8cd410220181522ec8eca07de4860a4acdd12909d831cc56cbbac4622082221a8768d1d0901"
+  %tr
+    %th out
+    %td Outputs from this transaction
+    %td 
+  %tr
+    %th.level1 value
+    %td Value this output spends
+    %td "10.00000000"
+  %tr
+    %th.level1 scriptPubKey
+    %td Pubkey Script defining the conditions under which this output can be spent
+    %td
+      %pre "04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG"
+
+
+%h3 Error
+
+%p When there is no transaction with the specified hash, the response will include an "error" message.
+
+%h3 Example
+
+.example
+  %pre= "curl http://webbtc.com/tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16.json"
+  %pre= render partial: "tx_170_1.json"

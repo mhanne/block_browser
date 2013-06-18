@@ -54,9 +54,16 @@ table.list
 table.details
   th
     text-align: left
+    &.level1
+      padding-left: 10px
+    &.level2
+      padding-left: 20px
   tr:nth-child(even)
     td, th
       background: #eee
+  td.example
+    width: 200px
+    overflow: scroll
 
 table.tx_outs, table.tx_ins
   margin: 0px
@@ -89,3 +96,5 @@ pre
 #debug td pre
   width: 500px
 
+.example pre
+  width: 99%
