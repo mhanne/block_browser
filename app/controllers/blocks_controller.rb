@@ -185,14 +185,6 @@ class BlocksController < ApplicationController
     end
   end
 
-  def about
-    @page_title = "About"
-  end
-
-  def stats
-    @page_title = "Stats"
-  end
-
   def source
     git_rev = `git rev-parse --verify HEAD`.strip
     public_name = "block_browser-#{git_rev[0..8]}"
