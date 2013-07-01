@@ -2,13 +2,6 @@
 
 %p Showing <b>#{params[:type]}</b> scripts #{@offset}-#{@offset + @limit} of #{@count}.
 
-- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
-
-.types{style: "float: right; margin-top: -25px;"}
-  Script Types:
-  - STORE.class::SCRIPT_TYPES.each do |type|
-    = link_to "#{type} (#{stats['script_types'][type.to_s]})", "/scripts/#{type}"
-
 %table.details
   %tr
     %th Transaction
@@ -31,3 +24,11 @@
 
 - if @count > @offset + @limit
   = link_to ">>", "?offset=#{@offset + @limit}", style: "float: right"
+
+
+- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
+
+%p
+  Script Types:
+  - STORE.class::SCRIPT_TYPES.each do |type|
+    = link_to "#{type} (#{stats['script_types'][type.to_s]})", "/scripts/#{type}"

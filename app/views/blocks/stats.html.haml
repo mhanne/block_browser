@@ -32,7 +32,7 @@
   %tr
     %th Script Types
     %td
-      = [:unknown, :pubkey, :hash160, :multisig, :p2sh].map {|type| link_to("#{stats['script_types'][type.to_s]} #{type}", "/scripts/#{type}") }.join(", ").html_safe
+      = STORE.class::SCRIPT_TYPES.map {|type| link_to("#{stats['script_types'][type.to_s]} #{type}", "/scripts/#{type}") }.join(", ").html_safe
 
   %tr
     %th Last Update
