@@ -9,6 +9,7 @@ BlockBrowser::Application.routes.draw do
   match 'search/:search' => 'blocks#search', :as => :search
   match 'search' => 'blocks#search', :as => :search
   match 'unconfirmed' => 'blocks#unconfirmed', :as => :unconfirmed
+  match 'scripts/:type' => 'blocks#scripts', :as => :scripts
   match 'names' => 'blocks#names', :as => :names
   match 'name/*name' => 'blocks#name', :as => :name, :constraints => /.*/
 

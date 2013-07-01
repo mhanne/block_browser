@@ -11,6 +11,8 @@ relay_wait_default: 3
 relay_wait_max: 10
 relay_send: 3
 
+script_list_limit: 20
+
 networks:
   bitcoin: "http://webbtc.com"
   namecoin: "http://namecoin.webbtc.com"

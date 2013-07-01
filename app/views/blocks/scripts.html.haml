@@ -1,0 +1,33 @@
+- @page_title = "#{params[:type]} Scripts"
+
+%p Showing <b>#{params[:type]}</b> scripts #{@offset}-#{@offset + @limit} of #{@count}.
+
+- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
+
+.types{style: "float: right; margin-top: -25px;"}
+  Script Types:
+  - STORE.class::SCRIPT_TYPES.each do |type|
+    = link_to "#{type} (#{stats['script_types'][type.to_s]})", "/scripts/#{type}"
+
+%table.details
+  %tr
+    %th Transaction
+    %th Value
+    %th Script
+    %th Address(es)
+  - @txouts.each do |txout|
+    - tx = STORE.db[:tx][id: txout[:tx_id]]
+    - script = Bitcoin::Script.new(txout[:pk_script])
+    %tr
+      %td= link_to "#{tx[:hash].hth}:#{txout[:tx_idx]}", "/tx/#{tx[:hash].hth}"
+      %td= format_amount txout[:value]
+      %td
+        %pre= script.to_string
+      %td
+        - script.get_addresses.each do |addr|
+          = link_to addr, "/address/#{addr}"
+- if @offset >= @limit
+  = link_to "<<", "?offset=#{@offset - @limit}"
+
+- if @count > @offset + @limit
+  = link_to ">>", "?offset=#{@offset + @limit}", style: "float: right"

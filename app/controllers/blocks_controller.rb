@@ -87,6 +87,14 @@ class BlocksController < ApplicationController
     @page_title = "Script Details"
   end
 
+  def scripts
+    type = STORE.class::SCRIPT_TYPES.index(params[:type].to_sym)
+    @limit = BB_CONFIG["script_list_limit"] || 10
+    @offset = (params[:offset] || 0).to_i
+    @count = STORE.db[:txout].where(type: type).count
+    @txouts = STORE.db[:txout].where(type: type).order(:id).limit(@limit, @offset)
+  end
+
   # search for given (part of) block/tx/address.
   # also try to account for 'half bytes' when hex string is cut off.
   # TODO: currently it just looks for whole hashes/addrs

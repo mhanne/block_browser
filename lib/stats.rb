@@ -19,6 +19,14 @@ STORE.db.transaction do
     txouts: tx.join(:txout, tx_id: :tx_id).count,
     addrs: STORE.db[:addr].count,
     coins: (total = 0; (STORE.get_depth + 1).times {|i| total += calculate_reward(i + 1) }; total),
+    script_types: {
+      unknown: STORE.db[:txout].where(type: 0).count,
+      pubkey: STORE.db[:txout].where(type: 1).count,
+      hash160: STORE.db[:txout].where(type: 2).count,
+      multisig: STORE.db[:txout].where(type: 3).count,
+      p2sh: STORE.db[:txout].where(type: 4).count,
+    },
+
     time: Time.now.to_i
 
   }
