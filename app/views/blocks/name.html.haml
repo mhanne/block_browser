@@ -9,7 +9,7 @@
   %tr
     %th Owner
     %td
-      - addr = @current.get_txout.get_address
+      - addr = @current.get_address
       = link_to addr, address_path(addr)
   %tr
     %th Expires In
@@ -35,4 +35,5 @@
       %td= name.get_txout.type
       %td
         %pre= name.get_txout.type == :name_new ? name.hash : name.value
+      - addr = name.get_address
       %td= link_to addr, address_path(addr)
