@@ -13,13 +13,15 @@ class BlocksController < ApplicationController
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = (@per_page - 1)  if depth < @per_page
     @blocks = []
-    @blocks = STORE.db[:blk].filter("depth <= ?", depth).order(:depth).limit(@per_page).reverse
+    @blocks = STORE.db[:blk].filter("depth <= ?", depth).where(chain: 0).order(:depth).limit(@per_page).reverse
     @page_title = "Recent Blocks"
   end
 
   def block
     @block = STORE.get_block(params[:id])
     return render_error("Block #{params[:id]} not found.")  unless @block
+    @siblings = STORE.db[:blk].where(depth: @block.depth).map {|b| STORE.get_block(b[:hash].hth) }
+    @siblings.delete(@block)
     respond_to do |format|
       format.html { @page_title = "Block Details" }
       format.json { render :text => @block.to_json }
