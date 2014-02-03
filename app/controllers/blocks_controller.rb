@@ -31,8 +31,8 @@ class BlocksController < ApplicationController
 
   def tx
     @tx = STORE.get_tx(params[:id])
-    @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     return render_error("Tx #{params[:id]} not found.")  unless @tx
+    @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     respond_to do |format|
       format.html { @page_title = "Transaction Details" }
       format.json { render :text => @tx.to_json }
