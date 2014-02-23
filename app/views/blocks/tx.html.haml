@@ -3,6 +3,9 @@
     %th Transaction
     %th= @tx.hash
   %tr
+    %th Normalized Hash
+    %td= @tx.nhash
+  %tr
     %th Block
     %td
       - if @blk

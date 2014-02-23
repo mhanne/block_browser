@@ -225,8 +225,9 @@ class BlocksController < ApplicationController
   def search_tx(part)
     # blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
     # hash = STORE.db[:tx].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
-    hash = STORE.db[:tx][hash: part.htb.to_sequel_blob][:hash].hth
-    redirect_to tx_path(hash)
+    tx = STORE.db[:tx][hash: part.htb.blob]
+    tx ||= STORE.db[:tx][nhash: part.htb.blob]
+    redirect_to tx_path(tx[:hash].hth)
   rescue
     nil
   end
