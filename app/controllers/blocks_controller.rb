@@ -182,17 +182,16 @@ class BlocksController < ApplicationController
         if @error
           res = { error: @error }
           res[:details] = @details  if @details
-          render(text: JSON.pretty_generate(res), status: 500)
+          render(text: JSON.pretty_generate(res), status: :unprocessable_entity)
         else
           render(text: JSON.pretty_generate(@result))
         end
-
       end
       format.html
     end
   rescue Exception => ex
     respond_to do |format|
-      format.json { render(json: { error: $!.message }) }
+      format.json { render(json: { error: $!.message }, status: :internal_server_error) }
       format.html { @error = $! }
     end
   end
