@@ -182,10 +182,11 @@ class BlocksController < ApplicationController
         if @error
           res = { error: @error }
           res[:details] = @details  if @details
+          render(text: JSON.pretty_generate(res), status: 500)
         else
-          res = @result
+          render(text: JSON.pretty_generate(@result))
         end
-        render(text: JSON.pretty_generate(res))
+
       end
       format.html
     end
