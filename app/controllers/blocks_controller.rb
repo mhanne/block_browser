@@ -95,7 +95,7 @@ class BlocksController < ApplicationController
     @limit = BB_CONFIG["script_list_limit"] || 10
     @offset = (params[:offset] || 0).to_i
     @count = STORE.db[:txout].where(type: type).count
-    @txouts = STORE.db[:txout].where(type: type).order(:id).limit(@limit, @offset)
+    @txouts = STORE.db[:txout].where(type: type).order(:id).reverse.limit(@limit, @offset)
   end
 
   # search for given (part of) block/tx/address.
