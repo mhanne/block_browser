@@ -126,7 +126,7 @@
         %td.value= format_amount(txout.value)
         %td
           - case script.type
-          - when :pubkey, :hash160
+          - when :pubkey, :hash160, :p2sh
             - addr = txout.get_address
             = link_to(addr, address_path(addr))
           - when :multisig
