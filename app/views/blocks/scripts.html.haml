@@ -4,14 +4,18 @@
 
 %table.details
   %tr
+    %th Block
     %th Transaction
     %th Value
     %th Script
     %th Address(es)
   - @txouts.each do |txout|
     - tx = STORE.db[:tx][id: txout[:tx_id]]
+    - blk_tx = STORE.db[:blk_tx][tx_id: txout[:tx_id]]
+    - blk = STORE.db[:blk][id: blk_tx[:blk_id]]
     - script = Bitcoin::Script.new(txout[:pk_script])
     %tr
+      %td= link_to "#{blk[:depth]}", "/blk/#{blk[:hash].hth}"
       %td= link_to "#{tx[:hash].hth}:#{txout[:tx_idx]}", "/tx/#{tx[:hash].hth}"
       %td= format_amount txout[:value]
       %td
