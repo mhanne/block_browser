@@ -136,6 +136,9 @@
             - addrs.each do |address|
               = link_to(address, address_path(address))
               %br
+          - when :op_return
+            Data:
+            = script.get_op_return_data
           - if Bitcoin.namecoin? && script.is_namecoin?
             - name = txout.get_namecoin_name
             - if name.name

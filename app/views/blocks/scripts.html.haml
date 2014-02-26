@@ -8,7 +8,7 @@
     %th Transaction
     %th Value
     %th Script
-    %th Address(es)
+    %th Address(es) / Data
   - @txouts.each do |txout|
     - tx = STORE.db[:tx][id: txout[:tx_id]]
     - blk_tx = STORE.db[:blk_tx][tx_id: txout[:tx_id]]
@@ -21,8 +21,11 @@
       %td
         %pre= script.to_string
       %td
-        - script.get_addresses.each do |addr|
-          = link_to addr, "/address/#{addr}"
+        - if script.is_op_return?
+          %pre= script.get_op_return_data
+        - else
+          - script.get_addresses.each do |addr|
+            = link_to addr, address_path(addr)
 - if @offset >= @limit
   = link_to "<<", "?offset=#{@offset - @limit}"
 
