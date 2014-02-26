@@ -2,6 +2,8 @@ require 'timeout'
 
 class BlocksController < ApplicationController
 
+  respond_to :html, :json, :bin, :hex
+
   around_filter :timeout
 
   layout 'application'
@@ -22,22 +24,16 @@ class BlocksController < ApplicationController
     return render_error("Block #{params[:id]} not found.")  unless @block
     @siblings = STORE.db[:blk].where(depth: @block.depth).map {|b| STORE.get_block(b[:hash].hth) }
     @siblings.delete(@block)
-    respond_to do |format|
-      format.html { @page_title = "Block Details" }
-      format.json { render :text => @block.to_json }
-      format.bin { render :text => @block.to_payload }
-    end
+    @page_title = "Block Details"
+    respond_with(@block)
   end
 
   def tx
     @tx = STORE.get_tx(params[:id])
     return render_error("Tx #{params[:id]} not found.")  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
-    respond_to do |format|
-      format.html { @page_title = "Transaction Details" }
-      format.json { render :text => @tx.to_json }
-      format.bin { render :text => @tx.to_payload }
-    end
+    @page_title = "Transaction Details"
+    respond_with(@tx)
   end
 
   def address
