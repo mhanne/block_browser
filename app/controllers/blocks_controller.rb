@@ -82,8 +82,8 @@ class BlocksController < ApplicationController
     @txin = @tx.in[txin_idx.to_i]
     @txout = @txin.get_prev_out
     @script = Bitcoin::Script.new(@txin.script_sig + @txout.pk_script)
-    @result = @script.run do |pubkey, sig, hash_type|
-      hash = @tx.signature_hash_for_input(@txin.tx_idx, nil, @txout.pk_script)
+    @result = @script.run do |pubkey, sig, hash_type, drop_sigs, script|
+      hash = @tx.signature_hash_for_input(@txin.tx_idx, nil, @txout.pk_script, hash_type, drop_sigs, script)
       Bitcoin.verify_signature(hash, sig, pubkey.unpack("H*")[0])
     end
     @debug = @script.debug
