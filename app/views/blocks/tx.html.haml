@@ -120,6 +120,7 @@
           - if next_input
             - tx_hash = next_input.get_tx.hash
             = link_to(truncate(tx_hash, :length => 16, :omission => '...'), tx_path(tx_hash))
+            = "/ #{next_input.tx_idx}"
           - else
             not seen
 
