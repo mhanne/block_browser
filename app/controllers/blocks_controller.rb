@@ -77,6 +77,7 @@ class BlocksController < ApplicationController
 
   caches_page :script
   def script
+    require 'method_source'
     tx_hash, txin_idx = params[:id].split(":")
     @tx = STORE.get_tx(tx_hash)
     @txin = @tx.in[txin_idx.to_i]

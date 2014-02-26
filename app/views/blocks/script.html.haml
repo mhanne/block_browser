@@ -8,23 +8,31 @@
 
 %h3 Execution
 
-%style
-  td, th {border: 1px solid #ccc; vertical-align: bottom}
-  th {text-align: right}
-
 - i = 0
 %table#debug
   %tr
-    %th Operation
     %th Stack
+    %th Operation
+    %th Description
   - (@debug.size / 2).times do
+    - op, stack = @debug[i+1], @debug[i]
     %tr
-      %th{:width => "30%"}
-        %pre= @debug[i+1]
       %td
-        %pre= raw @debug[i].join("<br />")
+        %pre= raw stack.join("<br />")
+      %th
+        %pre= op
+      %td
+        - case op
+        - when /PUSH DATA/
+          %pre Data is pushed onto the stack.
+        - when *(2..16).map {|i| "OP_#{i}" }
+          %pre The number #{op.split("_")[1]} is pushed onto the stack.
+        - when "RESULT"
+          %pre True if the remaining stack is anything other than empty or 0.
+        - else
+          - comment = Bitcoin::Script.instance_method(@debug[i+1].downcase).comment
+          %pre= comment.split(/\n?#\s/).map(&:strip).join("\n")
     - i += 2
-  
 
 %h3 Result
 
