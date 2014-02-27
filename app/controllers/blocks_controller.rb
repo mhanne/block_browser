@@ -69,6 +69,7 @@ class BlocksController < ApplicationController
     @names = STORE.name_history(@name)
     @current = @names.last
     return render_error("Name #{@name} not found.")  unless @current
+    respond_with(params[:history] ? @names : @current)
   end
 
   caches_page :script
