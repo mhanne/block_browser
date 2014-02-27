@@ -43,6 +43,7 @@
       %th Formats
       %td
         = link_to "[json]", "/block/#{@block.hash}.json"
+        = link_to "[hex]", "/block/#{@block.hash}.hex"
         = link_to "[binary]", "/block/#{@block.hash}.bin"
 
 - cache("block/#{@block.hash}/tx") do

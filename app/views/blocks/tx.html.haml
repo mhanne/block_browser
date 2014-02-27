@@ -52,6 +52,7 @@
       %th Formats
       %td
         = link_to "[json]", "/tx/#{@tx.hash}.json"
+        = link_to "[hex]", "/tx/#{@tx.hash}.hex"
         = link_to "[binary]", "/tx/#{@tx.hash}.bin"
 
 %h3 Inputs
