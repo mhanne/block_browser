@@ -15,4 +15,10 @@ module ApplicationHelper
     ((50.0 / (2 ** (depth / Bitcoin::Validation::REWARD_DROP.to_f).floor)) * 1e8).to_i
   end
 
+  def calculate_total_coins depth
+    0.upto(depth).map {|i|
+      ((50.0 / (2 ** (i / Bitcoin::Validation::REWARD_DROP.to_f).floor)) * 1e8).to_i
+    }.inject(:+)
+  end
+
 end
