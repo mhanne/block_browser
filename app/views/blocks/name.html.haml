@@ -17,6 +17,11 @@
   %tr
     %th Operations
     %td= @names.count
+  %tr
+    %th Formats
+    %td
+      = link_to "[json]", "/name/#{@name}.json"
+      = link_to "[json history]", "/name/#{@name}.json?history=true"
 
 %h3 History
 

@@ -64,14 +64,6 @@ class BlocksController < ApplicationController
     end
   end
 
-  def name
-    @name = params[:name]
-    @names = STORE.name_history(@name)
-    @current = @names.last
-    return render_error("Name #{@name} not found.")  unless @current
-    respond_with(params[:history] ? @names : @current)
-  end
-
   caches_page :script
   def script
     require 'method_source'
@@ -137,6 +129,15 @@ class BlocksController < ApplicationController
       format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
       format.json { render :text => @tx.map(&:to_hash).to_json }
     end
+  end
+
+  def name
+    @name = params[:name]
+    @names = STORE.name_history(@name)
+    @current = @names.last
+    return render_error("Name #{@name} not found.")  unless @current
+    @page_title = "Name #{@name}"
+    respond_with(params[:history] ? @names : @current)
   end
 
   def names
