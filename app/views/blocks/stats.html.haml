@@ -51,7 +51,7 @@
   %tr
     %th Next Halving
     %td
-      - drop = Bitcoin::Validation::REWARD_DROP
+      - drop = Bitcoin::REWARD_DROP
       in #{blocks = drop - (STORE.get_depth % drop)} blocks -
       - seconds = blocks * 10 * 60
       = (Time.now + seconds).strftime("%Y-%m-%d %H:%M")
