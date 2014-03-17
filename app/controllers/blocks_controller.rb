@@ -189,6 +189,7 @@ class BlocksController < ApplicationController
       format.html
     end
   rescue Exception => ex
+    p $!; puts *$@
     respond_to do |format|
       format.json { render(json: { error: $!.message }, status: :internal_server_error) }
       format.html { @error = $! }
@@ -288,13 +289,13 @@ class BlocksController < ApplicationController
 
   def node_command cmd, *args
     s = TCPSocket.new(*BB_CONFIG["command"].split(":"))
-    s.write([cmd.to_s, args].to_json + "\x00")
+    s.write({id: 1, method: "relay_tx", params: args}.to_json + "\x00")
     buf = ""
     while b = s.read(1)
       break  if b == "\x00"
       buf << b
     end
-    res = JSON.parse(buf)[1]
+    JSON.parse(buf)["result"]
   end
 
 end
