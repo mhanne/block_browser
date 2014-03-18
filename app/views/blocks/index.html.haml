@@ -1,5 +1,6 @@
-%table#blocks.list
+%table#blocks.list{cellpadding: 0, cellspacing: 0}
   %tr
+    %th Chain
     %th Depth
     %th Hash
     %th Time
@@ -9,8 +10,15 @@
   %tbody.blocks
     - @blocks.each do |block|
       %tr{:class => cycle('odd','even')}
+        - siblings = STORE.db[:blk].where(depth: block[:depth], chain: 1)
+        - next_siblings = STORE.db[:blk].where(depth: block[:depth]+1, chain: 1)
         - cache("block/#{block[:hash].hth}/list_item") do
-          = render :partial => "blk", :object => block
+          = render :partial => "blk", :object => block, :locals => { :siblings => siblings, :next_siblings => next_siblings }
+
+        - siblings.each do |sibling|
+          %tr{:class => cycle('odd','even')}
+            = render :partial => "blk", :object => sibling
+
 
 - if STORE.db.class.name =~ /Sequel/
   - if @blocks.first[:depth] < STORE.get_depth

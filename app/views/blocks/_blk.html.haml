@@ -1,3 +1,24 @@
+:css
+  tr { padding: 0px; margin: 0px }
+  img { height: 21px; width: 21px; padding: 0px; margin: 0px -8px -3px 0px; }
+
+%td{style: "padding: 0px; margin: 0px;"}
+  - if blk[:chain] == 0
+    - if next_siblings.any? && next_siblings.first[:prev_hash] == blk[:hash]
+      = image_tag "dot_fork.png"
+    - else
+      = image_tag "dot.png"
+  - else
+    = image_tag "line.png"
+
+  - if blk[:chain] == 0
+    - if next_siblings.any?
+      - if siblings.any?
+        = image_tag "line.png"
+      - else
+        = image_tag "fork.png"
+  - else
+    = image_tag "dot.png"
 %td
   %a{:href => block_path(blk[:hash].hth)}= blk[:depth]
 %td
