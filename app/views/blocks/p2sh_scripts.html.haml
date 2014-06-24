@@ -47,6 +47,6 @@
 - stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
 
 %p
-  Script Types:
-  - (STORE.class::SCRIPT_TYPES - [:p2sh]).each do |type|
+  P2SH Script Types:
+  - (STORE.class::SCRIPT_TYPES - [:p2sh, :op_return]).each do |type|
     = link_to "#{type} (#{stats['p2sh_types'][type.to_s]})", "/p2sh_scripts/#{type}"

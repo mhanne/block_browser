@@ -37,7 +37,7 @@
   %tr
     %th P2SH Types
     %td
-      = (STORE.class::SCRIPT_TYPES - [:p2sh]).map {|type| link_to("#{stats['p2sh_types'][type.to_s]} #{type}", "/p2sh_scripts/#{type}") }.join(", ").html_safe
+      = (STORE.class::SCRIPT_TYPES - [:p2sh, :op_return]).map {|type| link_to("#{stats['p2sh_types'][type.to_s]} #{type}", "/p2sh_scripts/#{type}") }.join(", ").html_safe
 
   %tr
     %th Last Update
