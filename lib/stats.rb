@@ -20,10 +20,12 @@ STORE.db.transaction do
     addrs: STORE.db[:addr].count,
     coins: (total = 0; (STORE.get_depth + 1).times {|i| total += calculate_reward(i + 1) }; total),
     script_types: {},
+    p2sh_types: {},
   }
 
   STORE.class::SCRIPT_TYPES.each.with_index do |type, idx|
     data[:script_types][type] = STORE.db[:txout].where(type: idx).count
+    data[:p2sh_types][type] = STORE.db[:txin].where(p2sh_type: idx).count
   end
 
   data[:names] = STORE.db[:names].count  if Bitcoin.namecoin?

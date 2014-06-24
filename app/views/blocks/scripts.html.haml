@@ -21,13 +21,18 @@
         = "/ #{txout[:tx_idx]}"
       %td= format_amount txout[:value]
       %td
-        %pre= script.to_string
+        %pre= script.to_string.gsub("\s", "\n")
       %td
         - if script.is_op_return?
           %pre= script.get_op_return_data
         - else
           - script.get_addresses.each do |addr|
             = link_to addr, address_path(addr)
+            %br/
+      - if next_in = STORE.db[:txin][prev_out: tx[:hash].reverse, prev_out_index: txout[:tx_idx]]
+        - next_tx = STORE.db[:tx][id: next_in[:tx_id]]
+        %td= link_to "Run Script", "/script/#{next_tx[:hash].hth}:#{next_in[:tx_idx]}"
+
 - if @offset >= @limit
   = link_to "<<", "?offset=#{@offset - @limit}"
 

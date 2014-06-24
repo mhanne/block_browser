@@ -80,7 +80,11 @@
           %td= txin.script_sig.unpack("H*")[0]
         - else
           - if prev_out
-            %td= prev_out.type
+            %td
+              = link_to(prev_out.type, "/scripts/#{prev_out.type}")
+              - if prev_out.type == :p2sh
+                %br/
+                (#{link_to txin.p2sh_type, "/p2sh_scripts/#{txin.p2sh_type}"})
             %td
               = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
               = "/ #{txin.prev_out_index}"
@@ -116,7 +120,14 @@
         - next_input = STORE.wrap_txin(next_input)
         - script = Bitcoin::Script.new(txout.pk_script) rescue nil
         %td= idx
-        %td= txout.type
+        %td
+          = link_to(txout.type, "/scripts/#{txout.type}")
+          - if txout.type == :p2sh
+            %br/
+            - if next_in = txout.get_next_in
+              (#{link_to next_in.p2sh_type, "/p2sh_scripts/#{next_input.p2sh_type}"})
+            - else
+              (unspent)
         %td
           - if next_input
             - tx_hash = next_input.get_tx.hash

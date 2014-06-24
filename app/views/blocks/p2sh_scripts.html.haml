@@ -1,0 +1,52 @@
+- @page_title = "P2SH #{params[:type]} Scripts"
+
+%p Showing <b>#{params[:type]}</b> P2SH scripts  #{@offset}-#{@offset + @limit} of #{@count}.
+
+%table.details
+  %tr
+    %th Block
+    %th Transaction
+    %th Value
+    %th Inner P2SH Script
+    %th Address(es) / Data
+    %th Debug
+  - @txins.each do |txin|
+    - tx = STORE.db[:tx][id: txin[:tx_id]]
+    - blk_tx = STORE.db[:blk_tx][tx_id: txin[:tx_id]]
+    - blk = STORE.db[:blk][id: blk_tx[:blk_id]]
+    - script = Bitcoin::Script.new(txin[:script_sig])
+    - prev_tx = STORE.db[:tx][hash: txin[:prev_out].reverse]
+    - prev_out = STORE.db[:txout][tx_id: prev_tx[:id], tx_idx: txin[:prev_out_index]]
+    - script = Bitcoin::Script.new(txin[:script_sig], prev_out[:pk_script])
+    - inner_script = Bitcoin::Script.new(script.inner_p2sh_script)
+
+    %tr
+      %td= link_to "#{blk[:depth]}", block_path(blk[:hash].hth)
+      %td
+        = link_to truncate(tx[:hash].hth, :length => 16), tx_path(tx[:hash].hth)
+        = "/ #{txin[:tx_idx]}"
+      %td= format_amount prev_out[:value]
+      %td
+        %pre= inner_script.to_string.gsub("\s", "\n")
+      %td
+        - if inner_script.is_op_return?
+          %pre= inner_script.get_op_return_data
+        - else
+          - inner_script.get_addresses.each do |addr|
+            = link_to addr, address_path(addr)
+            %br/
+      %td= link_to "Run Script", "/script/#{tx[:hash].hth}:#{txin[:tx_idx]}"
+
+- if @offset >= @limit
+  = link_to "<<", "?offset=#{@offset - @limit}"
+
+- if @count > @offset + @limit
+  = link_to ">>", "?offset=#{@offset + @limit}", style: "float: right"
+
+
+- stats = JSON.load(File.read(File.join(Rails.root, "public/stats.json")))
+
+%p
+  Script Types:
+  - (STORE.class::SCRIPT_TYPES - [:p2sh]).each do |type|
+    = link_to "#{type} (#{stats['p2sh_types'][type.to_s]})", "/p2sh_scripts/#{type}"

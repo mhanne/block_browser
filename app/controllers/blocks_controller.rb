@@ -80,6 +80,7 @@ class BlocksController < ApplicationController
     @page_title = "Script Details"
   end
 
+  # list scripts of the given :type
   def scripts
     type = STORE.class::SCRIPT_TYPES.index(params[:type].to_sym)
     @limit = BB_CONFIG["script_list_limit"] || 10
@@ -87,6 +88,16 @@ class BlocksController < ApplicationController
     @count = STORE.db[:txout].where(type: type).count
     @txouts = STORE.db[:txout].where(type: type).order(:id).reverse.limit(@limit, @offset)
   end
+
+  # list inner p2sh scripts of the given :type
+  def p2sh_scripts
+    type = STORE.class::SCRIPT_TYPES.index(params[:type].to_sym)
+    @limit = BB_CONFIG["script_list_limit"] || 10
+    @offset = (params[:offset] || 0).to_i
+    @count = STORE.db[:txin].where(p2sh_type: type).count
+    @txins = STORE.db[:txin].where(p2sh_type: type).order(:id).reverse.limit(@limit, @offset)
+  end
+
 
   # search for given (part of) block/tx/address.
   # also try to account for 'half bytes' when hex string is cut off.
