@@ -64,21 +64,45 @@ class BlocksController < ApplicationController
     end
   end
 
-  caches_page :script
+  # display script execution debug trace.
+  # either provide a parameter :id of the form <tx_hash>:<txin_idx>, or
+  # the :script_sig, :pk_script, and optionally :sig_hash parameters for your
+  # custom script. when :id is given, the :sig_hash can be overridden, and when
+  # no :sig_hash is given or found, signature validation will be skipped.
   def script
     require 'method_source'
-    tx_hash, txin_idx = params[:id].split(":")
-    @tx = STORE.get_tx(tx_hash)
-    @txin = @tx.in[txin_idx.to_i]
-    @txout = @txin.get_prev_out
-    @script = Bitcoin::Script.new(@txin.script_sig, @txout.pk_script)
-    @result = @script.run do |pubkey, sig, hash_type, subscript|
-      hash = @tx.signature_hash_for_input(@txin.tx_idx, subscript, hash_type)
-      Bitcoin.verify_signature(hash, sig, pubkey.unpack("H*")[0])
+
+    # if tx_hash:idx is given, fetch tx from db and use those scripts
+    if params[:id] =~ /([0-9a-fA-F]{64}):(\d+)/
+      tx_hash, txin_idx = params[:id].split(":")
+      @tx = STORE.get_tx(tx_hash)
+      @txin = @tx.in[txin_idx.to_i]
+      @txout = @txin.get_prev_out
+      @script_sig = @txin.script_sig
+      @pk_script = @txout.pk_script
+      @sig_hash = nil
+    else # when no tx is given, try to get script directly from parameters
+      @script_sig = Bitcoin::Script.from_string(params[:script_sig]).raw  if params[:script_sig]
+      @pk_script = Bitcoin::Script.from_string(params[:pk_script]).raw  if params[:script_sig]
+      @sig_hash = params[:sig_hash].htb  if params[:sig_hash] && !params[:sig_hash].blank?
     end
-    @debug = @script.debug
-    @page_title = "Script Details"
+
+    # if there is a script, execute it
+    if @script_sig && @pk_script
+      @script = Bitcoin::Script.new(@script_sig, @pk_script)
+      @result = @script.run do |pubkey, sig, hash_type, subscript|
+        # get sig_hash from tx if tx is given and sig_hash isn't already set
+        @sig_hash ||= @tx.signature_hash_for_input(@txin.tx_idx, subscript, hash_type)  if @tx && @txin
+        # if there is a sig_hash (either computed or passed as parameter), verify signature,
+        # else assume it's valid.
+        @sig_hash ? Bitcoin.verify_signature(@sig_hash, sig, pubkey.unpack("H*")[0]) : true
+      end
+      @debug = @script.debug
+    end
+
+    @page_title = "Debug Script Execution"
   end
+  caches_page :script
 
   # list scripts of the given :type
   def scripts

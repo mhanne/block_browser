@@ -11,6 +11,10 @@ module ApplicationHelper
     "%.8f" % ((amount || 0) / 1e8)
   end
 
+  def format_script string
+    string.size > 100 ? string.gsub(/\s+/, "\n") : string
+  end
+
   def calculate_reward depth
     ((50.0 / (2 ** (depth / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
   end

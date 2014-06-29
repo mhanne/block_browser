@@ -1,39 +1,63 @@
-%h3 Input Script
+- @script_sig_str = @script_sig ? format_script(Bitcoin::Script.new(@script_sig).to_string) : ""
+- @pk_script_str = @pk_script ? format_script(Bitcoin::Script.new(@pk_script).to_string) : ""
+- @sig_hash_str = @sig_hash ? @sig_hash.hth : ""
 
-%pre= Bitcoin::Script.new(@txin.script_sig).to_string
-
-%h3 Output Script
-
-%pre= Bitcoin::Script.new(@txout.pk_script).to_string
-
-%h3 Execution
-
-- i = 0
-%table#debug
-  %tr
-    %th Stack
-    %th Operation
-    %th Description
-  - (@debug.size / 2).times do
-    - op, stack = @debug[i+1], @debug[i]
+= form_tag("/script") do
+  %table{style: "width: 100%"}
     %tr
+      %th Transaction
       %td
-        %pre= raw stack.join("<br />")
-      %th
-        %pre= op
-      %td
-        - case op
-        - when /PUSH DATA/
-          %pre Data is pushed onto the stack.
-        - when *(2..16).map {|i| "OP_#{i}" }
-          %pre The number #{op.split("_")[1]} is pushed onto the stack.
-        - when "RESULT"
-          %pre True if the remaining stack is anything other than empty or 0.
+        - if @tx && @txin
+          = link_to "#{@tx.hash}:#{@txin.tx_idx}", tx_path(@tx.hash)
         - else
-          - comment = Bitcoin::Script.instance_method(@debug[i+1].downcase).comment
-          %pre= comment.split(/\n?#\s/).map(&:strip).join("\n")
-    - i += 2
+          Not found
+          (#{link_to "Link to this script", "/script?script_sig=#{@script_sig_str.gsub("\n", " ")}&pk_script=#{@pk_script_str.gsub("\n", " ")}&signature_hash=#{@sig_hash_str}"})
+    %tr
+      %th{style: "width: 10em"} Input Script
+      %td
+        = text_area_tag :script_sig, @script_sig_str, rows: @script_sig_str.lines.count, style: "width: 100%"
+    %tr
+      %th Output Script
+      %td
+        = text_area_tag :pk_script, @pk_script_str, rows: @pk_script_str.lines.count, style: "width: 100%"
+    %tr
+      %th Signature Hash
+      %td
+        = text_field_tag :sig_hash, @sig_hash_str, size: 64
+        Optional; If empty, all signatures are assumed to be valid.
+    %tr
+      %th Result
+      %th
+        %pre= @result
+        = submit_tag "(Re-)Run Script", style: "float: right;"
 
-%h3 Result
+  - if @script && @debug
 
-%pre= @result
+    %h3 Execution Trace
+
+    - i = 0
+    %table#debug
+      %tr
+        %th Stack
+        %th Operation
+        %th Description
+      - (@debug.size / 2).times do
+        - op, stack = @debug[i+1], @debug[i]
+        - if op
+          %tr
+            %td
+              %pre= raw stack.map(&:inspect).join("<br />")
+            %th
+              %pre= op
+            %td
+              - case op
+              - when /PUSH DATA/
+                %pre Data is pushed onto the stack.
+              - when *(2..16).map {|i| "OP_#{i}" }
+                %pre The number #{op.split("_")[1]} is pushed onto the stack.
+              - when "RESULT"
+                %pre True if the remaining stack is anything other than empty or 0.
+              - else
+                - comment = Bitcoin::Script.instance_method(@debug[i+1].downcase).comment rescue ""
+                %pre= comment.split(/\n?#\s/).map(&:strip).join("\n")
+        - i += 2
