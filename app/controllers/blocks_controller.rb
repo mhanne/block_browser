@@ -42,11 +42,13 @@ class BlocksController < ApplicationController
       return render_error("Address #{params[:id]} is invalid.")
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
+    @type = Bitcoin.address_type(@address)
 
     @addr_data = { address: @address, hash160: @hash160,
       tx_in_sz: 0, tx_out_sz: 0, btc_in: 0, btc_out: 0 }
 
     @addr_txouts = STORE.db[:addr].where(hash160: @hash160)
+      .where("addr.type = #{STORE.class::ADDRESS_TYPES.index(@type)}")
       .join(:addr_txout, addr_id: :id).join(:txout, id: :txout_id)
       .join(:tx, id: :tx_id).join(:blk_tx, tx_id: :id).join(:blk, id: :blk_id)
       .where(chain: 0).order(:depth)
