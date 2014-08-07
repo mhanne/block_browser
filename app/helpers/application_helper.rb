@@ -19,4 +19,12 @@ module ApplicationHelper
     ((50.0 / (2 ** (depth / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
   end
 
+  def address_link addr
+    if addr
+      link_to(addr, address_path(addr)).html_safe
+    else
+      "<span class='error'>Error decoding address from pubkey</span>".html_safe
+    end
+  end
+
 end

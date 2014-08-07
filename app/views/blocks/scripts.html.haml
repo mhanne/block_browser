@@ -27,7 +27,7 @@
           %pre= script.get_op_return_data
         - else
           - script.get_addresses.each do |addr|
-            = link_to addr, address_path(addr)
+            = address_link(addr)
             %br/
       - if next_in = STORE.db[:txin][prev_out: tx[:hash].reverse, prev_out_index: txout[:tx_idx]]
         - next_tx = STORE.db[:tx][id: next_in[:tx_id]]

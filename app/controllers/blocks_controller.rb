@@ -14,7 +14,6 @@ class BlocksController < ApplicationController
     depth = STORE.get_depth
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = (@per_page - 1)  if depth < @per_page
-    @blocks = []
     @blocks = STORE.db[:blk].filter("depth <= ?", depth).where(chain: 0).order(:depth).limit(@per_page).reverse
     @page_title = "Recent Blocks"
   end

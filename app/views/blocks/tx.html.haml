@@ -92,7 +92,7 @@
             - if prev_out.get_address
               %td
                 - prev_out.get_addresses.each do |address|
-                  = link_to(address, address_path(address))
+                  = address_link(address)
                   %br
             - else
               %td not seen
@@ -144,9 +144,13 @@
             = link_to(addr, address_path(addr))
           - when :multisig
             - addrs = script.get_multisig_addresses
-            multisig (#{script.get_signatures_required} of #{addrs.size})
+            multisig (#{script.get_signatures_required} of #{script.get_keys_provided}):
+            %br/
             - addrs.each do |address|
-              = link_to(address, address_path(address))
+              - if address
+                = link_to(address, address_path(address))
+              - else
+                %span.error Error decoding address from pubkey
               %br
           - when :op_return
             Data:

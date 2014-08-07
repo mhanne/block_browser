@@ -52,7 +52,7 @@
               %tr
                 %td
                   - o.get_addresses.map do |addr|
-                    = link_to(addr, address_path(addr))
+                    = address_link(addr)
                     %br/
                 %td (#{format_amount o.value})
         %td.outgoing= "<-"

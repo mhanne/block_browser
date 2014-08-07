@@ -33,7 +33,7 @@
           %pre= inner_script.get_op_return_data
         - else
           - inner_script.get_addresses.each do |addr|
-            = link_to addr, address_path(addr)
+            = address_link(addr)
             %br/
       %td= link_to "Run Script", "/script/#{tx[:hash].hth}:#{txin[:tx_idx]}"
 
