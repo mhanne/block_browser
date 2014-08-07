@@ -48,5 +48,5 @@
 
 %p
   P2SH Script Types:
-  - (STORE.class::SCRIPT_TYPES - [:p2sh, :op_return]).each do |type|
+  - (STORE.class::SCRIPT_TYPES - [:op_return]).each do |type|
     = link_to "#{type} (#{stats['p2sh_types'][type.to_s]})", "/p2sh_scripts/#{type}"

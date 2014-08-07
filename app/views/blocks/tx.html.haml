@@ -82,7 +82,7 @@
           - if prev_out
             %td
               = link_to(prev_out.type, "/scripts/#{prev_out.type}")
-              - if prev_out.type == :p2sh
+              - if prev_out.type == :script_hash
                 %br/
                 (#{link_to txin.p2sh_type, "/p2sh_scripts/#{txin.p2sh_type}"})
             %td
@@ -122,7 +122,7 @@
         %td= idx
         %td
           = link_to(txout.type, "/scripts/#{txout.type}")
-          - if txout.type == :p2sh
+          - if txout.type == :script_hash
             %br/
             - if next_in = txout.get_next_in
               (#{link_to next_in.p2sh_type, "/p2sh_scripts/#{next_input.p2sh_type}"})
@@ -139,7 +139,7 @@
         %td.value= format_amount(txout.value)
         %td
           - case script.type
-          - when :pubkey, :hash160, :p2sh
+          - when :pubkey, :pubkey_hash, :script_hash
             - addr = txout.get_address
             = link_to(addr, address_path(addr))
           - when :multisig
