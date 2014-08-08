@@ -25,7 +25,9 @@ STORE.db.transaction do
 
   STORE.class::SCRIPT_TYPES.each.with_index do |type, idx|
     data[:script_types][type] = STORE.db[:txout].where(type: idx).count
-    data[:p2sh_types][type] = STORE.db[:txin].where(p2sh_type: idx).count
+    if BB_CONFIG["index_p2sh_types"]
+      data[:p2sh_types][type] = STORE.db[:txin].where(p2sh_type: idx).count 
+    end
   end
 
   data[:names] = STORE.db[:names].count  if Bitcoin.namecoin?

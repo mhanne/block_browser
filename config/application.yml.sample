@@ -12,6 +12,7 @@ relay_wait_max: 10
 relay_send: 3
 
 script_list_limit: 20
+index_p2sh_scripts: true  # disable for networks without p2sh support
 
 networks:
   bitcoin: "http://webbtc.com"
