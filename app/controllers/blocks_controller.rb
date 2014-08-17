@@ -32,7 +32,7 @@ class BlocksController < ApplicationController
     return render_error("Tx #{params[:id]} not found.")  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     @page_title = "Transaction Details"
-    respond_with(@tx)
+    respond_with(@tx, with_nid: true)
   end
 
   def address
@@ -302,7 +302,7 @@ class BlocksController < ApplicationController
     blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
 
-    data = tx.to_hash(with_address: true)
+    data = tx.to_hash(with_address: true, with_nid: true)
     data['block'] = blk[:hash].hth
     data['blocknumber'] = blk[:depth]
     data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")
