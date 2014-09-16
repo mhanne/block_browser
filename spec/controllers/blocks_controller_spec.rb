@@ -127,6 +127,53 @@ describe BlocksController do
 
   end
 
+  describe :relay do
 
+    include Bitcoin::Builder
+
+    before do
+      run_bitcoin_node
+      @tx = build_tx do |t|
+        t.input do |i|
+          i.prev_out @fake_chain.store.get_head.tx.first.out.first.get_tx, 0
+          i.signature_key @key
+        end
+        t.output do |o|
+          o.value 12345
+          o.to @key.addr
+        end
+      end
+    end
+
+    after do
+      kill_bitcoin_node
+    end
+
+    let(:tx) { Bitcoin::P::Tx.new }
+
+    it "should relay transaction to the bitcoin network" do
+      post :relay_tx, tx: @tx.payload.hth, wait: 0
+      assigns(:error).should == nil
+      res = assigns(:result)
+      res["success"].should == true
+      res["hash"].should == @tx.hash
+    end
+
+    it "should fail when tx syntax is invalid" do
+      @tx.instance_eval { @in = [] }
+      post :relay_tx, tx: @tx.to_payload.hth, wait: 0
+      assigns(:error).should == "Transaction syntax invalid."
+      assigns(:result)["error"].should == "Transaction syntax invalid."
+      assigns(:result)["details"].should == ["lists", [0, 1]]
+    end
+
+    it "should fail when tx context is invalid" do
+      @tx.instance_eval { @in[0].prev_out = "\x00"*32 }
+      post :relay_tx, tx: @tx.to_payload.hth, wait: 0
+      assigns(:error).should == "Transaction context invalid."
+      assigns(:result)["details"].should == ["prev_out", [["0000000000000000000000000000000000000000000000000000000000000000", 0]]]
+    end
+
+  end
 
 end
