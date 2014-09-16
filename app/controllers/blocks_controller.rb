@@ -209,7 +209,8 @@ class BlocksController < ApplicationController
         @wait = (params[:wait] || BB_CONFIG['relay_wait_default']).to_f
         @wait = BB_CONFIG['relay_wait_max']  if @wait > BB_CONFIG['relay_wait_max']
 
-        @result = node_command(:relay_tx, @tx.to_payload.hth, BB_CONFIG['relay_send'], @wait)
+        @result = node_command(:relay_tx, hex: @tx.to_payload.hth,
+                                          send: BB_CONFIG['relay_send'], wait: @wait)
         @error, @details = @result["error"], @result["details"]  if @result["error"]
       end
     end
@@ -324,9 +325,9 @@ class BlocksController < ApplicationController
     render template: "blocks/error"
   end
 
-  def node_command cmd, *args
+  def node_command cmd, params
     s = TCPSocket.new(*BB_CONFIG["command"].split(":"))
-    s.write({id: 1, method: "relay_tx", params: args}.to_json + "\x00")
+    s.write({id: 1, method: "relay_tx", params: params}.to_json + "\x00")
     buf = ""
     while b = s.read(1)
       break  if b == "\x00"
