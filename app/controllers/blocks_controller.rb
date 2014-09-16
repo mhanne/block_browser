@@ -31,6 +31,7 @@ class BlocksController < ApplicationController
     @tx = STORE.get_tx(params[:id])
     return render_error("Tx #{params[:id]} not found.")  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
+    @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
     @page_title = "Transaction Details"
     respond_with(@tx, with_nid: true)
   end

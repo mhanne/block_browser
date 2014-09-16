@@ -18,8 +18,11 @@
       - if @blk
         = STORE.get_depth - @blk[:depth] + 1
         (At Depth: #{@blk[:depth]})
+        - unless @blk[:chain] == 0
+          %span{style: "color:red"} (#{["Main", "Side", "Orphan"][@blk[:chain]]} Chain!)
       - else
         unconfirmed
+
   - cache("tx/#{@tx.hash}/details") do
     - if Bitcoin.namecoin?
       %tr
@@ -35,7 +38,7 @@
       %th Outputs
       %td= @tx.out.size
     - if @tx.in.size == 1 && @tx.in[0].coinbase?
-      - input_value = Bitcoin.block_creation_reward(@tx.get_block.depth)
+      - input_value = Bitcoin.block_creation_reward(@blk[:depth])
     - else
       - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum rescue '?'
     %tr
@@ -75,7 +78,7 @@
         - if txin.coinbase?
           %td generation
           %td none
-          %td.value= format_amount(Bitcoin.block_creation_reward(@tx.get_block.depth))
+          %td.value= format_amount(Bitcoin.block_creation_reward(@blk[:depth]))
           %td -
           %td= txin.script_sig.unpack("H*")[0]
         - else
