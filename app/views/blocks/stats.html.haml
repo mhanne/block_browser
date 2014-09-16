@@ -67,15 +67,8 @@
 
 %br/
 
-= image_tag "/graphs/block_size.png"
-= image_tag "/graphs/total_size.png"
-
-= image_tag "/graphs/block_work.png"
-= image_tag "/graphs/total_work.png"
-
-= image_tag "/graphs/tx_per_block.png"
-= image_tag "/graphs/total_coins.png"
-
+- [:block_size, :tx_per_block, :total_size, :total_coins, :block_work, :total_work].each do |name|
+  = link_to image_tag("/graphs/#{name}_small.png"), "/graphs/#{name}.png"
 
 
 %h3 Time Since Last Block

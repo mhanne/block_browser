@@ -45,7 +45,8 @@ data.each do |name, lines|
   end
 
   Dir.chdir(GRAPH_DIR) do
-    `gnuplot #{Rails.root}/lib/graphs/#{name}.cfg`
+    `gnuplot -e "width=480;height=320;outfile='#{name}_small.png'" #{Rails.root}/lib/graphs/#{name}.cfg`
+    `gnuplot -e "width=1024;height=800;outfile='#{name}.png'" #{Rails.root}/lib/graphs/#{name}.cfg`
     puts "[DONE]"
   end
 
