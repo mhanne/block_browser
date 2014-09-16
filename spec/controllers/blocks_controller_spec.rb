@@ -55,7 +55,7 @@ describe BlocksController do
     it "should render json" do
       get :tx, id: tx_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.get_tx(tx_hash).to_hash
+      JSON.parse(response.body).should == STORE.get_tx(tx_hash).to_hash(with_nid: true)
     end
 
     it "should render bin" do
