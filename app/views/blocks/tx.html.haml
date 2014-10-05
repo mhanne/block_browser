@@ -51,6 +51,15 @@
     %tr
       %th Fee
       %td= format_amount(input_value - output_value) rescue '?'
+    - if @tx.lock_time != 0
+      %tr
+        %th Lock Time
+        %td
+          - if @tx.lock_time < 500_000_000
+            - block = STORE.db[:blk][depth: @tx.lock_time, chain: 0][:hash].hth
+            Block #{link_to @tx.lock_time, "/block/#{block}"}
+          - else
+            = format_time Time.at(@tx.lock_time)
     %tr
       %th Formats
       %td
@@ -67,6 +76,8 @@
     %th Value
     %th From Address
     %th Script
+    - if display_sequence = @tx.in.map(&:sequence).any? {|s| s.unpack("I")[0] != 0xffffffff }
+      %th Sequence
     %th Debug
 
 
@@ -102,6 +113,8 @@
             %td
               %pre
                 = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
+            - if display_sequence
+              %td= txin.sequence.unpack("I")[0]
             %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
           - else
             %td{:colspan => 5} not seen
