@@ -23,3 +23,9 @@ public/stats.json
 public/node_*.png
 public/node_*.html
 public/graphs
+
+coverage/
+doc/
+
+spec/data/base.db
+spec/tmp

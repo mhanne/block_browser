@@ -2,6 +2,17 @@ $:.unshift( File.expand_path("../../../bitcoin-ruby/lib", __FILE__) )
 
 require 'bitcoin'
 
+require 'simplecov'
+require 'coveralls'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  Coveralls::SimpleCov::Formatter,
+  SimpleCov::Formatter::HTMLFormatter]
+
+SimpleCov.start do
+  add_filter "/config/"
+end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
@@ -44,11 +55,12 @@ end
 Bitcoin.network = :testnet3
 
 db_path = File.join(Rails.root, "tmp/spec.db")
-
+FileUtils.mkdir_p File.dirname(db_path)
 # FileUtils.rm_rf db_path
 
 import = true  unless File.exists?(db_path)
-STORE = Bitcoin::Storage.sequel(db: "sqlite://#{db_path}", skip_validation: true, index_nhash: true)
+STORE = Bitcoin::Storage.sequel(db: "sqlite://#{db_path}", skip_validation: true, index_nhash: true,
+                                index_p2sh_type: true)
 
 datafile = File.join(Rails.root, "tmp/testnet_first500.dat")
 unless File.exist?(datafile)
@@ -62,6 +74,9 @@ STORE.import(datafile)  if import
 
 BB_CONFIG["command"] = "localhost:22034"
 
+unless File.exists?("public/stats.json")
+  `cp spec/data/stats.json public/`
+end
 
 
 class FakeChain
@@ -141,12 +156,13 @@ def run_bitcoin_node
   setup_fake_chain
 
   options = Bitcoin::Config.load_file({}, "spec/data/node1.conf", :blockchain)
-  options[:log] = { network: :error, storage: :error }
+  options[:log] = { network: :warn, storage: :warn }
   @node1_pid = fork do
     node = Bitcoin::Network::Node.new(options)
+    node.log.level = :warn
     node.run
   end
-  sleep 0.1
+  sleep 1
 end
 
 def kill_bitcoin_node

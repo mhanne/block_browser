@@ -49,8 +49,12 @@ end
 
 require 'bitcoin'
 
-BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml"))
-Bitcoin::network = BB_CONFIG["network"]
-backend, config = BB_CONFIG["database"].split("::")
-STORE = Bitcoin::Storage.send(backend, :db => config)
-
+begin
+  BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml"))
+  Bitcoin::network = BB_CONFIG["network"]
+  backend, config = BB_CONFIG["database"].split("::")
+  STORE = Bitcoin::Storage.send(backend, db: config, index_nhash: true, index_p2sh_type: true)
+rescue
+  puts "Error loading configuration from config/application.yml; falling back to defaults"
+  BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
+end

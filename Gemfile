@@ -31,3 +31,7 @@ gem 'jquery-rails'
 gem 'em-websocket'
 
 gem 'svg-graph'
+
+gem 'ffi'
+gem 'simplecov'
+gem 'coveralls'

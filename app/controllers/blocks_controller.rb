@@ -160,13 +160,13 @@ class BlocksController < ApplicationController
     render_error("Nothing matches #{@id}.")
   end
 
-  def unconfirmed
-    @tx = STORE.get_unconfirmed_tx
-    respond_to do |format|
-      format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
-      format.json { render :text => @tx.map(&:to_hash).to_json }
-    end
-  end
+  # def unconfirmed
+  #   @tx = STORE.get_unconfirmed_tx
+  #   respond_to do |format|
+  #     format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
+  #     format.json { render :text => @tx.map(&:to_hash).to_json }
+  #   end
+  # end
 
   def name
     @name = params[:name]
