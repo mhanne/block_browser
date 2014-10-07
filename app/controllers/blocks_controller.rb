@@ -126,8 +126,8 @@ class BlocksController < ApplicationController
 
 
   # search for given (part of) block/tx/address.
-  # also try to account for 'half bytes' when hex string is cut off.
-  # TODO: currently it just looks for whole hashes/addrs
+  # TODO: search for partial data
+  # TODO: search for pubkeys/hash160
   def search
     @id = params[:search]
 
@@ -140,33 +140,9 @@ class BlocksController < ApplicationController
       return  if search_block(@id)
       return  if search_tx(@id)
       return  if search_name(@id)
-      # if @id.size % 2 == 0
-      #   return  if search_block(@id)
-      #   return  if search_tx(@id)
-      #   t = @id.split; t.pop; t.shift; t = t.join
-      #   return  if search_block(t)
-      #   return  if search_tx(t)
-      # else
-      #   return  if search_block(@id[0..-2])
-      #   return  if search_block(@id[1..-1])
-      #   return  if search_tx(@id[0..-2])
-      #   return  if search_tx(@id[1..-1])
-      # end
-    elsif @id =~ /^0000/
-      redirect_to block_path(@id)
-    else
-      redirect_to tx_path(@id)
     end
     render_error("Nothing matches #{@id}.")
   end
-
-  # def unconfirmed
-  #   @tx = STORE.get_unconfirmed_tx
-  #   respond_to do |format|
-  #     format.html { @page_title = "Unconfirmed Tx (#{@tx.size})" }
-  #     format.json { render :text => @tx.map(&:to_hash).to_json }
-  #   end
-  # end
 
   def name
     @name = params[:name]

@@ -1,6 +1,7 @@
 $:.unshift( File.expand_path("../../../bitcoin-ruby/lib", __FILE__) )
 
 require 'bitcoin'
+Bitcoin.network = :namecoin
 
 require 'simplecov'
 require 'coveralls'
@@ -52,7 +53,7 @@ RSpec.configure do |config|
   config.order = "random"
 end
 
-Bitcoin.network = :testnet3
+Bitcoin.network = :namecoin
 
 db_path = File.join(Rails.root, "tmp/spec.db")
 FileUtils.mkdir_p File.dirname(db_path)
@@ -62,11 +63,11 @@ import = true  unless File.exists?(db_path)
 STORE = Bitcoin::Storage.sequel(db: "sqlite://#{db_path}", skip_validation: true, index_nhash: true,
                                 index_p2sh_type: true)
 
-datafile = File.join(Rails.root, "tmp/testnet_first500.dat")
+datafile = File.join(Rails.root, "tmp/namecoin_first500.dat")
 unless File.exist?(datafile)
   require 'open-uri'
   File.open(datafile, "wb") do |file|
-    file.write open("http://dumps.webbtc.com/testnet3/testnet_first500.dat").read
+    file.write open("http://dumps.webbtc.com/namecoin/namecoin_first500.dat").read
   end
 end
 
