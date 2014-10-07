@@ -169,8 +169,10 @@
                 %span.error Error decoding address from pubkey
               %br
           - when :op_return
-            Data:
-            = script.get_op_return_data
+            - if script.get_op_return_data
+              Data: #{script.get_op_return_data}
+            - else
+              (No data)
           - if Bitcoin.namecoin? && script.is_namecoin?
             - name = txout.get_namecoin_name
             - if name.name

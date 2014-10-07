@@ -25,6 +25,8 @@
           %td
             - if o.parsed_script.type == :unknown
               %span{class: "error"} Unknown script type
+            - elsif o.parsed_script.type == :op_return
+              OP_RETURN (provably burned)
             - else
               - o.get_addresses.map do |addr|
                 = address_link(addr)
