@@ -45,6 +45,14 @@ describe BlocksController do
       response.body.should == STORE.get_block(block_hash).to_payload.hth
     end
 
+    it "should display block containing tx with unknown output script type" do
+      block_hash = "00000000004f9e2bfeb67af0b07d8fc5cfb7779f3a1a9065e5a47ce1dd6dea59"
+      get :block, id: block_hash
+      response.should be_success
+      assigns(:block).hash.should == block_hash
+      response.body.should =~ /Unknown script type/
+    end
+
   end
 
   describe :tx do
@@ -71,6 +79,14 @@ describe BlocksController do
       get :tx, id: tx_hash, format: :hex
       response.status.should == 200
       response.body.should == STORE.get_tx(tx_hash).to_payload.hth
+    end
+
+    it "should tx with unknown output script type" do
+      tx_hash = "496b728d51d8d6030035779f6c588f519a0fd1ab2eaaa1ceb5924122bf8c68d5"
+      get :tx, id: tx_hash
+      response.should be_success
+      assigns(:tx).hash.should == tx_hash
+      response.body.should =~ /Unknown script type/
     end
 
   end

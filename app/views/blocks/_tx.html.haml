@@ -23,9 +23,12 @@
       - tx.out.map do |o|
         %tr
           %td
-            - o.get_addresses.map do |addr|
-              = address_link(addr)
-              %br/
+            - if o.parsed_script.type == :unknown
+              %span{class: "error"} Unknown script type
+            - else
+              - o.get_addresses.map do |addr|
+                = address_link(addr)
+                %br/
           %td (#{format_amount o.value})
   %td= number_to_human_size tx.to_payload.bytesize
   %td.value= format_amount(tx.out.map(&:value).sum)

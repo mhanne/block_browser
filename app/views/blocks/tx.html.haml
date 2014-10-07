@@ -180,6 +180,8 @@
             %br
             - addr = txout.get_address
             = link_to(addr, address_path(addr))
+          - if script.type == :unknown
+            %span{class: "error"} Unknown script type
         %td
           %pre= script.to_string rescue "?"
         %td
