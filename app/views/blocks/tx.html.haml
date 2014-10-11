@@ -59,7 +59,7 @@
             - block = STORE.db[:blk][depth: @tx.lock_time, chain: 0][:hash].hth
             Block #{link_to @tx.lock_time, "/block/#{block}"}
           - else
-            = format_time Time.at(@tx.lock_time)
+            #{@tx.lock_time} (#{format_time Time.at(@tx.lock_time)})
     %tr
       %th Formats
       %td
@@ -114,7 +114,7 @@
               %pre
                 = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
             - if display_sequence
-              %td= txin.sequence.unpack("I")[0]
+              %td= txin.sequence.unpack("I")[0].to_s(16)
             %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
           - else
             %td{:colspan => 5} not seen
