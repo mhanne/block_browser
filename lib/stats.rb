@@ -35,8 +35,6 @@ STORE.db.transaction do
   data[:time] = Time.now.to_i
 end
 
-
-
 puts JSON.pretty_generate(data)
 
 File.open(File.join(Rails.root, "public/stats.json"), 'w') {|f|

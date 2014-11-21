@@ -1,0 +1,102 @@
+- @page_title = "Stats API"
+
+%h2 Stats
+
+%p Get some blockchain statistics.
+
+%pre= "GET /stats.json"
+
+%h3 Response
+
+%p Returns the tx hash and propagation information.
+
+%table.details
+  %tr
+    %th blocks
+    %td Block statistics
+  %tr
+    %th.level1 total
+    %td Total number of blocks seen by this node
+  %tr
+    %th.level1 main
+    %td Number of blocks in the main chain
+  %tr
+    %th.level1 side
+    %td Number of blocks in a side chain
+  %tr
+    %th.level1 orphan
+    %td Number of orphan blocks without a chain
+  %tr
+    %th.level1 size
+    %td Total size of all blocks in the main chain
+
+  %tr
+    %th txs
+    %td Number of transactions
+  %tr
+    %th txins
+    %td Number of transaction inputs
+  %tr
+    %th txouts
+    %td Number of transaction outputs
+  %tr
+    %th addrs
+    %td Number of addresses that have been used
+  %tr
+    %th coins
+    %td Number of coins ever created
+
+  %tr
+    %th script_types
+    %td Output script statistics
+  %tr
+    %th.level1 unknown
+    %td Number of outputs with a script of unknown type
+  %tr
+    %th.level1 pubkey
+    %td Number of outputs with a pay-to-pubkey script
+  %tr
+    %th.level1 pubkey_hash
+    %td Number of outputs with a pay-to-pubkey-hash script
+  %tr
+    %th.level1 multisig
+    %td Number of outputs with a multisig script
+  %tr
+    %th.level1 script_hash
+    %td Number of outputs with a pay-to-script-hash/p2sh script
+  %tr
+    %th.level1 op_return
+    %td Number of outputs with an op_return script
+
+  %tr
+    %th p2sh_types
+    %td P2SH-input script statistics
+  %tr
+    %th.level1 unknown
+    %td Number of inputs that spend an unknown p2sh script
+  %tr
+    %th.level1 pubkey
+    %td Number of inputs that spend a pay-to-pubkey p2sh script
+  %tr
+    %th.level1 pubkey_hash
+    %td Number of inputs that spend a pay-to-pubkey-hash/address p2sh script
+  %tr
+    %th.level1 multisig
+    %td Number of inputs that spend a multisig p2sh script
+  %tr
+    %th.level1 script_hash
+    %td Number of inputs that spend a pay-to-script-hash/p2sh script nested inside a p2sh script
+  %tr
+    %th.level1 op_return
+    %td (Not possible)
+
+  %tr
+    %th time
+    %td Timestamp when the stats where last updated
+
+
+%h3 Example
+
+#api_relay_example.example
+  %pre= "curl http://#{BB_CONFIG['domain']}/stats.json"
+  %pre= File.read(File.join(Rails.root, "public/stats.json"))
