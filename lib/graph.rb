@@ -24,7 +24,6 @@ EOS
   data[:total_work] << [blk[:depth], blk[:work]]
 
   total_coins += Bitcoin.block_creation_reward(blk[:depth])
-  data[:total_coins] << [blk[:depth], (total_coins) / 1e8]
 end
 
 puts "Collecting tx data..."
@@ -35,6 +34,14 @@ STORE.db[<<EOS].each do |blk|
   WHERE blk.chain = 0 GROUP BY blk.depth
 EOS
   data[:tx_per_block] << [blk[:depth], blk[:count]]
+end
+
+total = 0; reward = 50e8;
+16.times do |i|
+  data[:total_coins] << [210_000*i, total/1e8]
+  data[:total_coins].last << total/1e8  if i < 3
+  total += 210_000 * reward
+  reward /= 2
 end
 
 data.each do |name, lines|
