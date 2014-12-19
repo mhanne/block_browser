@@ -3,3 +3,11 @@
 
 en:
   hello: "Hello world"
+
+  number:
+    human:
+      storage_units:
+        units:
+          byte:
+            one: B
+            other: B

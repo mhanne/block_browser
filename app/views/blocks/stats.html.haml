@@ -8,11 +8,18 @@
   %tr
     %th Blocks
     - b = stats['blocks']
-    %td #{b['main']} (#{b['side']} side, #{b['orphan']} orphan, #{b['total']} total)
+    %td
+      #{number_with_delimiter b['main']}
+      (#{number_with_delimiter b['side']} side,
+      #{number_with_delimiter b['orphan']} orphan,
+      #{number_with_delimiter b['total']} total)
 
   %tr
     %th Transactions
-    %td #{stats['txs']} (#{stats['txins']} inputs, #{stats['txouts']} outputs)
+    %td
+      #{number_with_delimiter stats['txs']}
+      (#{number_with_delimiter stats['txins']} inputs,
+      #{number_with_delimiter stats['txouts']} outputs)
 
   %tr
     %th Addresses
@@ -32,13 +39,13 @@
   %tr
     %th Script Types
     %td
-      = STORE.class::SCRIPT_TYPES.map {|type| link_to("#{stats['script_types'][type.to_s]} #{type}", "/scripts/#{type}") }.join(", ").html_safe
+      = STORE.class::SCRIPT_TYPES.map {|type| link_to("#{number_with_delimiter stats['script_types'][type.to_s]} #{type}", "/scripts/#{type}") }.join(", ").html_safe
 
   - if BB_CONFIG["index_p2sh_types"]
     %tr
       %th P2SH Types
       %td
-        = (STORE.class::SCRIPT_TYPES - [:op_return]).map {|type| link_to("#{stats['p2sh_types'][type.to_s]} #{type}", "/p2sh_scripts/#{type}") }.join(", ").html_safe
+        = (STORE.class::SCRIPT_TYPES - [:op_return]).map {|type| link_to("#{number_with_delimiter stats['p2sh_types'][type.to_s]} #{type}", "/p2sh_scripts/#{type}") }.join(", ").html_safe
 
   %tr
     %th Last Update
@@ -58,7 +65,7 @@
     %th Next Halving
     %td
       - drop = Bitcoin::REWARD_DROP
-      in #{blocks = drop - (STORE.height % drop)} blocks -
+      in #{number_with_delimiter blocks = drop - (STORE.height % drop)} blocks -
       - seconds = blocks * 10 * 60
       = (Time.now + seconds).strftime("%Y-%m-%d %H:%M")
       - if seconds < 2592000

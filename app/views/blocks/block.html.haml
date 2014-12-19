@@ -32,7 +32,7 @@
       %td= format_time @block.time
     %tr
       %th Transactions
-      %td= @block.tx.size
+      %td= number_with_delimiter @block.tx.size
     %tr
       %th Size
       %td= number_to_human_size @block.to_payload.bytesize
