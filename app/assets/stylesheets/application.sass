@@ -43,7 +43,7 @@ table.list
     &.odd td
       background: #eee
 
-  td
+  th, td
     &.incoming
       color: green
     &.outgoing
@@ -74,6 +74,16 @@ table.tx_outs, table.tx_ins
 
   tr:last-child td
     padding: 0px
+
+table
+  tr.doublespent
+    th, td, td a
+      color: red
+      font-weight: bold
+  tr.rejected
+    td a
+      text-decoration: line-through
+
 
 table td.right
   text-align: right

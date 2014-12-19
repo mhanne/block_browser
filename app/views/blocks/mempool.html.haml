@@ -1,0 +1,44 @@
+%table.details
+  %tr
+    %th= link_to "Total", mempool_path
+    %td#mempool_n_tx= MEMPOOL.transactions.count
+    %th= link_to "Accepted", mempool_type_path(type: :accepted)
+    %td#mempool_n_accepted= MEMPOOL.accepted.count
+    %th= link_to "Rejected", mempool_type_path(type: :rejected)
+    %td#mempool_n_rejected= MEMPOOL.rejected.count
+    %th= link_to "Doublespends", mempool_type_path(type: :doublespend)
+    %td#mempool_n_doublespend= MEMPOOL.doublespend.count
+
+%table#mempool.list
+  %tr
+    %th ID
+    %th Hash
+    %th First Seen
+    - unless params[:action] == "doublespends"
+      %th Last Seen
+      %th Times Seen
+    %th Size
+    %th Input Value
+    %th Fee
+    %th Priority
+
+  %tbody.transactions
+    - @txs.each do |tx|
+      - classes = "#{cycle('odd', 'even')} #{tx.type}"
+      - classes += " doublespent"  if tx.is_doublespent
+      %tr{id: "mempool_#{tx.hash}", class: classes }
+        = render partial: "mempool", locals: { tx: tx }
+
+- if @page > 1
+  = link_to "<<", "?page=1"
+  = link_to "<", "?page=#{@page-1}"
+
+Page #{@page} of #{@total / @per_page + 1}
+
+- if @page * @per_page < @total
+  = link_to ">", "?page=#{@page+1}"
+  = link_to ">>", "?page=#{@total / @per_page + 1}"
+
+
+:javascript
+  ws.add_handler(new Mempool());

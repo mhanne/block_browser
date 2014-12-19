@@ -1,0 +1,243 @@
+%table.details
+  %tr
+    %th Transaction
+    %th= @tx.hash
+  %tr
+    %th Normalized Hash
+    %td= @tx.nhash
+
+  %tr
+    %th Mempool ID
+    %td#mempool_id= @tx.id
+
+  %tr
+    %th First Seen
+    %td= format_time(@tx.created_at, :with_seconds)
+  %tr
+    %th Last Seen
+    %td#updated_at= format_time(@tx.updated_at, :with_seconds)
+  %tr
+    %th Times Seen
+    %td#times_seen= @tx.times_seen
+
+  - if @tx.doublespend? || @tx.is_doublespent
+    %tr.doublespent
+      %th Doublespend
+      %td
+        - if @tx.doublespends
+          = link_to @tx.doublespends.hth, mempool_tx_path(@tx.doublespends.hth)
+        - else
+          - MEMPOOL.doublespend.where(doublespends: @tx.hash.htb.blob).each do |doublespend|
+            = link_to doublespend[:hash].hth, mempool_tx_path(doublespend[:hash].hth)
+            %br/
+
+  - if @tx.depends.any?
+    %tr.depends
+      %th Depends on
+      %td
+        - @tx.depends.each do |hash|
+          = link_to hash, mempool_tx_path(hash)
+          %br/
+
+  - if @tx.depending.any?
+    %tr.depending
+      %th Depending
+      %td
+        - @tx.depending.each do |hash|
+          = link_to hash, mempool_tx_path(hash)
+          %br/
+
+  - cache("tx/#{@tx.hash}/details") do
+    - if Bitcoin.namecoin?
+      %tr
+        %th Version
+        %td= @tx.ver == 0x7100 ? "Namecoin" : "Bitcoin"
+    %tr
+      %th Size
+      %td= @tx.to_payload.bytesize
+    %tr
+      %th Inputs
+      %td= @tx.in.size
+    %tr
+      %th Outputs
+      %td= @tx.out.size
+    - if @tx.in.size == 1 && @tx.in[0].coinbase?
+      - input_value = Bitcoin.block_creation_reward(@blk[:depth])
+    - else
+      - input_value = @tx.in.map.with_index {|i, idx| @prev_outs[idx].value }.sum rescue '?'
+    %tr
+      %th Input Value
+      %td= format_amount(input_value) rescue '?'
+    - output_value = @tx.out.map(&:value).sum
+    %tr
+      %th Output Value
+      %td= format_amount(output_value)
+    %tr
+      %th Fee
+      %td= format_amount(input_value - output_value) rescue '?'
+    - if @tx.lock_time != 0
+      %tr
+        %th Lock Time
+        %td
+          - if @tx.lock_time < 500_000_000
+            Block #{@tx.lock_time}
+          - else
+            #{@tx.lock_time} (#{format_time Time.at(@tx.lock_time)})
+    %tr
+      %th Priority
+      %td= number_with_delimiter @tx.priority
+    %tr
+      %th Formats
+      %td
+        = link_to "[json]", "/mempool_tx/#{@tx.hash}.json"
+        = link_to "[hex]", "/mempool_tx/#{@tx.hash}.hex"
+        = link_to "[binary]", "/mempool_tx/#{@tx.hash}.bin"
+
+%h3 Inputs
+%table.list
+  %tr
+    %th IDX
+    %th Type
+    %th Previous Output
+    %th Value
+    %th From Address
+    %th Script
+    - if display_sequence = @tx.in.map(&:sequence).any? {|s| s.unpack("I")[0] != 0xffffffff }
+      %th Sequence
+    %th Debug
+
+
+  - @tx.in.each_with_index do |txin, idx|
+    %tr{:class => cycle('odd', 'even')}
+      -# - prev_hash = txin.prev_out.reverse.hth
+      -# - prev_tx = STORE.get_tx(prev_hash) || @mempool.get(prev_hash)
+      -# - prev_out = prev_tx.out[txin.prev_out_index] if prev_tx
+      - prev_tx_hash = txin.prev_out.reverse.hth
+      - prev_out = @prev_outs[idx]
+      - prev_script = prev_out.parsed_script  if prev_out
+
+      - cache("tx/#{@tx.hash}/in/#{idx}/#{!!prev_out}") do
+        %td= idx
+        - if txin.coinbase?
+          %td generation
+          %td none
+          %td.value= format_amount(Bitcoin.block_creation_reward(@blk[:depth]))
+          %td -
+          %td= txin.script_sig.unpack("H*")[0]
+        - else
+          - if prev_out
+            %td
+              - type = Bitcoin::Script.new(prev_out.pk_script).type
+              = link_to(type, "/scripts/#{type}")
+              -# - if type == :script_hash
+              -#   %br/
+              -#   (#{link_to txin.p2sh_type, "/p2sh_scripts/#{txin.p2sh_type}"})
+            %td
+              - if MEMPOOL.exists?(prev_tx_hash)
+                = link_to(truncate(prev_tx_hash, length: 16), mempool_tx_path(prev_tx_hash))
+              - else
+                = link_to(truncate(prev_tx_hash, length: 16), tx_path(prev_tx_hash))
+              = "/ #{txin.prev_out_index}"
+            %td.value= format_amount(prev_out.value) rescue "?"
+            - if prev_script.get_address
+              %td
+                - prev_script.get_addresses.each do |address|
+                  = address_link(address)
+                  %br
+            - else
+              %td not seen
+            %td
+              %pre
+                = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
+            - if display_sequence
+              %td= txin.sequence.unpack("I")[0].to_s(16)
+            %td
+              %form{action: script_path}
+                %input{type: :hidden, name: :script_sig, value: txin.parsed_script.to_string}
+                %input{type: :hidden, name: :pk_script, value: prev_out.parsed_script.to_string}
+                %input{type: :hidden, name: :sig_hash, value: @tx.signature_hash_for_input(idx, prev_out.pk_script).hth}
+                %input{type: :submit, value: "Run Script"}
+          - else
+            %td not seen
+            %td{colspan: 5, style: "color: red"} #{txin.prev_out.reverse.hth} / #{txin.prev_out_index}
+
+
+%h3 Outputs
+%table.list
+  %tr
+    %th IDX
+    %th Type
+    %th Next Input
+    %th Value
+    %th To Address
+    %th Script
+    %th Debug
+  - @tx.out.each_with_index do |txout, idx|
+    - next_input = STORE.db[:txin][prev_out: @tx.hash.htb.reverse.to_sequel_blob, prev_out_index: idx]
+    %tr{:class => cycle('odd', 'even')}
+      - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
+
+        - spent_out = MEMPOOL.spent_outs[prev_out: "#{@tx.hash.htb}:#{idx}".blob]
+        - tx_data = MEMPOOL.transactions[id: spent_out[:spent_by]] if spent_out
+        - next_tx = Bitcoin::Blockchain::Mempool::MempoolTx.new(STORE, MEMPOOL.db, tx_data)  if tx_data
+        - next_input = next_tx.in.find {|i| i.prev_out.reverse == @tx.hash.htb && i.prev_out_index == idx }  if next_tx
+
+        - script = Bitcoin::Script.new(txout.pk_script) rescue nil
+        %td= idx
+        %td
+          - type = txout.parsed_script.type
+          = link_to(type, "/scripts/#{type}")
+          - if type == :script_hash
+            -# %br/
+            -# - if next_input
+            -#   (#{link_to next_in.p2sh_type, "/p2sh_scripts/#{next_input.p2sh_type}"})
+            -# - else
+            -#   (unspent)
+        %td
+          - if next_input
+            = link_to(truncate(next_tx.hash, :length => 16, :omission => '...'), mempool_tx_path(next_tx.hash))
+            = "/ #{next_tx.in.index(next_input)}"
+          - else
+            not seen
+
+        %td.value= format_amount(txout.value)
+        %td
+          - case type
+          - when :pubkey, :pubkey_hash, :script_hash
+            - addr = txout.parsed_script.get_address
+            = link_to(addr, address_path(addr))
+          - when :multisig
+            - addrs = script.get_multisig_addresses
+            multisig (#{script.get_signatures_required} of #{script.get_keys_provided}):
+            %br/
+            - addrs.each do |address|
+              - if address
+                = link_to(address, address_path(address))
+              - else
+                %span.error Error decoding address from pubkey
+              %br
+          - when :op_return
+            - if script.get_op_return_data
+              Data: #{script.get_op_return_data}
+            - else
+              (No data)
+          - if Bitcoin.namecoin? && script.is_namecoin?
+            - name = txout.get_namecoin_name
+            - if name.name
+              #{link_to(name.name, name_path(name.name))}: #{name.value || name.hash}
+            - else
+              Hash: #{name.hash}
+            %br
+            - addr = txout.get_address
+            = link_to(addr, address_path(addr))
+          - if script.type == :unknown
+            %span{class: "error"} Unknown script type
+        %td
+          %pre= script.to_string rescue "?"
+        %td
+          - if next_input
+            -# TODO!
+            = link_to "Run Script", script_path("#{next_tx.hash}:#{next_tx.in.index(next_input)}")
+
+:javascript
+  ws.add_handler(new MempoolTx(#{@tx.id}, "#{@tx.hash}"));

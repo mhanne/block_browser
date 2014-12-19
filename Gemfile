@@ -5,11 +5,11 @@ gem 'bitcoin-ruby', require: 'bitcoin',
   # path: '../bitcoin-ruby'
 
 gem 'bitcoin-ruby-blockchain', require: 'bitcoin/blockchain',
-  git: 'git://github.com/mhanne/bitcoin-ruby-blockchain'
+  git: 'git://github.com/mhanne/bitcoin-ruby-blockchain', branch: 'mempool'
   # path: '../bitcoin-ruby-blockchain'
 
 gem 'bitcoin-ruby-node', require: 'bitcoin/node',
-  git: 'git://github.com/mhanne/bitcoin-ruby-node'
+  git: 'git://github.com/mhanne/bitcoin-ruby-node', branch: 'mempool'
   # path: '../bitcoin-ruby-node'
 
 gem 'bitcoin-ruby-wallet', require: 'bitcoin/wallet',

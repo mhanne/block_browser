@@ -6,6 +6,9 @@
     %th Hash160
     %th= @hash160
   %tr
+    %th Type
+    %td= @type
+  %tr
     %th Transactions
     %td
       #{@addr_data[:tx_in_sz] + @addr_data[:tx_out_sz]}

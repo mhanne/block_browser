@@ -4,12 +4,16 @@ BlockBrowser::Application.routes.draw do
   match 'blocks' => 'blocks#index', :as => :blocks
   match 'block/:id' => 'blocks#block', :as => :block
   match 'tx/:id' => 'blocks#tx', :as => :tx
+  match 'mempool_tx/:id' => 'blocks#mempool_tx', as: :mempool_tx
+  match 'mempool/:type' => 'blocks#mempool', as: :mempool_type
+  match 'mempool' => 'blocks#mempool', as: :mempool, type: :all
+  match 'doublespends' => 'blocks#doublespends', as: :doublespends
+
   match 'script/:id' => 'blocks#script', :as => :script
   match 'script' => 'blocks#script'
   match 'address/:id' => 'blocks#address', :as => :address
   match 'search/:search' => 'blocks#search', :as => :search
   match 'search' => 'blocks#search', :as => :search
-  match 'unconfirmed' => 'blocks#unconfirmed', :as => :unconfirmed
   match 'scripts/:type' => 'blocks#scripts', :as => :scripts
   match 'p2sh_scripts/:type' => 'blocks#p2sh_scripts', :as => :scripts
   match 'names' => 'blocks#names', :as => :names

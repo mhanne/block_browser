@@ -1,12 +1,14 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
-  revision: 117a69507bf5034025f13fa5bc631e0570e5db8a
+  revision: 97d9cadad713eb863f0db78bbaaa2167ad1ba191
+  branch: mempool
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-node
-  revision: 29605f8454b5f7e21eb57de984eaad40194d6262
+  revision: fb811a533358526d2ae910f7091aef09dbd12911
+  branch: mempool
   specs:
     bitcoin-ruby-node (0.0.1)
 

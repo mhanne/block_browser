@@ -1,0 +1,10 @@
+%td= tx.id
+%td
+  %a{href: mempool_tx_path(tx.hash)}= tx.hash
+%td.right= format_time tx.created_at, :seconds
+%td.updated_at.right= format_time tx.updated_at, :seconds
+%td.times_seen.right= tx.times_seen
+%td.right= number_to_human_size tx.payload.size / 2
+%td.right= format_amount(tx.input_value)
+%td.right= format_amount(tx.input_value - tx.out.map(&:value).inject(:+)) rescue binding.pry
+%td.right= number_with_delimiter(defined?(priority) ? priority : tx.priority)

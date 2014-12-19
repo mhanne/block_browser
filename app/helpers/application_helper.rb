@@ -3,8 +3,8 @@ module ApplicationHelper
   def hth(h); h.unpack("H*")[0]; end
   def htb(h); [h].pack("H*"); end
 
-  def format_time time
-    Time.at(time).strftime("%Y-%m-%d %H:%M")
+  def format_time time, seconds = false
+    Time.at(time).strftime("%Y-%m-%d %H:%M#{seconds ? ':%S' : ''}")
   end
 
   def format_amount amount

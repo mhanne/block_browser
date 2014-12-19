@@ -7,9 +7,10 @@
     = javascript_include_tag "application"
     = csrf_meta_tags
     :javascript
-      $(document).ready(function() {
-        connect_websocket("ws://#{BB_CONFIG['websocket']}/");
-      })
+      window.ws = new WebSocketHandler("ws://#{BB_CONFIG['websocket']}/");
+      window.ws.add_handler(new BlockCount())
+      window.ws.add_handler(new ClientCount())
+      $(document).ready(function () { window.ws.connect() });
 
   %body
     #header
@@ -39,6 +40,8 @@
       - if Bitcoin.namecoin?
         = link_to "Recent Names", names_path
         |
+      = link_to "Mempool", mempool_path
+      |
       = link_to "API", api_path
       |
       = link_to "Relay", relay_tx_path

@@ -22,3 +22,6 @@
     = link_to "<<", "?height=#{@blocks.first.height + @per_page}", :style => "float: left"
   - if @blocks.last.height > 0
     = link_to ">>", "?height=#{@blocks.last.height - 1}", :style => "float: right"
+
+:javascript
+  ws.add_handler(new Blocks())

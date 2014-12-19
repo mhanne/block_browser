@@ -84,8 +84,7 @@ unless File.exist?(datafile)
   end
 end
 
-`rm #{ENV["HOME"]}/.bitcoin-ruby/namecoin/import_resume.state`
-STORE.import(datafile)  if import
+STORE.import(datafile, resume_file: "/dev/null")  if import
 
 BB_CONFIG["command"] = "localhost:22034"
 
@@ -152,10 +151,14 @@ class FakeChain
 end
 
 def setup_fake_chain
+  Bitcoin.network = :regtest
+  Bitcoin.network[:genesis_hash] = "00006c62931caa8550b8a3be9364126126ef2b193facbac421ee21b9680a7d97"
+  `rm -rf spec/tmp`; `mkdir -p spec/tmp`
+
   @key = Bitcoin::Key.from_base58("92Pt1VX7sBoW37svE1X3mHUGjkYMbfj1D7fy2nTh8fezot3KdLp")
   rebuild = !File.exist?("spec/data/base.db")
   @store = Bitcoin::Blockchain.create_store(:archive, db: "sqlite://spec/data/base.db",
-    index_nhash: true, log_level: :warn)
+    index_nhash: true, log_level: :error)
   @fake_chain = FakeChain.new(@key, @store)
   if rebuild
     puts "Creating fake chain..."
@@ -163,12 +166,12 @@ def setup_fake_chain
   end
   @store.height.should == 123
   `cp spec/data/base.db spec/tmp/testbox1.db`
+  `cp spec/data/base.db spec/tmp/fake_chain.db`
+  @store = Bitcoin::Blockchain.create_store(:sequel, db: "sqlite://spec/tmp/fake_chain.db", index_nhash: true, log_level: :warn)
+  @fake_chain = FakeChain.new(@key, @store)
 end
 
 def run_bitcoin_node
-  Bitcoin.network = :regtest
-  Bitcoin.network[:genesis_hash] = "00006c62931caa8550b8a3be9364126126ef2b193facbac421ee21b9680a7d97"
-  `rm -rf spec/tmp`; `mkdir -p spec/tmp`
   setup_fake_chain
 
   options = Bitcoin::Config.load_file({}, "spec/data/node1.conf", :blockchain)

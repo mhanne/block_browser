@@ -44,7 +44,7 @@ module BlockBrowser
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
+    config.assets.version = '1.1'
   end
 end
 
@@ -56,7 +56,9 @@ begin
   Bitcoin::network = BB_CONFIG["network"]
   backend, config = BB_CONFIG["database"].split("::")
   STORE = Bitcoin::Blockchain.create_store(backend, db: config, index_nhash: true, index_p2sh_type: true)
+  MEMPOOL = Bitcoin::Blockchain::Mempool.new(STORE, db: config)
 rescue
+p $!
   puts "Error loading configuration from config/application.yml; falling back to defaults"
   BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
 end

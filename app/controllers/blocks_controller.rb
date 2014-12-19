@@ -19,6 +19,20 @@ class BlocksController < ApplicationController
     @page_title = "Recent Blocks"
   end
 
+  def mempool
+    @per_page = 25
+    @page = (params[:page] || 1).to_i
+    @total = MEMPOOL.transactions.count
+
+    filter = MEMPOOL.transactions
+    filter = filter.where(type: Bitcoin::Blockchain::Mempool::TYPES.index(params[:type].to_sym))  if params[:type] && params[:type].to_sym != :all
+
+    @txs = filter.order(:id).reverse
+      .limit(@per_page).offset((@page - 1) * @per_page)
+      .map {|data| Bitcoin::Blockchain::Mempool::MempoolTx.new(STORE, MEMPOOL.db, data) }
+    @page_title = "Mempool (#{params[:type]})"
+  end
+
   def block
     @block = STORE.block(params[:id])
     return render_error("Block #{params[:id]} not found.")  unless @block
@@ -35,6 +49,17 @@ class BlocksController < ApplicationController
     @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
     @page_title = "Transaction Details"
     respond_with(@tx, with_nid: true, with_address: true, with_next_in: true)
+  end
+
+  def mempool_tx
+    return redirect_to tx_path(params[:id])  if STORE.has_tx(params[:id])
+    @tx = MEMPOOL.get params[:id]
+    return render_error("Tx #{params[:id]} not found.")  unless @tx
+    @prev_outs = @tx.in.map {|i| hash = i.prev_out.reverse.hth
+      (STORE.get_tx(hash) || MEMPOOL.get(hash)).out[i.prev_out_index] rescue nil }
+    return render_error("Tx #{params[:id]} not found.")  unless @tx
+    @page_title = "Mempool Transaction (#{@tx.type})"
+    respond_with(@tx, with_nid: true)
   end
 
   def address
@@ -164,6 +189,7 @@ class BlocksController < ApplicationController
     elsif STORE.is_a?(Bitcoin::Blockchain::Backends::SequelBase)
       return  if search_block(@id)
       return  if search_tx(@id)
+      return  if search_mempool_tx(@id)
       return  if search_name(@id)
     end
     render_error("Nothing matches #{@id}.")
@@ -256,7 +282,7 @@ class BlocksController < ApplicationController
     # blob = ("%" + [part].pack("H*") + "%").to_sequel_blob
     # hash = STORE.db[:blk].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
     hash = STORE.db[:blk][hash: part.htb.to_sequel_blob][:hash].hth
-    redirect_to block_path(hash)
+    redirect_to block_path(hash)  if hash
   rescue
     nil
   end
@@ -266,7 +292,14 @@ class BlocksController < ApplicationController
     # hash = STORE.db[:tx].filter(:hash.like(blob)).first[:hash].unpack("H*")[0]
     tx = STORE.db[:tx][hash: part.htb.blob]
     tx ||= STORE.db[:tx][nhash: part.htb.blob]
-    redirect_to tx_path(tx[:hash].hth)
+    redirect_to tx_path(tx[:hash].hth)  if tx
+  rescue
+    nil
+  end
+
+  def search_mempool_tx(part)
+    tx = MEMPOOL.get(part)
+    redirect_to mempool_tx_path(tx.hash)  if tx
   rescue
     nil
   end
