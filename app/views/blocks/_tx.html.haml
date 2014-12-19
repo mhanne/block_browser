@@ -32,5 +32,5 @@
                 = address_link(addr)
                 %br/
           %td (#{format_amount o.value})
-  %td= number_to_human_size tx.to_payload.bytesize
+  %td.right= number_to_human_size tx.to_payload.bytesize
   %td.value= format_amount(tx.out.map(&:value).sum)

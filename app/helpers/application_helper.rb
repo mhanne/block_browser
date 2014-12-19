@@ -8,7 +8,9 @@ module ApplicationHelper
   end
 
   def format_amount amount
-    "%.8f" % ((amount || 0) / 1e8)
+    a, b = ("%.8f" % ((amount || 0) / 1e8)).split(".")
+    a = number_with_delimiter a
+    [a, b].join(".")
   end
 
   def format_script string
