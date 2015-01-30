@@ -1,10 +1,4 @@
 GIT
-  remote: git://github.com/lian/bitcoin-ruby.git
-  revision: fe7a8f77219d083eb27475aab6f4b730b8b5e996
-  specs:
-    bitcoin-ruby (0.0.6)
-
-GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
   revision: 5a791adef1b5aafefa59a742e9d513b126dfa4c0
   specs:
@@ -23,8 +17,15 @@ GIT
     bitcoin-ruby-wallet (0.0.1)
 
 GIT
+  remote: git://github.com/mhanne/bitcoin-ruby.git
+  revision: 0b3f0a8bf5ca86f1722e1e98cfa78b5eae0c9381
+  branch: next
+  specs:
+    bitcoin-ruby (0.0.6)
+
+GIT
   remote: git://github.com/mhanne/namecoin-ruby
-  revision: 4e5d84793ab1efec559ed0573303cc05e4854332
+  revision: fa811e2c669917ecb016cb270a169b8d94864480
   specs:
     namecoin-ruby (0.0.1)
 

@@ -78,6 +78,7 @@ unless File.exist?(datafile)
   end
 end
 
+`rm #{ENV["HOME"]}/.bitcoin-ruby/namecoin/import_resume.state`
 STORE.import(datafile)  if import
 
 BB_CONFIG["command"] = "localhost:22034"

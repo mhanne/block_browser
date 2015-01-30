@@ -1,8 +1,8 @@
 source 'http://rubygems.org'
 
 gem 'bitcoin-ruby',
-  git: 'git://github.com/lian/bitcoin-ruby.git',
-#   path: '../bitcoin-ruby'
+  git: 'git://github.com/mhanne/bitcoin-ruby.git', branch: 'next',
+#   path: '../bitcoin-ruby',
   require: 'bitcoin'
 
 gem 'bitcoin-ruby-blockchain',

@@ -56,7 +56,6 @@ begin
   backend, config = BB_CONFIG["database"].split("::")
   STORE = Bitcoin::Blockchain.create_store(backend, db: config, index_nhash: true, index_p2sh_type: true)
 rescue
-  p $!
-  puts "Error loading configuration from config/application.yml"
-  exit
+  puts "Error loading configuration from config/application.yml; falling back to defaults"
+  BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
 end
