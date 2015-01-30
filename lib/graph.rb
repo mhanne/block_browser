@@ -36,12 +36,13 @@ EOS
   data[:tx_per_block] << [blk[:depth], blk[:count]]
 end
 
+height = STORE.get_depth
 total = 0; reward = 50e8;
-16.times do |i|
-  data[:total_coins] << [210_000*i, total/1e8]
-  data[:total_coins].last << total/1e8  if i < 3
-  total += 210_000 * reward
-  reward /= 2
+160.times do |i|
+  data[:total_coins] << [21_000*i, total/1e8]
+  data[:total_coins].last << total/1e8  if i < height / 21_000
+  total += 21_000 * reward
+  reward /= 2  if i > 0 && (i+1) % 10 == 0
 end
 
 data.each do |name, lines|
