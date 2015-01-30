@@ -1,6 +1,13 @@
 $:.unshift( File.expand_path("../../../bitcoin-ruby/lib", __FILE__) )
 
-require 'bitcoin'
+require 'bundler'
+Bundler.setup
+
+require 'bitcoin/blockchain'
+require 'bitcoin/node'
+require 'bitcoin/wallet'
+require 'bitcoin/namecoin'
+
 Bitcoin.network = :namecoin
 
 require 'simplecov'
@@ -60,8 +67,8 @@ FileUtils.mkdir_p File.dirname(db_path)
 # FileUtils.rm_rf db_path
 
 import = true  unless File.exists?(db_path)
-STORE = Bitcoin::Storage.sequel(db: "sqlite://#{db_path}", skip_validation: true, index_nhash: true,
-                                index_p2sh_type: true)
+STORE = Bitcoin::Blockchain.create_store(:archive, db: "sqlite://#{db_path}",
+  skip_validation: true, index_nhash: true, index_p2sh_type: true)
 
 datafile = File.join(Rails.root, "tmp/namecoin_first500.dat")
 unless File.exist?(datafile)
@@ -126,7 +133,7 @@ class FakeChain
   def send_block blk
     if @command
       EM.run do
-        Bitcoin::Network::CommandClient.connect(*@command) do
+        Bitcoin::Node::CommandClient.connect(*@command) do
           on_connected { request(:store_block, hex: blk.payload.hth) }
           on_response { EM.stop }
         end
@@ -140,7 +147,8 @@ end
 def setup_fake_chain
   @key = Bitcoin::Key.from_base58("92Pt1VX7sBoW37svE1X3mHUGjkYMbfj1D7fy2nTh8fezot3KdLp")
   rebuild = !File.exist?("spec/data/base.db")
-  @store = Bitcoin::Storage.sequel(db: "sqlite://spec/data/base.db", index_nhash: true, log_level: :warn)
+  @store = Bitcoin::Blockchain.create_store(:archive, db: "sqlite://spec/data/base.db",
+    index_nhash: true, log_level: :warn)
   @fake_chain = FakeChain.new(@key, @store)
   if rebuild
     puts "Creating fake chain..."
@@ -159,7 +167,7 @@ def run_bitcoin_node
   options = Bitcoin::Config.load_file({}, "spec/data/node1.conf", :blockchain)
   options[:log] = { network: :warn, storage: :warn }
   @node1_pid = fork do
-    node = Bitcoin::Network::Node.new(options)
+    node = Bitcoin::Node::Node.new(options)
     node.log.level = :warn
     node.run
   end

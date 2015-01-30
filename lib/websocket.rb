@@ -25,7 +25,7 @@ EM.run do
 
   log = Bitcoin::Logger.create(:websocket, :debug)
 
-  Bitcoin::Network::CommandClient.connect(bc_host, bc_port) do
+  Bitcoin::Node::CommandClient.connect(bc_host, bc_port) do
     on_connected do
       log.info { "Connected to bitcoin node" }
       request("monitor", channel: "block")

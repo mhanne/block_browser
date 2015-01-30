@@ -5,3 +5,8 @@
 require File.expand_path('../config/application', __FILE__)
 
 BlockBrowser::Application.load_tasks
+
+task :doc do
+  `rm -rf doc`
+  system("yard")
+end

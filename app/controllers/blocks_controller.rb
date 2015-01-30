@@ -130,13 +130,12 @@ class BlocksController < ApplicationController
   # TODO: search for pubkeys/hash160
   def search
     @id = params[:search]
-
     if Bitcoin.valid_address?(@id)
       return redirect_to address_path(@id)
     elsif @id.to_i.to_s == @id
       block = STORE.get_block_by_depth(@id.to_i)
       return redirect_to(block_path(block.hash))  if block
-    elsif STORE.db.class.name =~ /Sequel/
+    elsif STORE.is_a?(Bitcoin::Blockchain::Backends::SequelBase)
       return  if search_block(@id)
       return  if search_tx(@id)
       return  if search_name(@id)

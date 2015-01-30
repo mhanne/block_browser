@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 
-  include Bitcoin::Storage
+  include Bitcoin::Blockchain
 
   layout 'application'
 

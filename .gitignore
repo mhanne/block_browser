@@ -26,6 +26,7 @@ public/graphs
 
 coverage/
 doc/
+.yardoc/
 
 spec/data/base.db
 spec/tmp

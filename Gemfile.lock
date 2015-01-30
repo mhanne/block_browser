@@ -1,8 +1,32 @@
 GIT
-  remote: git://github.com/mhanne/bitcoin-ruby.git
-  revision: e4226002ad34e5b3207efa8f9f158c3f4eb65b0c
+  remote: git://github.com/lian/bitcoin-ruby.git
+  revision: fe7a8f77219d083eb27475aab6f4b730b8b5e996
   specs:
     bitcoin-ruby (0.0.6)
+
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-blockchain
+  revision: 5a791adef1b5aafefa59a742e9d513b126dfa4c0
+  specs:
+    bitcoin-ruby-blockchain (0.0.1)
+
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-node
+  revision: f71f0f689a23fb44f9eb0ef933cb66a0dde8242d
+  specs:
+    bitcoin-ruby-node (0.0.1)
+
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-wallet
+  revision: 920b4afd784ea59b243bd97c03f28f60aca8ca7c
+  specs:
+    bitcoin-ruby-wallet (0.0.1)
+
+GIT
+  remote: git://github.com/mhanne/namecoin-ruby
+  revision: 4e5d84793ab1efec559ed0573303cc05e4854332
+  specs:
+    namecoin-ruby (0.0.1)
 
 GEM
   remote: http://rubygems.org/
@@ -66,7 +90,7 @@ GEM
     hike (1.2.3)
     http_parser.rb (0.6.0)
     i18n (0.6.11)
-    jquery-rails (3.1.2)
+    jquery-rails (2.3.0)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
@@ -164,18 +188,23 @@ GEM
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     will_paginate (3.0.7)
+    yard (0.8.7.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   bitcoin-ruby!
+  bitcoin-ruby-blockchain!
+  bitcoin-ruby-node!
+  bitcoin-ruby-wallet!
   coffee-rails (~> 3.1.1)
   coveralls
   em-websocket
   ffi
   haml
-  jquery-rails
+  jquery-rails (~> 2.3.0)
+  namecoin-ruby!
   pg
   pry
   rails (= 3.1.3)
@@ -191,3 +220,4 @@ DEPENDENCIES
   thin
   uglifier (>= 1.0.3)
   will_paginate
+  yard
