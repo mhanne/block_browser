@@ -16,7 +16,7 @@
     %th Confirmations
     %td
       - if @blk
-        = STORE.get_depth - @blk[:depth] + 1
+        = STORE.get_depth - @blk[:height] + 1
         (At Depth: #{@blk[:depth]})
         - unless @blk[:chain] == 0
           %span{style: "color:red"} (#{["Main", "Side", "Orphan"][@blk[:chain]]} Chain!)

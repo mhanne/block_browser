@@ -17,7 +17,7 @@
 
     %tr{:class => cycle('odd', 'even')}
       %td= link_to(tx.hash, tx_path(tx.hash))
-      %td= link_to(blk[:depth], block_path(blk[:hash].hth))
+      %td= link_to(blk[:height], block_path(blk[:hash].hth))
       %td
         - STORE.db[:txin].where(tx_id: tx.id).order(:tx_idx).each do |prev_in|
           - txin = STORE.wrap_txin(prev_in)
@@ -44,7 +44,7 @@
 
       %tr{:class => cycle('odd', 'even')}
         %td= link_to(tx.hash, tx_path(tx.hash))
-        %td= link_to(blk[:depth], block_path(blk[:hash].hth))
+        %td= link_to(blk[:height], block_path(blk[:hash].hth))
         %td
 
           %table.tx_outs{cellpadding: 0, cellspacing: 0}

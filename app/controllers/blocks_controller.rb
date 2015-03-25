@@ -14,14 +14,14 @@ class BlocksController < ApplicationController
     depth = STORE.get_depth
     depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
     depth = (@per_page - 1)  if depth < @per_page
-    @blocks = STORE.db[:blk].filter("depth <= ?", depth).where(chain: 0).order(:depth).limit(@per_page).reverse
+    @blocks = STORE.db[:blk].filter("height <= ?", depth).where(chain: 0).order(:height).limit(@per_page).reverse
     @page_title = "Recent Blocks"
   end
 
   def block
     @block = STORE.get_block(params[:id])
     return render_error("Block #{params[:id]} not found.")  unless @block
-    @siblings = STORE.db[:blk].where(depth: @block.depth).map {|b| STORE.get_block(b[:hash].hth) }
+    @siblings = STORE.db[:blk].where(height: @block.depth).map {|b| STORE.get_block(b[:hash].hth) }
     @siblings.delete(@block)
     @page_title = "Block Details"
     respond_with(@block)
@@ -51,7 +51,7 @@ class BlocksController < ApplicationController
       .where("addr.type = #{STORE.class::ADDRESS_TYPES.index(@type)}")
       .join(:addr_txout, addr_id: :id).join(:txout, id: :txout_id)
       .join(:tx, id: :tx_id).join(:blk_tx, tx_id: :id).join(:blk, id: :blk_id)
-      .where(chain: 0).order(:depth)
+      .where(chain: 0).order(:height)
 
     if @addr_txouts.count > (BB_CONFIG['max_addr_txouts'] || 100)
       return render_error("Too many outputs for this address (#{@addr_txouts.count})")
@@ -281,7 +281,7 @@ class BlocksController < ApplicationController
 
     data = tx.to_hash(with_address: true, with_nid: true)
     data['block'] = blk[:hash].hth
-    data['blocknumber'] = blk[:depth]
+    data['blocknumber'] = blk[:height]
     data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")
     data
   end

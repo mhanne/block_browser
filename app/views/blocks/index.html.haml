@@ -13,10 +13,10 @@
           = render :partial => "blk", :object => block
 
 - if STORE.db.class.name =~ /Sequel/
-  - if @blocks.first[:depth] < STORE.get_depth
-    = link_to "<<", "?depth=#{@blocks.first[:depth] + @per_page}", :style => "float: left"
-  - if @blocks.all.last[:depth] > 0
-    = link_to ">>", "?depth=#{@blocks.all.last[:depth] - 1}", :style => "float: right"
+  - if @blocks.first[:height] < STORE.get_depth
+    = link_to "<<", "?depth=#{@blocks.first[:height] + @per_page}", :style => "float: left"
+  - if @blocks.all.last[:height] > 0
+    = link_to ">>", "?depth=#{@blocks.all.last[:height] - 1}", :style => "float: right"
 - else
   - if @blocks.first.depth < STORE.get_depth
     = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"

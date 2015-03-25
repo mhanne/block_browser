@@ -15,7 +15,7 @@
         %td= @siblings.map {|s| link_to s.hash, block_path(s.hash) }.join("<br/>").html_safe
     %tr
       %th Prev Block
-      %td= link_to @block.prev_block.reverse_hth, block_path(@block.prev_block.reverse_hth)
+      %td= link_to @block.prev_block_hash.reverse_hth, block_path(@block.prev_block_hash.reverse_hth)
   %tr
     %th Next Block
     - blk = STORE.db[:blk][prev_hash: @block.hash.htb.to_sequel_blob, chain: 0]

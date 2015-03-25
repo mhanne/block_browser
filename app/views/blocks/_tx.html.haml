@@ -7,7 +7,7 @@
           %td coinbase
       - else
         - tx.in.map do |i|
-          - prev_tx = STORE.db[:tx][hash: i.prev_out.reverse.to_sequel_blob]
+          - prev_tx = STORE.db[:tx][hash: i.prev_out_hash.reverse.to_sequel_blob]
           - prev_out = STORE.db[:txout][tx_id: prev_tx[:id], tx_idx: i.prev_out_index]
           - if prev_out
             %tr
