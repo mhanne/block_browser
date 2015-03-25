@@ -1,25 +1,31 @@
-PATH
-  remote: ../bitcoin-ruby
-  specs:
-    bitcoin-ruby (0.0.6)
-
-PATH
-  remote: ../bitcoin-ruby-blockchain
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-blockchain
+  revision: 846d970f9a597be04033299e7c68fccf0137b582
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 
-PATH
-  remote: ../bitcoin-ruby-node
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-node
+  revision: 5f508d35bf2e42e355446d8ed11304dff0b88be5
   specs:
     bitcoin-ruby-node (0.0.1)
 
-PATH
-  remote: ../bitcoin-ruby-wallet
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-wallet
+  revision: 2895e2d8942cc414a6cf13ec04021fd13ccb1eeb
   specs:
     bitcoin-ruby-wallet (0.0.1)
 
-PATH
-  remote: ../namecoin-ruby
+GIT
+  remote: git://github.com/mhanne/bitcoin-ruby.git
+  revision: 664b63a369c3f5cb567f12630c3d75f206526ac2
+  branch: next
+  specs:
+    bitcoin-ruby (0.0.6)
+
+GIT
+  remote: git://github.com/mhanne/namecoin-ruby
+  revision: 8597401c12b561c11246daea69906cfa78353b5f
   specs:
     namecoin-ruby (0.0.1)
 
