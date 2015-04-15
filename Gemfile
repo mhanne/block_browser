@@ -1,32 +1,27 @@
 source 'http://rubygems.org'
 
-gem 'bitcoin-ruby',
-  git: 'git://github.com/mhanne/bitcoin-ruby.git', branch: 'next',
-  # path: '../bitcoin-ruby',
-  require: 'bitcoin'
+gem 'bitcoin-ruby', require: 'bitcoin',
+  git: 'git://github.com/mhanne/bitcoin-ruby.git', branch: 'next'
+  # path: '../bitcoin-ruby'
 
-gem 'bitcoin-ruby-blockchain',
-  git: 'git://github.com/mhanne/bitcoin-ruby-blockchain',
-  # path: '../bitcoin-ruby-blockchain',
-  require: 'bitcoin/blockchain'
+gem 'bitcoin-ruby-blockchain', require: 'bitcoin/blockchain',
+  git: 'git://github.com/mhanne/bitcoin-ruby-blockchain'
+  # path: '../bitcoin-ruby-blockchain'
 
-gem 'bitcoin-ruby-node',
-  git: 'git://github.com/mhanne/bitcoin-ruby-node',
-  # path: '../bitcoin-ruby-node',
-  require: 'bitcoin/node'
+gem 'bitcoin-ruby-node', require: 'bitcoin/node',
+  git: 'git://github.com/mhanne/bitcoin-ruby-node'
+  # path: '../bitcoin-ruby-node'
 
-gem 'bitcoin-ruby-wallet',
-  git: 'git://github.com/mhanne/bitcoin-ruby-wallet',
-  # path: '../bitcoin-ruby-wallet',
-  require: 'bitcoin/wallet'
+gem 'bitcoin-ruby-wallet', require: 'bitcoin/wallet',
+  git: 'git://github.com/mhanne/bitcoin-ruby-wallet'
+  # path: '../bitcoin-ruby-wallet'
 
-gem 'namecoin-ruby',
-  git: 'git://github.com/mhanne/namecoin-ruby',
-  # path: '../namecoin-ruby',
-  require: 'bitcoin/namecoin'
+gem 'namecoin-ruby', require: 'bitcoin/namecoin',
+  git: 'git://github.com/mhanne/namecoin-ruby'
+  # path: '../namecoin-ruby'
 
 gem 'thin'
-gem 'rails', '3.1.3'
+gem 'rails', '3.2.14'
 
 gem 'haml'
 gem 'sass'
@@ -39,9 +34,8 @@ gem 'pg'
 gem 'will_paginate'
 
 group :assets do
-  gem 'sass-rails',   '~> 3.1.5'
-  gem 'coffee-rails', '~> 3.1.1'
-  gem 'uglifier', '>= 1.0.3'
+  gem 'coffee-rails'
+  gem 'uglifier'
 end
 
 group :development, :test do
@@ -51,7 +45,7 @@ group :development, :test do
   gem 'yard'
 end
 
-gem 'jquery-rails', '~> 2.3.0'
+gem 'jquery-rails'
 
 gem 'em-websocket'
 
