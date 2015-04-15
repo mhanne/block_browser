@@ -4,9 +4,9 @@
       %th Block
       %th= @block.hash
     %tr
-      %th Depth
+      %th Height
       %td
-        = @block.depth
+        = @block.height
         - unless @block.chain == 0
           %span{style: "color: red"} (Side Chain)
     - if @siblings.any?

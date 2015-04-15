@@ -16,8 +16,8 @@
     %th Confirmations
     %td
       - if @blk
-        = STORE.get_depth - @blk[:height] + 1
-        (At Depth: #{@blk[:depth]})
+        = STORE.height - @blk[:height] + 1
+        (At Height: #{@blk[:height]})
         - unless @blk[:chain] == 0
           %span{style: "color:red"} (#{["Main", "Side", "Orphan"][@blk[:chain]]} Chain!)
       - else
@@ -38,7 +38,7 @@
       %th Outputs
       %td= @tx.out.size
     - if @tx.in.size == 1 && @tx.in[0].coinbase?
-      - input_value = Bitcoin.block_creation_reward(@blk[:depth])
+      - input_value = Bitcoin.block_creation_reward(@blk[:height])
     - else
       - input_value = @tx.in.map(&:get_prev_out).map(&:value).sum rescue '?'
     %tr
@@ -56,7 +56,7 @@
         %th Lock Time
         %td
           - if @tx.lock_time < 500_000_000
-            - block = STORE.db[:blk][depth: @tx.lock_time, chain: 0][:hash].hth
+            - block = STORE.db[:blk][height: @tx.lock_time, chain: 0][:hash].hth
             Block #{link_to @tx.lock_time, "/block/#{block}"}
           - else
             #{@tx.lock_time} (#{format_time Time.at(@tx.lock_time)})
@@ -89,7 +89,7 @@
         - if txin.coinbase?
           %td generation
           %td none
-          %td.value= format_amount(Bitcoin.block_creation_reward(@blk[:depth]))
+          %td.value= format_amount(Bitcoin.block_creation_reward(@blk[:height]))
           %td -
           %td= txin.script_sig.unpack("H*")[0]
         - else

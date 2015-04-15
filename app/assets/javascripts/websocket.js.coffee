@@ -17,13 +17,13 @@ window.connect_websocket = (host) ->
   window.socket.addEventListener "message", (event) =>
     d = JSON.parse(event.data); cmd = d[0]; data = d[1]
     if(cmd == "new_block")
-      current_depth = parseInt($("#head_block a").html())
-      if current_depth > data['depth'] - 1 # missed blocks; reload
+      current_height = parseInt($("#head_block a").html())
+      if current_height > data['height'] - 1 # missed blocks; reload
         document.location = document.location
-      else if current_depth < data['depth'] - 1
+      else if current_height < data['height'] - 1
         # ignore
       else
-        $('#head_block').html("<a href='/block/#{data['json']['hash']}'>#{data['depth']}</a>")
+        $('#head_block').html("<a href='/block/#{data['json']['hash']}'>#{data['height']}</a>")
         $('#footer').effect("highlight")
         list = $('table#blocks tbody.blocks')
         if list.length > 0

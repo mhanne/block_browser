@@ -15,8 +15,8 @@ module ApplicationHelper
     string.size > 100 ? string.gsub(/\s+/, "\n") : string
   end
 
-  def calculate_reward depth
-    ((50.0 / (2 ** (depth / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
+  def calculate_reward height
+    ((50.0 / (2 ** (height / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
   end
 
   def address_link addr

@@ -30,12 +30,12 @@ EM.run do
       log.info { "Connected to bitcoin node" }
       request("monitor", channel: "block")
     end
-    on_block do |blk, depth|
-      block = STORE.get_block(blk['hash'])
-      log.info { "new block: #{block.depth} #{block.hash}" }
-      CHANNEL.push ["new_block", {depth: block.depth, json: block.to_hash,
+    on_block do |blk, height|
+      block = STORE.block(blk['hash'])
+      log.info { "new block: #{block.height} #{block.hash}" }
+      CHANNEL.push ["new_block", {height: block.height, json: block.to_hash,
                       partial: compile_block_haml(STORE.db[:blk][id: block.id])}]
-      log.debug { "pushed block #{block.depth}" }
+      log.debug { "pushed block #{block.height}" }
       # TODO: fix caching properly
       cache_dir = File.join(Rails.root, "tmp/cache/")
       FileUtils.rm_rf cache_dir

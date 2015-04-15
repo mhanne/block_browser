@@ -1,6 +1,6 @@
 %table#blocks.list
   %tr
-    %th Depth
+    %th Height
     %th Hash
     %th Time
     %th Tx
@@ -13,12 +13,12 @@
           = render :partial => "blk", :object => block
 
 - if STORE.db.class.name =~ /Sequel/
-  - if @blocks.first[:height] < STORE.get_depth
-    = link_to "<<", "?depth=#{@blocks.first[:height] + @per_page}", :style => "float: left"
+  - if @blocks.first[:height] < STORE.height
+    = link_to "<<", "?height=#{@blocks.first[:height] + @per_page}", :style => "float: left"
   - if @blocks.all.last[:height] > 0
-    = link_to ">>", "?depth=#{@blocks.all.last[:height] - 1}", :style => "float: right"
+    = link_to ">>", "?height=#{@blocks.all.last[:height] - 1}", :style => "float: right"
 - else
-  - if @blocks.first.depth < STORE.get_depth
-    = link_to "<<", "?depth=#{@blocks.first.depth + @per_page}", :style => "float: left"
-  - if @blocks.last.depth > 0
-    = link_to ">>", "?depth=#{@blocks.last.depth - 1}", :style => "float: right"
+  - if @blocks.first.height < STORE.height
+    = link_to "<<", "?height=#{@blocks.first.height + @per_page}", :style => "float: left"
+  - if @blocks.last.height > 0
+    = link_to ">>", "?height=#{@blocks.last.height - 1}", :style => "float: right"

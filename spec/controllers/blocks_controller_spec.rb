@@ -30,19 +30,19 @@ describe BlocksController do
     it "should render json" do
       get :block, id: block_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.get_block(block_hash).to_hash
+      JSON.parse(response.body).should == STORE.block(block_hash).to_hash
     end
 
     it "should render bin" do
       get :block, id: block_hash, format: :bin
       response.status.should == 200
-      response.body.should == STORE.get_block(block_hash).to_payload
+      response.body.should == STORE.block(block_hash).to_payload
     end
 
     it "should render hex" do
       get :block, id: block_hash, format: :hex
       response.status.should == 200
-      response.body.should == STORE.get_block(block_hash).to_payload.hth
+      response.body.should == STORE.block(block_hash).to_payload.hth
     end
 
     it "should display block containing tx with OP_RETURN output script type" do
@@ -66,19 +66,19 @@ describe BlocksController do
     it "should render json" do
       get :tx, id: tx_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.get_tx(tx_hash).to_hash(with_nid: true)
+      JSON.parse(response.body).should == STORE.tx(tx_hash).to_hash(with_nid: true)
     end
 
     it "should render bin" do
       get :tx, id: tx_hash, format: :bin
       response.status.should == 200
-      response.body.should == STORE.get_tx(tx_hash).to_payload
+      response.body.should == STORE.tx(tx_hash).to_payload
     end
 
     it "should render hex" do
       get :tx, id: tx_hash, format: :hex
       response.status.should == 200
-      response.body.should == STORE.get_tx(tx_hash).to_payload.hth
+      response.body.should == STORE.tx(tx_hash).to_payload.hth
     end
 
     it "should display tx with OP_RETURN output script type" do
@@ -131,7 +131,7 @@ describe BlocksController do
     let(:sig_hash) { "4b64f253615a173f60b260c819390b6d65e3257ef50846549c2bc53e6b797db9" }
 
     it "should execute input script given tx hash / index" do
-      tx_hash = STORE.get_head.get_prev_block.tx.last.hash
+      tx_hash = STORE.head.prev_block.tx.last.hash
       get :script, id: "#{tx_hash}:0"
       assigns(:tx).hash.should == tx_hash
       assigns(:result).should == true
@@ -199,8 +199,8 @@ describe BlocksController do
       response.should redirect_to(block_path(block_hash))
     end
 
-    it "should search for block by depth" do
-      block = STORE.get_block_by_depth(123)
+    it "should search for block by height" do
+      block = STORE.block_at_height(123)
       get :search, search: 123
       response.should redirect_to(block_path(block.hash))
     end
@@ -211,7 +211,7 @@ describe BlocksController do
     end
 
     it "should search for tx by nhash" do
-      tx = STORE.get_tx(tx_hash)
+      tx = STORE.tx(tx_hash)
       get :search, search: tx.nhash
       response.should redirect_to(tx_path(tx_hash))
     end

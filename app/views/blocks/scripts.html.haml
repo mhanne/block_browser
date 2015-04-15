@@ -15,7 +15,7 @@
     - blk = STORE.db[:blk][id: blk_tx[:blk_id]]
     - script = Bitcoin::Script.new(txout[:pk_script])
     %tr
-      %td= link_to "#{blk[:depth]}", block_path(blk[:hash].hth)
+      %td= link_to "#{blk[:height]}", block_path(blk[:hash].hth)
       %td
         = link_to truncate(tx[:hash].hth, :length => 16), tx_path(tx[:hash].hth)
         = "/ #{txout[:tx_idx]}"

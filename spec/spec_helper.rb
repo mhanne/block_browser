@@ -100,7 +100,7 @@ class FakeChain
     @key, @store, @command = key, storage, command
     Bitcoin.network[:genesis_hash] = GENESIS.hash
     @store.new_block GENESIS
-    @prev_hash = @store.get_head.hash
+    @prev_hash = @store.head.hash
     @tx = []
   end
 
@@ -155,7 +155,7 @@ def setup_fake_chain
     puts "Creating fake chain..."
     123.times { print "\rGenerated block #{@fake_chain.new_block[0]}/#{123}"; sleep 0.2 }
   end
-  @store.get_depth.should == 123
+  @store.height.should == 123
   `cp spec/data/base.db spec/tmp/testbox1.db`
 end
 

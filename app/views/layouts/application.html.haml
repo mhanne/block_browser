@@ -31,7 +31,7 @@
           = link_to name, url
       |
       Blocks:
-      %span#head_block= link_to STORE.get_depth, block_path(STORE.get_head_hash)
+      %span#head_block= link_to STORE.height, block_path(STORE.head_hash)
       |
       Clients:
       %span#client_count ?

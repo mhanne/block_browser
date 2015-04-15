@@ -52,13 +52,13 @@
 
   %tr
     %th Current Reward
-    %td= format_amount calculate_reward(STORE.get_depth)
+    %td= format_amount calculate_reward(STORE.height)
 
   %tr
     %th Next Halving
     %td
       - drop = Bitcoin::REWARD_DROP
-      in #{blocks = drop - (STORE.get_depth % drop)} blocks -
+      in #{blocks = drop - (STORE.height % drop)} blocks -
       - seconds = blocks * 10 * 60
       = (Time.now + seconds).strftime("%Y-%m-%d %H:%M")
       - if seconds < 2592000

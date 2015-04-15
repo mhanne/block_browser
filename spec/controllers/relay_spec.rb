@@ -10,7 +10,7 @@ describe BlocksController do
       run_bitcoin_node
       @tx = build_tx do |t|
         t.input do |i|
-          i.prev_out @fake_chain.store.get_head.tx.first.out.first.get_tx, 0
+          i.prev_out @fake_chain.store.head.tx.first.out.first.get_tx, 0
           i.signature_key @key
         end
         t.output do |o|

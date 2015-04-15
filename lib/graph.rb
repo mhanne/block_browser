@@ -13,30 +13,30 @@ data = {}
 puts "Collecting block data..."
 total_size, total_work, total_coins = 0, 0, 0
 STORE.db[<<EOS].each do |blk|
-  SELECT depth, work, bits, blk_size AS size
-  FROM blk WHERE chain = 0 ORDER BY depth
+  SELECT height, work, bits, blk_size AS size
+  FROM blk WHERE chain = 0 ORDER BY height
 EOS
 
-  data[:block_size] << [blk[:depth], blk[:size]]
-  data[:total_size] << [blk[:depth], total_size += blk[:size]]
+  data[:block_size] << [blk[:height], blk[:size]]
+  data[:total_size] << [blk[:height], total_size += blk[:size]]
 
-  data[:block_work] << [blk[:depth], Bitcoin.block_difficulty(blk[:bits])]
-  data[:total_work] << [blk[:depth], blk[:work]]
+  data[:block_work] << [blk[:height], Bitcoin.block_difficulty(blk[:bits])]
+  data[:total_work] << [blk[:height], blk[:work]]
 
-  total_coins += Bitcoin.block_creation_reward(blk[:depth])
+  total_coins += Bitcoin.block_creation_reward(blk[:height])
 end
 
 puts "Collecting tx data..."
 STORE.db[<<EOS].each do |blk|
-  SELECT blk.depth, count(blk_tx)
+  SELECT blk.height, count(blk_tx)
   FROM blk
   JOIN blk_tx ON blk.id = blk_tx.blk_id
-  WHERE blk.chain = 0 GROUP BY blk.depth
+  WHERE blk.chain = 0 GROUP BY blk.height
 EOS
-  data[:tx_per_block] << [blk[:depth], blk[:count]]
+  data[:tx_per_block] << [blk[:height], blk[:count]]
 end
 
-height = STORE.get_depth
+height = STORE.height
 total = 0; reward = 50e8;
 160.times do |i|
   data[:total_coins] << [21_000*i, total/1e8]

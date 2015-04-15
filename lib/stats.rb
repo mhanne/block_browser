@@ -1,7 +1,7 @@
 data = {}
 
-def calculate_reward depth
-  ((50.0 / (2 ** (depth / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
+def calculate_reward height
+  ((50.0 / (2 ** (height / Bitcoin::REWARD_DROP.to_f).floor)) * 1e8).to_i
 end
 
 STORE.db.transaction do
@@ -18,7 +18,7 @@ STORE.db.transaction do
     txins: tx.join(:txin, tx_id: :tx_id).count,
     txouts: tx.join(:txout, tx_id: :tx_id).count,
     addrs: STORE.db[:addr].count,
-    coins: (total = 0; (STORE.get_depth + 1).times {|i| total += calculate_reward(i + 1) }; total),
+    coins: (total = 0; (STORE.height + 1).times {|i| total += calculate_reward(i + 1) }; total),
     script_types: {},
     p2sh_types: {},
   }

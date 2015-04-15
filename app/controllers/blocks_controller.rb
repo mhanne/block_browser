@@ -11,24 +11,24 @@ class BlocksController < ApplicationController
   def index
     @per_page = 20
     STORE.instance_eval { @head = nil }
-    depth = STORE.get_depth
-    depth = params[:depth].to_i  if params[:depth] && params[:depth].to_i < depth
-    depth = (@per_page - 1)  if depth < @per_page
-    @blocks = STORE.db[:blk].filter("height <= ?", depth).where(chain: 0).order(:height).limit(@per_page).reverse
+    height = STORE.height
+    height = params[:height].to_i  if params[:height] && params[:height].to_i < height
+    height = (@per_page - 1)  if height < @per_page
+    @blocks = STORE.db[:blk].filter("height <= ?", height).where(chain: 0).order(:height).limit(@per_page).reverse
     @page_title = "Recent Blocks"
   end
 
   def block
-    @block = STORE.get_block(params[:id])
+    @block = STORE.block(params[:id])
     return render_error("Block #{params[:id]} not found.")  unless @block
-    @siblings = STORE.db[:blk].where(height: @block.depth).map {|b| STORE.get_block(b[:hash].hth) }
+    @siblings = STORE.db[:blk].where(height: @block.height).map {|b| STORE.block(b[:hash].hth) }
     @siblings.delete(@block)
     @page_title = "Block Details"
     respond_with(@block)
   end
 
   def tx
-    @tx = STORE.get_tx(params[:id])
+    @tx = STORE.tx(params[:id])
     return render_error("Tx #{params[:id]} not found.")  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
@@ -77,7 +77,7 @@ class BlocksController < ApplicationController
     # if tx_hash:idx is given, fetch tx from db and use those scripts
     if params[:id] =~ /([0-9a-fA-F]{64}):(\d+)/
       tx_hash, txin_idx = params[:id].split(":")
-      @tx = STORE.get_tx(tx_hash)
+      @tx = STORE.tx(tx_hash)
       @txin = @tx.in[txin_idx.to_i]
       @txout = @txin.get_prev_out
       @script_sig = @txin.script_sig
@@ -133,7 +133,7 @@ class BlocksController < ApplicationController
     if Bitcoin.valid_address?(@id)
       return redirect_to address_path(@id)
     elsif @id.to_i.to_s == @id
-      block = STORE.get_block_by_depth(@id.to_i)
+      block = STORE.block_at_height(@id.to_i)
       return redirect_to(block_path(block.hash))  if block
     elsif STORE.is_a?(Bitcoin::Blockchain::Backends::SequelBase)
       return  if search_block(@id)
@@ -275,7 +275,7 @@ class BlocksController < ApplicationController
   end
 
   def tx_data_from_id tx_id
-    tx = STORE.get_tx_by_id(tx_id)
+    tx = STORE.tx_by_id(tx_id)
     blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
 

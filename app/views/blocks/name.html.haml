@@ -35,10 +35,10 @@
 
   - @names.reverse.each do |name|
     %tr{:class => cycle('odd', 'even')}
-      %td= link_to(name.get_block.depth, block_path(name.get_block.hash))  if name.get_block
-      %td= link_to(truncate(name.get_tx.hash, :length => 16), tx_path(name.get_tx.hash))
-      %td= name.get_txout.type
+      %td= link_to(name.block.height, block_path(name.block.hash))  if name.block
+      %td= link_to(truncate(name.tx.hash, :length => 16), tx_path(name.tx.hash))
+      %td= name.txout.type
       %td
-        %pre= name.get_txout.type == :name_new ? name.hash : name.value
-      - addr = name.get_address
+        %pre= name.txout.type == :name_new ? name.hash : name.value
+      - addr = name.address
       %td= link_to addr, address_path(addr)
