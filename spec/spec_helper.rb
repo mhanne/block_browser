@@ -58,6 +58,12 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  # re-enable old default behaviour
+  config.infer_spec_type_from_file_location!
+
+  # ... and make it actually work
+  config.before { @controller = BlocksController.new }
 end
 
 Bitcoin.network = :namecoin
