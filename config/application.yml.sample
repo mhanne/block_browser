@@ -1,19 +1,49 @@
+# the network to use ("bitcoin", "namecoin", "testnet3", etc.)
 network: bitcoin
-command: "127.0.0.1:9999"
-domain: "localhost"
-websocket: "127.0.0.1:8000"
+
+# blockchain database (has to match the "network" setting)
 database: "archive::postgres:/bitcoin"
-donate: 1NqPo22Jhthd5Suget1rgs9EEoFGuDTZ9S
+
+# how to connect to the "command socket" of the bitcoin-ruby-node
+command: "127.0.0.1:9999"
+
+# where the websocket server will be started / reachable by the clients
+websocket: "127.0.0.1:8000"
+
+
+# page processing timeout
 timeout: 30
+
+# don't even try to display addresses with more outputs than this
 max_addr_txouts: 100
 
-relay_wait_default: 3
-relay_wait_max: 10
+
+# whether to display indexed p2sh script types
+# (this also needs to be enabled in the bitcoin node / blockchain database!)
+index_p2sh_scripts: true
+
+# number of entries displayed in /scripts or /p2sh_scripts
+script_list_limit: 20
+
+
+# relay transactions to this many nodes
 relay_send: 3
 
-script_list_limit: 20
-index_p2sh_scripts: true  # disable for networks without p2sh support
+# default time to wait for relay propagation estimate
+relay_wait_default: 3
 
+# max time to wait for relay propagation estimate
+relay_wait_max: 10
+
+
+# the domain of this instance (only used in /api documentation for now,
+# but might become important in relation to the "networks" setting)
+domain: "localhost"
+
+# links to other instances for different networks
 networks:
   bitcoin: "http://webbtc.com"
   namecoin: "http://namecoin.webbtc.com"
+
+# donation address displayed in the footer
+donate: 1NqPo22Jhthd5Suget1rgs9EEoFGuDTZ9S

@@ -64,5 +64,5 @@
 %h3 Example
 
 .example
-  %pre= "curl http://webbtc.com/block/00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee.json"
+  %pre= "curl http://#{BB_CONFIG['domain']}/block/00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee.json"
   %pre= render partial: "block_170.json"
