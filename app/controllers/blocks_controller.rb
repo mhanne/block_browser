@@ -1,4 +1,5 @@
 require 'timeout'
+require 'method_source'
 
 class BlocksController < ApplicationController
 
@@ -72,7 +73,14 @@ class BlocksController < ApplicationController
   # custom script. when :id is given, the :sig_hash can be overridden, and when
   # no :sig_hash is given or found, signature validation will be skipped.
   def script
-    require 'method_source'
+    @options = {
+      verify_dersig: true,
+      verify_low_s: true,
+      verify_strictenc: true,
+      verify_sigpushonly: true,
+      verify_minimaldata: true,
+      verify_cleanstack: true }
+    @options.keys.each {|k| @options[k] = params[k] == "1"  if params[k] }
 
     # if tx_hash:idx is given, fetch tx from db and use those scripts
     if params[:id] =~ /([0-9a-fA-F]{64}):(\d+)/
@@ -92,7 +100,16 @@ class BlocksController < ApplicationController
     # if there is a script, execute it
     if @script_sig && @pk_script
       @script = Bitcoin::Script.new(@script_sig, @pk_script)
-      @result = @script.run do |pubkey, sig, hash_type, subscript|
+
+      if @options[:verify_sigpushonly] && !@script.is_push_only?(@script_sig)
+        return (@result, @debug = false, [[], :verify_sigpushonly])
+      end
+
+      if @options[:verify_minimaldata] && !@script.pushes_are_canonical?
+        return (@result, @debug = false, [[], :verify_minimaldata])
+      end
+
+      @result = @script.run(Time.now.to_i, @options) do |pubkey, sig, hash_type, subscript|
         # get sig_hash from tx if tx is given and sig_hash isn't already set
         @sig_hash ||= @tx.signature_hash_for_input(@txin.tx_idx, subscript, hash_type)  if @tx && @txin
         # if there is a sig_hash (either computed or passed as parameter), verify signature,
@@ -100,6 +117,11 @@ class BlocksController < ApplicationController
         @sig_hash ? Bitcoin.verify_signature(@sig_hash, sig, pubkey.unpack("H*")[0]) : true
       end
       @debug = @script.debug
+
+      if @options[:verify_cleanstack] && !@script.stack.empty?
+        @result = false
+        @debug += [@script.stack, :verify_cleanstack]
+      end
     end
 
     @page_title = "Debug Script Execution"

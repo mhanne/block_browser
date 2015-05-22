@@ -145,7 +145,8 @@ describe BlocksController do
     end
 
     it "should execute arbitrary script with sighash" do
-      get :script, script_sig: script_sig, pk_script: pk_script, sig_hash: sig_hash
+      get :script, script_sig: script_sig, pk_script: pk_script, sig_hash: sig_hash,
+          verify_low_s: "0"
       assigns(:result).should == true
     end
 
@@ -162,8 +163,53 @@ describe BlocksController do
 
     it "should ignore signatures when no sighash is given" do
       s, p = script_sig.split(" "); s[140] = "a"; s[141] = "a"; script_sig = [s, p].join(" ")
-      get :script, script_sig: script_sig, pk_script: pk_script, sig_hash: ""
+      get :script, script_sig: script_sig, pk_script: pk_script, sig_hash: "", verify_low_s: "0"
       assigns(:result).should == true
+    end
+
+    describe :verify do
+
+      it "should verify minimaldata" do
+        opts = { script_sig: "01", pk_script: "", sig_hash: "" }
+
+        get :script, opts
+        assigns(:result).should == false
+        assigns(:debug).should == [[], :verify_minimaldata]
+
+        get :script, opts.merge(verify_minimaldata: "0")
+        assigns(:result).should == true
+      end
+
+      it "should verify sigpushonly" do
+        opts = { script_sig: "1 OP_DROP 1", pk_script: "", sig_hash: "" }
+
+        get :script, opts
+        assigns(:result).should == false
+        assigns(:debug).should == [[], :verify_sigpushonly]
+
+        get :script, opts.merge(verify_sigpushonly: "0")
+        assigns(:result).should == true
+      end
+
+      it "should verify cleanstack" do
+        get :script, script_sig: "1 1", pk_script: "", sig_hash: ""
+        assigns(:result).should == false
+        assigns(:debug).should == [[], "OP_1", [1], "OP_1", [1, 1], "OP_CODESEPARATOR", [1, 1], "RESULT", [1], :verify_cleanstack]
+
+        get :script, script_sig: "1 1", pk_script: "", sig_hash: "", verify_cleanstack: "0"
+        assigns(:result).should == true
+      end
+
+      it "should verify low_s" do
+        opts = { script_sig: script_sig, pk_script: pk_script, sighash: sig_hash }
+
+        get :script, opts
+        assigns(:result).should == false
+
+        get :script, opts.merge(verify_low_s: "0")
+        assigns(:result).should == true
+      end
+
     end
 
   end

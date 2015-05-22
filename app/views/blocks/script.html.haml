@@ -25,6 +25,23 @@
       %td
         = text_field_tag :sig_hash, @sig_hash_str, size: 64
         Optional; If empty, all signatures are assumed to be valid.
+
+    %tr
+      %th Verify
+      %td
+        - { minimaldata: "Check that all numbers are encoded with the minimum possible number of bytes",
+            sigpushonly: "Check that the script_sig only contains pushes, no opcodes",
+            cleanstack: "Check that the scripts leaves a clean stack",
+            dersig: "Check that all signatures are in valid DER encoding",
+            low_s: "Check that all signatures have non-negative S values",
+            strictenc: "Check that all signatures and pubkeys are in canonical encoding",
+          }.each do |flag, desc|
+          = hidden_field_tag "verify_#{flag}", "0"
+          = check_box_tag "verify_#{flag}", "1", @options[:"verify_#{flag}"], id: "verify_#{flag}_cb"
+          - klass = (@debug && @debug[-1] == :"verify_#{flag}") ? "error" : ""
+          = label_tag "verify_#{flag}_cb", flag, title: desc, class: klass
+        (hover for info)
+
     %tr
       %th Result
       %th
@@ -57,6 +74,12 @@
                 %pre The number #{op.split("_")[1]} is pushed onto the stack.
               - when "RESULT"
                 %pre True if the remaining stack is anything other than empty or 0.
+              - when :verify_minimaldata
+                %pre Not all numbers are encoded with the minimum possible number of bytes!
+              - when :verify_sigpushonly
+                %pre The script_sig may only contain PUSHDATA operations, no other opcodes!
+              - when :verify_cleanstack
+                %pre The script may not leave any values on the stack after successful execution!
               - else
                 - comment = Bitcoin::Script.instance_method(@debug[i+1].downcase).comment rescue ""
                 %pre= comment.split(/\n?#\s/).map(&:strip).join("\n")
