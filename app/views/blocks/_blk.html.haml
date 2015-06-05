@@ -5,4 +5,4 @@
 %td= format_time blk[:time]
 %td= STORE.db[:blk_tx].where(blk_id: blk[:id]).count
 %td= number_to_human_size blk[:blk_size]
-%td= format_amount STORE.db[:blk_tx].where(blk_id: blk[:id]).join(:tx, id: :tx_id).join(:txout, tx_id: :id).map{|o|o[:value]}.inject(:+)
+%td.value= format_amount STORE.db[:blk_tx].where(blk_id: blk[:id]).join(:tx, id: :tx_id).join(:txout, tx_id: :id).map{|o|o[:value]}.inject(:+)
