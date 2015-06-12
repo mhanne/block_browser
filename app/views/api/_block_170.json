@@ -28,7 +28,8 @@
       "out":[
         {
           "value":"50.00000000",
-          "scriptPubKey":"04d46c4968bde02899d2aa0963367c7a6ce34eec332b32e42e5f3407e052d64ac625da6f0718e7b302140434bd725706957c092db53805b821a85b23a7ac61725b OP_CHECKSIG"
+          "scriptPubKey":"04d46c4968bde02899d2aa0963367c7a6ce34eec332b32e42e5f3407e052d64ac625da6f0718e7b302140434bd725706957c092db53805b821a85b23a7ac61725b OP_CHECKSIG",
+          "address":"1PSSGeFHDnKNxiEyFrD1wcEaHr9hrQDDWc"
         }
       ]
     },
@@ -51,11 +52,17 @@
       "out":[
         {
           "value":"10.00000000",
-          "scriptPubKey":"04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG"
+          "scriptPubKey":"04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG",
+          "address":"1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+          "next_in":{
+            "hash":"ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+            "n":0
+          }
         },
         {
           "value":"40.00000000",
-          "scriptPubKey":"0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 OP_CHECKSIG"
+          "scriptPubKey":"0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 OP_CHECKSIG",
+          "address":"12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S"
         }
       ]
     }
@@ -64,5 +71,6 @@
     "b1fea52486ce0c62bb442b530a3f0132b826c74e473d1f2c220bfa78111c5082",
     "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
     "7dac2c5666815c17a3b36427de37bb9d2e2c5ccec3f8633eb91a4205cb4c10ff"
-  ]
+  ],
+  "next_block": "000000002a22cfee1f2c846adbd12b3e183d4f97683f85dad08a79780a84bd55"
 }

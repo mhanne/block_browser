@@ -17,11 +17,17 @@
   "out":[
     {
       "value":"10.00000000",
-      "scriptPubKey":"04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG"
+      "scriptPubKey":"04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG",
+      "address":"1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3",
+      "next_in":{
+        "hash":"ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+        "n":0
+      }
     },
     {
       "value":"40.00000000",
-      "scriptPubKey":"0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 OP_CHECKSIG"
+      "scriptPubKey":"0411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3 OP_CHECKSIG",
+      "address":"12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S"
     }
   ]
 }

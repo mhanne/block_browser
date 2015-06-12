@@ -25,7 +25,7 @@ class BlocksController < ApplicationController
     @siblings = STORE.db[:blk].where(height: @block.height).map {|b| STORE.block(b[:hash].hth) }
     @siblings.delete(@block)
     @page_title = "Block Details"
-    respond_with(@block)
+    respond_with(@block, with_next_block: true, with_nid: true, with_address: true, with_next_in: true)
   end
 
   def tx
@@ -34,7 +34,7 @@ class BlocksController < ApplicationController
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
     @page_title = "Transaction Details"
-    respond_with(@tx, with_nid: true)
+    respond_with(@tx, with_nid: true, with_address: true, with_next_in: true)
   end
 
   def address
@@ -301,7 +301,7 @@ class BlocksController < ApplicationController
     blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
 
-    data = tx.to_hash(with_address: true, with_nid: true)
+    data = tx.to_hash(with_nid: true, with_address: true, with_next_in: true)
     data['block'] = blk[:hash].hth
     data['blocknumber'] = blk[:height]
     data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")

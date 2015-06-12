@@ -30,7 +30,7 @@ describe BlocksController do
     it "should render json" do
       get :block, id: block_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.block(block_hash).to_hash
+      JSON.parse(response.body).should == STORE.block(block_hash).to_hash(with_next_block: true, with_nid: true, with_address: true, with_next_in: true)
     end
 
     it "should render bin" do
@@ -66,7 +66,7 @@ describe BlocksController do
     it "should render json" do
       get :tx, id: tx_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.tx(tx_hash).to_hash(with_nid: true)
+      JSON.parse(response.body).should == STORE.tx(tx_hash).to_hash(with_nid: true, with_address: true, with_next_in: true)
     end
 
     it "should render bin" do
