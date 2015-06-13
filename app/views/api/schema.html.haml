@@ -1,0 +1,239 @@
+- @page_title = "Database Schema"
+
+%p
+  You can download a dump of the whole blockchain database from
+  = link_to "dumps.webbtc.com", "http://dumps.webbtc.com"
+
+%p This page details the database schema and explains what the columns are used for.
+
+%h3 schema_info
+%p Information about the current schema version, network and backend used.
+%table.list
+  %tr
+    %th version
+    %td integer
+    %td Schema Version of the migrations
+  %tr
+    %th magic
+    %td varchar
+    %td Magic Bytes identifying the network (bitcoin, testnet, namecoin, etc)
+  %tr
+    %th backend
+    %td varchar
+    %td The name of the storage backend used by bitcoin-ruby-blockchain when creating this DB
+
+%h3 blk
+%p Block Headers
+%table.list
+  %tr
+    %th id
+    %td integer
+    %td Internal ID
+  %tr
+    %th hash
+    %td bytea
+    %td Block hash in binary
+  %tr
+    %th height
+    %td integer
+    %td Height in the blockchain
+  %tr
+    %th version
+    %td bigint
+    %td Protocol Version
+  %tr
+    %th prev_hash
+    %td bytea
+    %td Hash of the previous block this one builds on, in binary
+  %tr
+    %th mrkl_root
+    %td bytea
+    %td Root hash of the merkle tree of all transactions in this block, in binary
+  %tr
+    %th time
+    %td bigint
+    %td Block timestamp
+  %tr
+    %th bits
+    %td bigint
+    %td Compact Bits encoding the required difficulty target this blocks hash satisfies
+  %tr
+    %th nonce
+    %td bigint
+    %td Nonce used to make the block header yield the correct hash
+  %tr
+    %th blk_size
+    %td integer
+    %td Size of the block in bytes
+  %tr
+    %th chain
+    %td integer
+    %td Chain this block has been sorted into (0 = main, 1 = side, 2 = orphan)
+  %tr
+    %th work
+    %td bytea
+    %td The total amount of work that has been done on the chain (including this block)
+  %tr
+    %th aux_pow
+    %td bytea
+    %td Auxiliary Proof-of-Work for merge-mined (Namecoin) blocks
+
+%h3 blk_tx
+%p Mapping between Blocks and Transactions
+%table.list
+  %tr
+    %th blk_id
+    %td integer
+    %td Block ID
+  %tr
+    %th tx_id
+    %td integer
+    %td Transaction ID
+  %tr
+    %th idx
+    %td integer
+    %td Index of the transaction inside the block
+
+%h3 tx
+%p Transactions
+%table.list
+  %tr
+    %th id
+    %td integer
+    %td Internal ID
+  %tr
+    %th hash
+    %td bytea
+    %td Transaction hash, in binary
+  %tr
+    %th version
+    %td bigint
+    %td Protocol Version
+  %tr
+    %th lock_time
+    %td bigint
+    %td Timestamp/Block Height before which the transaction isn't valid
+  %tr
+    %th coinbase
+    %td boolean
+    %td Whether this is a coinbase transaction
+  %tr
+    %th tx_size
+    %td integer
+    %td Size of the transaction in bytes
+  %tr
+    %th nhash
+    %td bytea
+    %td Normalized Hash of the transaction
+
+%h3 txin
+%p Transaction Inputs
+%table.list
+  %tr
+    %th id
+    %td integer
+    %td Internal ID
+  %tr
+    %th tx_id
+    %td integer
+    %td Transaction ID
+  %tr
+    %th tx_idx
+    %td integer
+    %td Index of this input inside the transaction
+  %tr
+    %th prev_out
+    %td bytea
+    %td Hash of the previous output transaction this input references
+  %tr
+    %th prev_out_index
+    %td bigint
+    %td Index of the output in the previous transaction
+  %tr
+    %th sequence
+    %td bigint
+    %td Transaction Sequence
+  %tr
+    %th script_sig
+    %td bytea
+    %td The Signature Script providing the signatures to satisfy the previous output script
+  %tr
+    %th p2sh_type
+    %td integer
+    %td Type of the inner script in case of a p2sh output
+
+%h3 txouts
+%p Transaction Outputs
+%table.list
+  %tr
+    %th id
+    %td integer
+    %td Internal ID
+  %tr
+    %th tx_id
+    %td integer
+    %td Transaction ID
+  %tr
+    %th tx_idx
+    %td integer
+    %td Index of this output inside the transaction
+  %tr
+    %th pk_script
+    %td bytea
+    %td The Output Script defining the recipient of the coins
+  %tr
+    %th value
+    %td bigint
+    %td Output value (in satoshi)
+  %tr
+    %th type
+    %td integer
+    %td Type of the output script (0=unknown, 1=pubkey, 2=pubkey_hash(address), 3=multisig, 4=script_hash(p2sh), 5=op_return, 6=name_new, 7=name_firstupdate, 8=name_update)
+
+%h3 addr_txout
+%p Mapping between Addresses and Transaction Outputs
+%table.list
+  %tr
+    %th addr_id
+    %td integer
+    %td Address ID
+  %tr
+    %th txout_id
+    %td integer
+    %td Output ID
+
+%h3 addr
+%p Addresses
+%table.list
+  %tr
+    %th id
+    %td integer
+    %td Internal ID
+  %tr
+    %th hash160
+    %td text
+    %td Hash160 of the address
+  %tr
+    %th type
+    %td integer
+    %td Type of the address (0 = regular, 1 = p2sh) </td>
+
+%h3 names
+%p Namecoin Name Records
+%table.list
+  %tr
+    %th txout_id
+    %td integer
+    %td Internal ID
+  %tr
+    %th hash
+    %td bytea
+    %td Name-Hash of this name, in binary
+  %tr
+    %th name
+    %td bytea
+    %td The Name that is registered
+  %tr
+    %th value
+    %td bytea
+    %td The Value associated with this Name
