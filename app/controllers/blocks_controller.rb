@@ -101,6 +101,10 @@ class BlocksController < ApplicationController
     if @script_sig && @pk_script
       @script = Bitcoin::Script.new(@script_sig, @pk_script)
 
+      if @script.is_script_hash?
+        @inner_script = Bitcoin::Script.new(@script.inner_p2sh_script)
+      end
+
       if @options[:verify_sigpushonly] && !@script.is_push_only?(@script_sig)
         return (@result, @debug = false, [[], :verify_sigpushonly])
       end

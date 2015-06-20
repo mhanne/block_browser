@@ -48,6 +48,21 @@
         %pre= @result
         = submit_tag "(Re-)Run Script", style: "float: right;"
 
+  - if @inner_script
+    %h3 Inner P2SH Script
+    %pre.p2sh_script= @inner_script.to_string.gsub("\s", "\n")
+
+    .p2sh_script_data
+      %h4 Addresses / Data
+      - if @inner_script.is_op_return?
+        %pre= @inner_script.get_op_return_data
+      - else
+        - @inner_script.get_addresses.each do |addr|
+          = address_link(addr)
+          %br/
+
+  .clear
+
   - if @script && @debug
 
     %h3 Execution Trace
