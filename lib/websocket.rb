@@ -59,7 +59,7 @@ EM.run do
           data[:payload] = data["payload"].htb
 
           log.info { "mempool #{type}: #{data['hash']} (#{data['priority']})" }
-          tx = MEMPOOL.get(data['hash'])
+          next  unless tx = MEMPOOL.get(data['hash'])
           CHANNEL.push ["mempool_#{type}", { id: tx.id, hash: tx.hash,
               partial: compile_mempool_haml(tx, data["priority"], type) }]
         end
