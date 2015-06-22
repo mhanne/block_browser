@@ -167,7 +167,7 @@ def setup_fake_chain
   @store.height.should == 123
   `cp spec/data/base.db spec/tmp/testbox1.db`
   `cp spec/data/base.db spec/tmp/fake_chain.db`
-  @store = Bitcoin::Blockchain.create_store(:sequel, db: "sqlite://spec/tmp/fake_chain.db", index_nhash: true, log_level: :warn)
+  @store = Bitcoin::Blockchain.create_store(:archive, db: "sqlite://spec/tmp/fake_chain.db", index_nhash: true, log_level: :warn)
   @fake_chain = FakeChain.new(@key, @store)
 end
 

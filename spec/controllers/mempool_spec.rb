@@ -13,8 +13,7 @@ describe BlocksController do
       setup_fake_chain
 
       v = $VERBOSE; $VERBOSE = nil
-      STORE = Bitcoin::Blockchain.create_store(:sequel, db: @store.db.uri)
-      p STORE.db.uri
+      STORE = Bitcoin::Blockchain.create_store(:archive, db: @store.db.uri)
       MEMPOOL = Bitcoin::Blockchain::Mempool.new(STORE, db: STORE.db.uri)
       $VERBOSE = v
 
