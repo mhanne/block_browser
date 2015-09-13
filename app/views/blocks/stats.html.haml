@@ -24,9 +24,9 @@
   %tr
     %th Addresses
     %td
-      #{stats['addrs']}
+      #{number_with_delimiter stats['addrs']}
       - if Bitcoin.namecoin?
-        (#{stats['names']} Names)
+        (#{number_with_delimiter stats['names']} Names)
 
   %tr
     %th Blockchain Size
