@@ -33,8 +33,15 @@ class BlocksController < ApplicationController
     return render_error("Tx #{params[:id]} not found.")  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
-    @page_title = "Transaction Details"
-    respond_with(@tx, with_nid: true, with_address: true, with_next_in: true)
+
+    respond_to do |format|
+      format.html do
+        @page_title = "Transaction Details"
+      end
+      format.json { render text: JSON.pretty_generate(tx_data(@tx, @blk)) }
+      format.hex { render text: @tx.to_payload.hth }
+      format.bin { render text: @tx.to_payload }
+    end
   end
 
   def address
@@ -304,7 +311,10 @@ class BlocksController < ApplicationController
     tx = STORE.tx_by_id(tx_id)
     blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).where(chain: 0).first
     return nil  unless blk
+    tx_data(tx, blk)
+  end
 
+  def tx_data tx, blk
     data = tx.to_hash(with_nid: true, with_address: true, with_next_in: true)
     data['block'] = blk[:hash].hth
     data['blocknumber'] = blk[:height]

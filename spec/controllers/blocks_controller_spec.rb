@@ -66,7 +66,12 @@ describe BlocksController do
     it "should render json" do
       get :tx, id: tx_hash, format: :json
       response.status.should == 200
-      JSON.parse(response.body).should == STORE.tx(tx_hash).to_hash(with_nid: true, with_address: true, with_next_in: true)
+      tx_data = STORE.tx(tx_hash).to_hash(with_nid: true, with_address: true, with_next_in: true).merge(
+        "block" => "0000000000020cbf6a9ad040c1bae5fae99f382ce104aac898622c0c218069b9",
+        "blocknumber" => 142,
+        "time" => "2011-04-21 07:44:30"
+      )
+      JSON.parse(response.body).should == tx_data
     end
 
     it "should render bin" do
