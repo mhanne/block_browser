@@ -1,5 +1,3 @@
-$:.unshift( File.expand_path("../../../bitcoin-ruby/lib", __FILE__) )
-
 require 'bundler'
 Bundler.setup
 
