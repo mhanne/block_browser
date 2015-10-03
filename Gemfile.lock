@@ -199,7 +199,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.44)
+    tzinfo (0.3.45)
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
