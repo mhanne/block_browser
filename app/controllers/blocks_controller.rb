@@ -318,7 +318,7 @@ class BlocksController < ApplicationController
     data = tx.to_hash(with_nid: true, with_address: true, with_next_in: true)
     data['block'] = blk[:hash].hth
     data['blocknumber'] = blk[:height]
-    data['time'] = Time.at(blk[:time]).strftime("%Y-%m-%d %H:%M:%S")
+    data['time'] = Time.at(blk[:time]).utc.strftime("%Y-%m-%d %H:%M:%S")
     data
   end
 
