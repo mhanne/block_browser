@@ -1,12 +1,12 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
-  revision: 410e9d3e3f0daa3171df29094207abc659038931
+  revision: 7a9dada719590f48d22b32ae4213fb4ca2c89732
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-node
-  revision: 803366e6de41452d0b5416aca1e2f3f82f4edc50
+  revision: 50b7518c0eb770522c91b3eb72e66f945a750e42
   specs:
     bitcoin-ruby-node (0.0.1)
 
@@ -78,7 +78,7 @@ GEM
     daemons (1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    domain_name (0.5.24)
+    domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -117,7 +117,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rack (1.4.7)
-    rack-cache (1.2)
+    rack-cache (1.3.0)
       rack (>= 0.4)
     rack-ssl (1.3.4)
       rack
