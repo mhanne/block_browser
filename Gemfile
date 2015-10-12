@@ -20,6 +20,10 @@ gem 'namecoin-ruby', require: 'bitcoin/namecoin',
   git: 'git://github.com/mhanne/namecoin-ruby'
   # path: '../namecoin-ruby'
 
+gem 'bitcoin-ruby-config', require: 'bitcoin/config',
+  git: 'git://github.com/mhanne/bitcoin-ruby-config'
+  # path: '../bitcoin-ruby-config'
+
 gem 'thin'
 gem 'rails', '3.2.14'
 

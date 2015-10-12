@@ -1,12 +1,19 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
-  revision: 7a9dada719590f48d22b32ae4213fb4ca2c89732
+  revision: 93fd37e941ee8b997044e335663a0bdec486f486
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 
 GIT
+  remote: git://github.com/mhanne/bitcoin-ruby-config
+  revision: e15e8201b7281e5ba5ab9bd672dec860f193739c
+  specs:
+    bitcoin-ruby-config (0.0.1)
+      bitcoin-ruby
+
+GIT
   remote: git://github.com/mhanne/bitcoin-ruby-node
-  revision: 50b7518c0eb770522c91b3eb72e66f945a750e42
+  revision: a4f54ae56d659822d1e7ce1a07eedd1a8a270600
   specs:
     bitcoin-ruby-node (0.0.1)
 
@@ -18,14 +25,14 @@ GIT
 
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby.git
-  revision: 7e15b114eea005bc2334be852a2b2c234ae68828
+  revision: fdf124f43700dfb1db6c3b180d91fa2f3805debd
   branch: next
   specs:
-    bitcoin-ruby (0.0.6)
+    bitcoin-ruby (0.0.8)
 
 GIT
   remote: git://github.com/mhanne/namecoin-ruby
-  revision: 5d8a68388b2c77f1cbce96c9f919da1600df4589
+  revision: a2cdd12bd0404aac71e205f4af1a46124f78973c
   specs:
     namecoin-ruby (0.0.1)
 
@@ -117,7 +124,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rack (1.4.7)
-    rack-cache (1.3.0)
+    rack-cache (1.5.0)
       rack (>= 0.4)
     rack-ssl (1.3.4)
       rack
@@ -167,7 +174,7 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    sass (3.4.18)
+    sass (3.4.19)
     sequel (4.27.0)
     simplecov (0.10.0)
       docile (~> 1.1.0)
@@ -180,11 +187,11 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sqlite3 (1.3.10)
+    sqlite3 (1.3.11)
     svg-graph (1.0.5)
     term-ansicolor (1.3.2)
       tins (~> 1.0)
-    test-unit (3.1.4)
+    test-unit (3.1.5)
       power_assert
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
@@ -215,6 +222,7 @@ PLATFORMS
 DEPENDENCIES
   bitcoin-ruby!
   bitcoin-ruby-blockchain!
+  bitcoin-ruby-config!
   bitcoin-ruby-node!
   bitcoin-ruby-wallet!
   coffee-rails
