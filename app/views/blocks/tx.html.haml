@@ -59,7 +59,7 @@
             - block = STORE.db[:blk][height: @tx.lock_time, chain: 0][:hash].hth
             Block #{link_to @tx.lock_time, "/block/#{block}"}
           - else
-            #{@tx.lock_time} (#{format_time Time.at(@tx.lock_time)})
+            #{@tx.lock_time} (#{format_time @tx.lock_time})
     %tr
       %th Formats
       %td

@@ -2,7 +2,7 @@
   %a{:href => block_path(blk[:hash].hth)}= blk[:height]
 %td
   %a{:href => block_path(blk[:hash].hth)}= blk[:hash].hth
-%td= format_time blk[:time]
+%td= format_time blk[:time], :short
 %td.right= number_with_delimiter STORE.db[:blk_tx].where(blk_id: blk[:id]).count
 %td.right= number_to_human_size blk[:blk_size]
 %td.right= format_amount STORE.db[:blk_tx].where(blk_id: blk[:id]).join(:tx, id: :tx_id).join(:txout, tx_id: :id).map{|o|o[:value]}.inject(:+)
