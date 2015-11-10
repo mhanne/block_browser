@@ -22,8 +22,9 @@ class BlocksController < ApplicationController
   def block
     @block = STORE.block(params[:id])
     return render_error("Block #{params[:id]} not found.")  unless @block
-    @siblings = STORE.db[:blk].where(height: @block.height).map {|b| STORE.block(b[:hash].hth) }
-    @siblings.delete(@block)
+    @siblings = STORE.db[:blk].where(prev_hash: @block.prev_block_hash.blob)
+                .reject {|b| b[:id] == @block.id }
+                .map {|b| STORE.wrap_block(b) }
     @page_title = "Block Details"
     respond_with(@block, with_next_block: true, with_nid: true, with_address: true, with_next_in: true)
   end
