@@ -23,6 +23,7 @@ public/stats.json
 public/node_*.png
 public/node_*.html
 public/graphs
+public/script/*
 
 coverage/
 doc/

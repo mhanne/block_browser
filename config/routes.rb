@@ -5,6 +5,8 @@ BlockBrowser::Application.routes.draw do
   match 'block/:id' => 'blocks#block', :as => :block
   match 'tx/:id' => 'blocks#tx', :as => :tx
   match 'script/:id' => 'blocks#script', :as => :script
+  match 'script/:script_sig/:pk_script' => 'blocks#script'
+  match 'script/:script_sig/:pk_script/:sig_hash' => 'blocks#script'
   match 'script' => 'blocks#script'
   match 'address/:id' => 'blocks#address', :as => :address
   match 'search/:search' => 'blocks#search', :as => :search

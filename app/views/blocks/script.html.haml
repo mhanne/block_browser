@@ -11,7 +11,7 @@
           = link_to "#{@tx.hash}:#{@txin.tx_idx}", tx_path(@tx.hash)
         - else
           Not found
-          (#{link_to "Link to this script", "/script?script_sig=#{@script_sig_str.gsub("\n", " ")}&pk_script=#{@pk_script_str.gsub("\n", " ")}&signature_hash=#{@sig_hash_str}"})
+          (#{link_to "Link to this script", "/script/#{@script_sig_str.gsub("\n", " ")}/#{@pk_script_str.gsub("\n", " ")}/#{@sig_hash_str}"})
     %tr
       %th{style: "width: 10em"} Input Script
       %td

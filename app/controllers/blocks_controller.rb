@@ -3,6 +3,8 @@ require 'method_source'
 
 class BlocksController < ApplicationController
 
+  include Bitcoin
+
   respond_to :html, :json, :bin, :hex
 
   around_filter :timeout
@@ -99,18 +101,21 @@ class BlocksController < ApplicationController
       @script_sig = @txin.script_sig
       @pk_script = @txout.pk_script
       @sig_hash = nil
-    else # when no tx is given, try to get script directly from parameters
-      @script_sig = Bitcoin::Script.from_string(params[:script_sig]).raw  if params[:script_sig]
-      @pk_script = Bitcoin::Script.from_string(params[:pk_script]).raw  if params[:script_sig]
+    elsif params[:script_sig] && params[:pk_script] # when no tx is given, try to get script directly from parameters
+      @script_sig = Script.from_string(params[:script_sig]).raw
+      @pk_script = Script.from_string(params[:pk_script]).raw
       @sig_hash = params[:sig_hash].htb  if params[:sig_hash] && !params[:sig_hash].blank?
+    else
+      @script_sig = Script.from_string("1 2").raw
+      @pk_script = Script.from_string("OP_ADD 3 OP_EQUAL").raw
     end
 
     # if there is a script, execute it
     if @script_sig && @pk_script
-      @script = Bitcoin::Script.new(@script_sig, @pk_script)
+      @script = Script.new(@script_sig, @pk_script)
 
       if @script.is_script_hash?
-        @inner_script = Bitcoin::Script.new(@script.inner_p2sh_script)
+        @inner_script = Script.new(@script.inner_p2sh_script)
       end
 
       if @options[:verify_sigpushonly] && !@script.is_push_only?(@script_sig)
@@ -169,7 +174,7 @@ class BlocksController < ApplicationController
     elsif @id.to_i.to_s == @id
       block = STORE.block_at_height(@id.to_i)
       return redirect_to(block_path(block.hash))  if block
-    elsif STORE.is_a?(Bitcoin::Blockchain::Backends::SequelBase)
+    elsif STORE.is_a?(Blockchain::Backends::SequelBase)
       return  if search_block(@id)
       return  if search_tx(@id)
       return  if search_name(@id)
@@ -199,9 +204,9 @@ class BlocksController < ApplicationController
     if request.post? && @input = params[:tx]
       begin
         if @input =~ /^[0-9a-f]+$/i
-          @tx = Bitcoin::P::Tx.new(@input.htb)
+          @tx = P::Tx.new(@input.htb)
         elsif !!JSON.parse(@input)
-          @tx = Bitcoin::P::Tx.from_json(@input)
+          @tx = P::Tx.from_json(@input)
         end
       rescue
         @error = "Error decoding transaction."
