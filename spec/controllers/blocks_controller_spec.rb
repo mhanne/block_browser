@@ -166,6 +166,11 @@ describe BlocksController do
       assigns(:result).should == false
     end
 
+    it "should fail when *VERIFY operation fails" do
+      get :script, script_sig: "2", pk_script: "3 OP_EQUALVERIFY"
+      assigns(:result).should == false
+    end
+
     it "should ignore signatures when no sighash is given" do
       s, p = script_sig.split(" "); s[140] = "a"; s[141] = "a"; script_sig = [s, p].join(" ")
       get :script, script_sig: script_sig, pk_script: pk_script, sig_hash: "", verify_low_s: "0"

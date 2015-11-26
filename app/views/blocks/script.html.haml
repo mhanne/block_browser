@@ -98,4 +98,5 @@
               - else
                 - comment = Bitcoin::Script.instance_method(@debug[i+1].downcase).comment rescue ""
                 %pre= comment.split(/\n?#\s/).map(&:strip).join("\n")
+          - break  if op == "INVALID TRANSACTION" # an OP_*VERIFY operation has failed
         - i += 2
