@@ -8,8 +8,13 @@ database: "archive::postgres:/bitcoin"
 command: "127.0.0.1:9999"
 
 # where the websocket server will be started / reachable by the clients
-websocket: "127.0.0.1:8000"
-
+websocket:
+  host: "127.0.0.1"
+  port: 8000
+#  secure: true
+#  tls_options:
+#    private_key_file: "path/to/key.pem"
+#    cert_chain_file: "path/to/cert.pem"
 
 # page processing timeout
 timeout: 30

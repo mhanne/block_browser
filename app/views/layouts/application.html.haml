@@ -8,7 +8,7 @@
     = csrf_meta_tags
     :javascript
       $(document).ready(function() {
-        connect_websocket("ws://#{BB_CONFIG['websocket']}/");
+        connect_websocket("#{WS_CONFIG['secure'] ? 'wss' : 'ws'}://#{WS_CONFIG['host']}:#{WS_CONFIG['port']}/");
       })
 
   %body

@@ -60,3 +60,5 @@ rescue
   puts "Error loading configuration from config/application.yml; falling back to defaults"
   BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
 end
+
+WS_CONFIG = BB_CONFIG["websocket"]

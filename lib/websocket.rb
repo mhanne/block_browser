@@ -17,7 +17,6 @@ end
 File.open(File.join(Rails.root, "tmp/pids/websocket.pid"), "w") {|f| f.write Process.pid }
 
 EM.run do
-  ws_host, ws_port = BB_CONFIG["websocket"].split(":")
   bc_host, bc_port = BB_CONFIG["command"].split(":")
 
   CHANNEL = EM::Channel.new
@@ -43,7 +42,7 @@ EM.run do
     end
   end
 
-  EventMachine::WebSocket.start(:host => ws_host, :port => ws_port) do |ws|
+  EventMachine::WebSocket.start(WS_CONFIG.deep_symbolize_keys) do |ws|
     sid = nil
 
     ws.onopen do
@@ -62,5 +61,5 @@ EM.run do
     end
   end
 
-    log.info { "websocket listening on #{ws_host}:#{ws_port}" }
+    log.info { "websocket listening on #{WS_CONFIG['host']}:#{WS_CONFIG['port']}" }
 end
