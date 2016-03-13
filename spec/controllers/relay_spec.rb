@@ -1,4 +1,4 @@
-RSpec.describe BlocksController, type: :controller do
+RSpec.describe RelayController, type: :controller do
 
   include Bitcoin::Builder
 

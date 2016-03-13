@@ -1,0 +1,177 @@
+%table.details
+  %tr
+    %th Transaction
+    %th= @tx.hash
+  %tr
+    %th Normalized Hash
+    %td= @tx.nhash
+
+  - cache("tx/#{@tx.hash}/details") do
+    - if Bitcoin.namecoin?
+      %tr
+        %th Version
+        %td= @tx.ver == 0x7100 ? "Namecoin" : "Bitcoin"
+    %tr
+      %th Size
+      %td= @tx.to_payload.bytesize
+    %tr
+      %th Inputs
+      %td= @tx.in.size
+    %tr
+      %th Outputs
+      %td= @tx.out.size
+    - if @tx.in.size == 1 && @tx.in[0].coinbase?
+      - input_value = Bitcoin.block_creation_reward(@blk[:height])
+    - else
+      - input_value = @tx.in.map {|i| STORE.get_tx(i.prev_out.reverse.hth).out[i.prev_out_index].value }.sum rescue '?'
+    %tr
+      %th Input Value
+      %td= format_amount(input_value) rescue '?'
+    - output_value = @tx.out.map(&:value).sum
+    %tr
+      %th Output Value
+      %td= format_amount(output_value)
+    %tr
+      %th Fee
+      %td= format_amount(input_value - output_value) rescue '?'
+    - if @tx.lock_time != 0
+      %tr
+        %th Lock Time
+        %td
+          - if @tx.lock_time < 500_000_000
+            - block = STORE.db[:blk][height: @tx.lock_time, chain: 0][:hash].hth
+            Block #{link_to @tx.lock_time, "/block/#{block}"}
+          - else
+            #{@tx.lock_time} (#{format_time Time.at(@tx.lock_time)})
+    %tr
+      %th Formats
+      %td
+        = link_to "[json]", "/tx/#{@tx.hash}.json"
+        = link_to "[hex]", "/tx/#{@tx.hash}.hex"
+        = link_to "[binary]", "/tx/#{@tx.hash}.bin"
+
+%h3 Inputs
+%table.list
+  %tr
+    %th IDX
+    %th Type
+    %th Previous Output
+    %th Value
+    %th From Address
+    %th Script
+    - if display_sequence = @tx.in.map(&:sequence).any? {|s| s.unpack("I")[0] != 0xffffffff }
+      %th Sequence
+    %th Debug
+
+
+  - @tx.in.each_with_index do |txin, idx|
+    %tr{:class => cycle('odd', 'even')}
+      - prev_tx = STORE.get_tx(txin.prev_out.reverse.hth)
+      - prev_out = prev_tx.out[txin.prev_out_index] if prev_tx
+
+      - cache("tx/#{@tx.hash}/in/#{idx}/#{!!prev_out}") do
+        %td= idx
+        - if txin.coinbase?
+          %td generation
+          %td none
+          %td.value= format_amount(Bitcoin.block_creation_reward(@blk[:height]))
+          %td -
+          %td= txin.script_sig.unpack("H*")[0]
+        - else
+          - if prev_out
+            %td
+              = link_to(prev_out.type, "/scripts/#{prev_out.type}")
+              - if prev_out.type == :script_hash
+                %br/
+                (#{link_to txin.p2sh_type, "/p2sh_scripts/#{txin.p2sh_type}"})
+            %td
+              = link_to(truncate(prev_out.get_tx.hash, :length => 16), tx_path(prev_out.get_tx.hash))
+              = "/ #{txin.prev_out_index}"
+            %td.value= format_amount(prev_out.value) rescue "?"
+            - if prev_out.get_address
+              %td
+                - prev_out.get_addresses.each do |address|
+                  = address_link(address)
+                  %br
+            - else
+              %td not seen
+            %td
+              %pre
+                = Bitcoin::Script.new(txin.script_sig).to_string.split(" ").join("\n")
+            - if display_sequence
+              %td= txin.sequence.unpack("I")[0].to_s(16)
+            %td= link_to "Run Script", script_path("#{@tx.hash}:#{idx}")
+          - else
+            %td{:colspan => 5} not seen
+
+%h3 Outputs
+%table.list
+  %tr
+    %th IDX
+    %th Type
+    %th Next Input
+    %th Value
+    %th To Address
+    %th Script
+    %th Debug
+  - @tx.out.each_with_index do |txout, idx|
+    - next_input = STORE.db[:txin][prev_out: @tx.hash.htb.reverse.to_sequel_blob, prev_out_index: idx]
+    %tr{:class => cycle('odd', 'even')}
+      - cache("tx/#{@tx.hash}/out/#{idx}/#{!!next_input}") do
+        - next_input = STORE.wrap_txin(next_input)
+        - script = Bitcoin::Script.new(txout.pk_script) rescue nil
+        %td= idx
+        %td
+          - type = txout.parsed_script.type
+          = link_to(type, "/scripts/#{type}")
+          - if type == :script_hash
+            %br/
+            - if next_in = txout.get_next_in
+              (#{link_to next_in.p2sh_type, "/p2sh_scripts/#{next_input.p2sh_type}"})
+            - else
+              (unspent)
+        %td
+          - if next_input
+            - tx_hash = next_input.get_tx.hash
+            = link_to(truncate(tx_hash, :length => 16, :omission => '...'), tx_path(tx_hash))
+            = "/ #{next_input.tx_idx}"
+          - else
+            not seen
+
+        %td.value= format_amount(txout.value)
+        %td
+          - case type
+          - when :pubkey, :pubkey_hash, :script_hash
+            - addr = txout.parsed_script.get_address
+            = link_to(addr, address_path(addr))
+          - when :multisig
+            - addrs = script.get_multisig_addresses
+            multisig (#{script.get_signatures_required} of #{script.get_keys_provided}):
+            %br/
+            - addrs.each do |address|
+              - if address
+                = link_to(address, address_path(address))
+              - else
+                %span.error Error decoding address from pubkey
+              %br
+          - when :op_return
+            - if script.get_op_return_data
+              Data: #{script.get_op_return_data}
+            - else
+              (No data)
+          - if Bitcoin.namecoin? && script.is_namecoin?
+            - name = txout.get_namecoin_name
+            - if name.name
+              #{link_to(name.name, name_path(name.name))}: #{name.value || name.hash}
+            - else
+              Hash: #{name.hash}
+            %br
+            - addr = txout.get_address
+            = link_to(addr, address_path(addr))
+          - if script.type == :unknown
+            %span{class: "error"} Unknown script type
+        %td
+          %pre= script.to_string rescue "?"
+        %td
+          - if next_input
+            = link_to "Run Script", script_path("#{next_input.get_tx.hash}:#{next_input.tx_idx}")

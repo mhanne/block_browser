@@ -1,4 +1,4 @@
-RSpec.describe BlocksController, type: :controller do
+RSpec.describe SearchController, type: :controller do
 
   let(:block_hash) { "00000000007e2a0846b25e0a70b7a7560f5c07bdbff16f259711480f58b33675" }
   let(:tx_hash) { "ab1207bd605af57ed0b5325ac94d19578cff3bce668ebe8dda2f42a00b001f5d" }
@@ -32,10 +32,14 @@ RSpec.describe BlocksController, type: :controller do
     response.should redirect_to(address_path(address))
   end
 
+  it "should search for namecoin name" do
+    get :search, search: "d/bitcoin"
+    response.should redirect_to(name_path("d/bitcoin"))
+  end
+
   it "should render error when nothing found" do
     get :search, search: "nonexistant"
     assigns(:error).should == "Nothing matches nonexistant."
   end
-
 
 end

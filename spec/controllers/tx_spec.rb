@@ -1,4 +1,4 @@
-RSpec.describe BlocksController, type: :controller do
+RSpec.describe TxController, type: :controller do
 
   render_views
 
@@ -7,13 +7,13 @@ RSpec.describe BlocksController, type: :controller do
   let(:address) { "NFGG6FCfnpWAB6DCyQuSFC612rnpYEgFBu" }
 
   it "should render html" do
-    get :tx, id: tx_hash
+    get :show, id: tx_hash
     response.status.should == 200
     assigns(:tx).hash.should == tx_hash
   end
 
   it "should render json" do
-    get :tx, id: tx_hash, format: :json
+    get :show, id: tx_hash, format: :json
     response.status.should == 200
     tx_data = STORE.tx(tx_hash).to_hash(with_nid: true, with_address: true, with_next_in: true).merge(
       "block" => "0000000000020cbf6a9ad040c1bae5fae99f382ce104aac898622c0c218069b9",
@@ -24,20 +24,20 @@ RSpec.describe BlocksController, type: :controller do
   end
 
   it "should render bin" do
-    get :tx, id: tx_hash, format: :bin
+    get :show, id: tx_hash, format: :bin
     response.status.should == 200
     response.body.should == STORE.tx(tx_hash).to_payload
   end
 
   it "should render hex" do
-    get :tx, id: tx_hash, format: :hex
+    get :show, id: tx_hash, format: :hex
     response.status.should == 200
     response.body.should == STORE.tx(tx_hash).to_payload.hth
   end
 
   it "should display tx with OP_RETURN output script type" do
     tx_hash = "496b728d51d8d6030035779f6c588f519a0fd1ab2eaaa1ceb5924122bf8c68d5"
-    get :tx, id: tx_hash
+    get :show, id: tx_hash
     response.should be_success
     assigns(:tx).hash.should == tx_hash
     response.body.should =~ /\(No data\)/

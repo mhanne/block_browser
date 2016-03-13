@@ -16,7 +16,7 @@
       %h1= link_to BB_CONFIG['network'].capitalize, root_path
       %h2= "- #{@page_title}"
       #search
-        = form_tag(search_path) do
+        = form_tag(search_path, method: "GET") do
           = text_field_tag :search
           = submit_tag "Search"
 

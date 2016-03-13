@@ -1,5 +1,4 @@
-
-RSpec.describe BlocksController, type: :controller do
+RSpec.describe StatsController, type: :controller do
 
   it "should display stats" do
     get :stats

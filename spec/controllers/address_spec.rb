@@ -1,4 +1,4 @@
-RSpec.describe BlocksController, type: :controller do
+RSpec.describe AddressController, type: :controller do
 
   render_views
 
@@ -7,7 +7,7 @@ RSpec.describe BlocksController, type: :controller do
   let(:address) { "NFGG6FCfnpWAB6DCyQuSFC612rnpYEgFBu" }
 
   it "should render html" do
-    get :address, id: address
+    get :show, id: address
     response.status.should == 200
     assigns(:address).should == address
     assigns(:hash160).should == Bitcoin.hash160_from_address(address)
@@ -15,7 +15,7 @@ RSpec.describe BlocksController, type: :controller do
   end
 
   it "should render json" do
-    get :address, id: address, format: :json
+    get :show, id: address, format: :json
     response.status.should == 200
     res = JSON.parse(response.body)
     res['address'].should == address
@@ -30,7 +30,7 @@ RSpec.describe BlocksController, type: :controller do
   end
 
   it "should fail on invalid address" do
-    get :address, id: "invalid_address"
+    get :show, id: "invalid_address"
     response.status.should == 200
     assigns(:error).should == "Address invalid_address is invalid."
   end

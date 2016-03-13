@@ -11,7 +11,7 @@
     - txout = STORE.wrap_txout(STORE.db[:txout][id: addr_txout[:txout_id]])
     - tx = txout.get_tx
     - blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).first
-    - next  unless blk 
+    - next  unless blk
     - @addr_data[:tx_in_sz] += 1
     - @addr_data[:btc_in] += txout.value
 
@@ -38,7 +38,7 @@
     - if next_in = txout.get_next_in
       - tx = next_in.get_tx
       - blk = STORE.db[:blk_tx].where(tx_id: tx.id).join(:blk, id: :blk_id).first
-      - next  unless blk 
+      - next  unless blk
       - @addr_data[:tx_out_sz] += 1
       - @addr_data[:btc_out] += txout.value
 
