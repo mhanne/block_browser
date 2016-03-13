@@ -1,5 +1,10 @@
+# setup bundler
+
 require 'bundler'
 Bundler.setup
+
+
+# setup bitcoin-ruby
 
 require 'bitcoin/blockchain'
 require 'bitcoin/node'
@@ -8,63 +13,111 @@ require 'bitcoin/namecoin'
 
 Bitcoin.network = :namecoin
 
+
+# setup coverage report
+
 require 'simplecov'
 require 'coveralls'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   Coveralls::SimpleCov::Formatter,
-  SimpleCov::Formatter::HTMLFormatter]
+  SimpleCov::Formatter::HTMLFormatter])
 
 SimpleCov.start do
   add_filter "/config/"
 end
 
-# This file is copied to spec/ when you run 'rails generate rspec:install'
+
+# setup rails environment
+
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-require 'rspec/autorun'
 
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-#Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
+# rspec configuration
+# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
-  # ## Mock Framework
-  #
-  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
 
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  # config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  # Enable old `should` syntax
+  config.expect_with(:rspec) { |c| c.syntax = :should }
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  # config.use_transactional_fixtures = true
+  # rspec-expectations config goes here. You can use an alternate
+  # assertion/expectation library such as wrong or the stdlib/minitest
+  # assertions if you prefer.
+  config.expect_with :rspec do |expectations|
+    # This option will default to `true` in RSpec 4. It makes the `description`
+    # and `failure_message` of custom matchers include text for helper methods
+    # defined using `chain`, e.g.:
+    #     be_bigger_than(2).and_smaller_than(4).description
+    #     # => "be bigger than 2 and smaller than 4"
+    # ...rather than:
+    #     # => "be bigger than 2"
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
 
-  # If true, the base class of anonymous controllers will be inferred
-  # automatically. This will be the default behavior in future versions of
-  # rspec-rails.
-  config.infer_base_class_for_anonymous_controllers = false
+  # rspec-mocks config goes here. You can use an alternate test double
+  # library (such as bogus or mocha) by changing the `mock_with` option here.
+  config.mock_with :rspec do |mocks|
+    # Prevents you from mocking or stubbing a method that does not exist on
+    # a real object. This is generally recommended, and will default to
+    # `true` in RSpec 4.
+    mocks.verify_partial_doubles = true
+  end
+
+# The settings below are suggested to provide a good initial experience
+# with RSpec, but feel free to customize to your heart's content.
+=begin
+  # These two settings work together to allow you to limit a spec run
+  # to individual examples or groups you care about by tagging them with
+  # `:focus` metadata. When nothing is tagged with `:focus`, all examples
+  # get run.
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
+
+  # Allows RSpec to persist some state between runs in order to support
+  # the `--only-failures` and `--next-failure` CLI options. We recommend
+  # you configure your source control system to ignore this file.
+  config.example_status_persistence_file_path = "spec/examples.txt"
+
+  # Limits the available syntax to the non-monkey patched syntax that is
+  # recommended. For more details, see:
+  #   - http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/
+  #   - http://www.teaisaweso.me/blog/2013/05/27/rspecs-new-message-expectation-syntax/
+  #   - http://rspec.info/blog/2014/05/notable-changes-in-rspec-3/#zero-monkey-patching-mode
+  config.disable_monkey_patching!
+
+  # Many RSpec users commonly either run the entire suite or an individual
+  # file, and it's useful to allow more verbose output when running an
+  # individual spec file.
+  if config.files_to_run.one?
+    # Use the documentation formatter for detailed output,
+    # unless a formatter has already been configured
+    # (e.g. via a command-line flag).
+    config.default_formatter = 'doc'
+  end
+
+  # Print the 10 slowest examples and example groups at the
+  # end of the spec run, to help surface which specs are running
+  # particularly slow.
+  config.profile_examples = 10
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = :random
 
-  # re-enable old default behaviour
-  config.infer_spec_type_from_file_location!
-
-  # ... and make it actually work
-  config.before { @controller = BlocksController.new }
+  # Seed global randomization in this process using the `--seed` CLI option.
+  # Setting this allows you to use `--seed` to deterministically reproduce
+  # test failures related to randomization by passing the same `--seed` value
+  # as the one that triggered the failure.
+  Kernel.srand config.seed
+=end
 end
 
-Bitcoin.network = :namecoin
+
+# setup test DB
 
 db_path = File.join(Rails.root, "tmp/spec.db")
 FileUtils.mkdir_p File.dirname(db_path)
@@ -85,12 +138,19 @@ end
 `rm #{ENV["HOME"]}/.bitcoin-ruby/namecoin/import_resume.state`
 STORE.import(datafile)  if import
 
+
+# set command socket for tests
+
 BB_CONFIG["command"] = "localhost:22034"
 
+# copy a dummy stats.json file to be used in tests
 unless File.exists?("public/stats.json")
   `cp spec/data/stats.json public/`
 end
 
+
+# fake blockchain to be used in tests
+# TODO: move into separate gem
 
 class FakeChain
 
@@ -163,6 +223,9 @@ def setup_fake_chain
   `cp spec/data/base.db spec/tmp/testbox1.db`
 end
 
+
+# run bitcoin nodes for testing
+
 def run_bitcoin_node
   Bitcoin.network = :regtest
   Bitcoin.network[:genesis_hash] = "00006c62931caa8550b8a3be9364126126ef2b193facbac421ee21b9680a7d97"
@@ -182,4 +245,5 @@ end
 def kill_bitcoin_node
   Process.kill("KILL", @node1_pid) rescue nil
   `rm -rf spec/tmp`
+  Bitcoin.network = :namecoin
 end

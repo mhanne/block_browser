@@ -1,5 +1,6 @@
+
 //= require jquery
-//= require jquery.ui.all
+//= require jquery-ui
 //= require websocket
 //= require jquery_ujs
 //= require_tree .

@@ -25,7 +25,10 @@ gem 'bitcoin-ruby-config', require: 'bitcoin/config',
   # path: '../bitcoin-ruby-config'
 
 gem 'thin'
-gem 'rails', '3.2.14'
+gem 'rails', '4.2.6'
+gem 'responders', '~> 2.0'
+gem 'actionpack-page_caching'
+gem 'actionpack-action_caching'
 
 gem 'haml'
 gem 'sass'
@@ -61,3 +64,4 @@ gem 'simplecov'
 gem 'coveralls'
 
 gem 'test-unit'
+
