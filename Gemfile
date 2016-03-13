@@ -29,6 +29,7 @@ gem 'rails', '4.2.6'
 gem 'responders', '~> 2.0'
 gem 'actionpack-page_caching'
 gem 'actionpack-action_caching'
+gem 'exception_notification'
 
 gem 'haml'
 gem 'sass'
