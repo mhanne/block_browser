@@ -7,6 +7,24 @@
   "btc_out": 1000000000,
   "balance": 0,
   "tx_sz": 2,
+  "unspent": [
+    {
+      "tx": {
+        "hash": "5b7aeedc2e82c9646408ce0588d9f98d2107062e9291af0e9e6fa372b0d7d1fb",
+        "n": 0
+      },
+      "value": "0.01333700",
+      "scriptPubKey": "OP_DUP OP_HASH160 fc916f213a3d7f1369313d5fa30f6168f9446a2d OP_EQUALVERIFY OP_CHECKSIG"
+    },
+    {
+      "tx": {
+        "hash": "fd6778a867cbc1bdc62054a43465641fd5efcbeb7b3088d964edc2b6313b1f9b",
+        "n": 0,
+      },
+      "value": "0.02000000",
+      "scriptPubKey": "OP_DUP OP_HASH160 fc916f213a3d7f1369313d5fa30f6168f9446a2d OP_EQUALVERIFY OP_CHECKSIG",
+    }
+    ],
   "transactions": {
     "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16": {
       "hash": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",

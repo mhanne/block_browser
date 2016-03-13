@@ -33,7 +33,7 @@ class AddressController < ApplicationController
   private
   
   def address_json(addr_data, addr_txouts)
-    transactions = {}
+    unspent, transactions = [], {}
     addr_txouts.each do |addr_txout|
       txout = STORE.db[:txout][id: addr_txout[:txout_id]]
       next  unless txout_tx_data = tx_data_from_id(txout[:tx_id])
@@ -42,12 +42,17 @@ class AddressController < ApplicationController
       transactions[txout_tx_data['hash']] = txout_tx_data
       txin = STORE.db[:txin][prev_out: txout_tx_data['hash'].htb.reverse.to_sequel_blob,
                              prev_out_index: txout[:tx_idx]]
-      next  unless txin && txin_tx_data = tx_data_from_id(txin[:tx_id])
-      addr_data[:tx_out_sz] += 1
-      addr_data[:btc_out] += txout[:value]
-      transactions[txin_tx_data['hash']] = txin_tx_data
+      if txin && txin_tx_data = tx_data_from_id(txin[:tx_id])
+        addr_data[:tx_out_sz] += 1
+        addr_data[:btc_out] += txout[:value]
+        transactions[txin_tx_data['hash']] = txin_tx_data
+      else
+        unspent << { tx: { hash: txout_tx_data['hash'], n: txout[:tx_idx] }}
+                  .merge(txout_tx_data['out'][txout[:tx_idx]])
+      end
     end
     addr_data[:balance] = addr_data[:btc_in] - addr_data[:btc_out]
+    addr_data[:unspent] = unspent
     addr_data[:tx_sz] = transactions.size
     addr_data[:transactions] = transactions
     JSON.pretty_generate(addr_data)

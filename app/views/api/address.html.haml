@@ -17,39 +17,62 @@
     %th Example
   %tr
     %th address
-    %td the given address
+    %td The given address
     %td "1Q2TWHE3GMdB6BZKafqwxXtWAWgFt5Jvm3"
   %tr
     %th hash160
-    %td decoded hash160 of the address
+    %td Decoded hash160 of the address
     %td "fc916f213a3d7f1369313d5fa30f6168f9446a2d"
   %tr
     %th tx_in_sz
-    %td number of transactions that send money to this address
+    %td Number of transactions that send money to this address
     %td 1
   %tr
     %th tx_out_sz
-    %td number of transactions that received money from this address
+    %td Number of transactions that received money from this address
     %td 1
   %tr
     %th btc_in
-    %td total bitcoins received by this address
+    %td Total bitcoins received by this address
     %td 1000000000
   %tr
     %th btc_out
-    %td total bitcoins sent by this address
+    %td Total bitcoins sent by this address
     %td 1000000000
   %tr
     %th balance
-    %td total bitcoins currently available to spend by this address
+    %td Total bitcoins currently available to spend by this address
     %td 0
   %tr
+    %th unspent
+    %td List of unspent transaction outputs
+  %tr
+    %th.level1 tx
+    %td the transaction containing the output
+  %tr
+    %th.level2 hash
+    %td Hash of the transaction
+    %td "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"
+  %tr
+    %th.level2 n
+    %td Index of this output in the transaction
+    %td 1
+  %tr
+    %th.level1 value
+    %td Value of the output
+    %td "10.00000000"
+  %tr
+    %th.level1 scriptPubKey
+    %td Pubkey Script defining the conditions under which this output can be spent
+    %td
+      %pre "04ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84c OP_CHECKSIG"
+  %tr
     %th tx_sz
-    %td total number of transactions
+    %td Total number of transactions
     %td 2
   %tr
     %th transactions
-    %td dictionary of transactions.
+    %td Dictionary of transactions.
     %td
       see #{link_to "Tx API", tx_api_path}.
 
