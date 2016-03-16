@@ -102,7 +102,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     erubis (2.7.0)
-    eventmachine (1.0.9.1)
+    eventmachine (1.2.0.1)
     exception_notification (4.1.4)
       actionmailer (~> 4.0)
       activesupport (~> 4.0)
