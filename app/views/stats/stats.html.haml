@@ -37,6 +37,10 @@
     %td= format_amount stats['coins']
 
   %tr
+    %th Hashes Computed
+    %td= number_with_delimiter(stats['work'])
+
+  %tr
     %th Script Types
     %td
       = STORE.class::SCRIPT_TYPES.map {|type| link_to("#{number_with_delimiter stats['script_types'][type.to_s]} #{type}", "/scripts/#{type}") }.join(", ").html_safe

@@ -19,6 +19,7 @@ STORE.db.transaction do
     txouts: tx.join(:txout, tx_id: :tx_id).count,
     addrs: STORE.db[:addr].count,
     coins: (total = 0; (STORE.height + 1).times {|i| total += calculate_reward(i + 1) }; total),
+    work: STORE.head.work,
     script_types: {},
     p2sh_types: {},
   }

@@ -40,6 +40,12 @@
       %th Total Value
       %td= format_amount(@block.tx.map(&:out).flatten.map(&:value).sum)
     %tr
+      %th Block Work
+      %td= number_with_delimiter @block.block_work
+    %tr
+      %th Chain Work
+      %td= number_with_delimiter @block.work
+    %tr
       %th Formats
       %td
         = link_to "[json]", "/block/#{@block.hash}.json"
