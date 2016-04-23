@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
-  revision: c436db7931c79bd351e8e4a3997a6fab16f53795
+  revision: 0c736f0ebaaaa80568036a3f0da1aaa7ed8012f1
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 

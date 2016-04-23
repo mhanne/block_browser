@@ -18,7 +18,7 @@
       %td= link_to @block.prev_block_hash.reverse_hth, block_path(@block.prev_block_hash.reverse_hth)
   %tr
     %th Next Block
-    - blk = STORE.db[:blk][prev_hash: @block.hash.htb.to_sequel_blob, chain: 0]
+    - blk = STORE.db[:blk][prev_hash: @block.hash.htb.to_sequel_blob, chain: @block.chain]
     - if blk
       %td= link_to(blk[:hash].hth, block_path(blk[:hash].hth))
     - else
