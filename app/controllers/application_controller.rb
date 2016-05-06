@@ -22,9 +22,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def render_error error
+  def render_error error, status = 500
     @error = error
-    render template: "blocks/error"
+    render template: "blocks/error", status: status
   end
 
   def tx_data_from_id tx_id

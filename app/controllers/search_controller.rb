@@ -15,7 +15,7 @@ class SearchController < ApplicationController
       return  if search_tx(@id)
       return  if search_name(@id)
     end
-    render_error("Nothing matches #{@id}.")
+    render_error("Nothing matches #{@id}.", 404)
   end
 
   private

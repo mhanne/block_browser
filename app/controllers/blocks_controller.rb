@@ -15,7 +15,7 @@ class BlocksController < ApplicationController
 
   def show
     @block = STORE.block(params[:id])
-    return render_error("Block #{params[:id]} not found.")  unless @block
+    return render_error("Block #{params[:id]} not found.", 404)  unless @block
     @siblings = STORE.db[:blk].where(prev_hash: @block.prev_block_hash.blob)
                 .reject {|b| b[:id] == @block.id }
                 .map {|b| STORE.wrap_block(b) }

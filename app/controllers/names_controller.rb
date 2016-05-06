@@ -13,7 +13,7 @@ class NamesController < ApplicationController
     @name = params[:name]
     @names = STORE.name_history(@name)
     @current = @names.last
-    return render_error("Name #{@name} not found.")  unless @current
+    return render_error("Name #{@name} not found.", 404)  unless @current
     @page_title = "Name #{@name}"
     respond_with(params[:history] ? @names : @current)
   end

@@ -2,7 +2,7 @@ class TxController < ApplicationController
 
   def show
     @tx = STORE.tx(params[:id])
-    return render_error("Tx #{params[:id]} not found.")  unless @tx
+    return render_error("Tx #{params[:id]} not found.", 404)  unless @tx
     @blk = STORE.db[:blk][id: @tx.blk_id, chain: 0]
     @blk ||= STORE.db[:blk][id: STORE.db[:blk_tx][tx_id: @tx.id][:blk_id]]
 
