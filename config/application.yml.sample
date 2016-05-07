@@ -45,6 +45,20 @@ relay_wait_max: 10
 # but might become important in relation to the "networks" setting)
 domain: "localhost"
 
+
+# mailer settings
+# (set to false to disable mail sending)
+mailer:
+  from: 'system@example.com'
+  address: 'mail.example.com'
+  port: 25
+  domain: 'example.com'
+  user_name: 'test@example.com'
+  password: 'password'
+  authentication: 'plain'
+  enable_starttls_auto: true
+
+
 # links to other instances for different networks
 networks:
   bitcoin: "http://webbtc.com"

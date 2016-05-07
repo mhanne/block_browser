@@ -18,7 +18,7 @@ ExceptionNotification.configure do |config|
   # Email notifier sends notifications by email.
   config.add_notifier :email, {
     :email_prefix         => "[ERROR] ",
-    :sender_address       => %{"Notifier" <notifier@webbtc.com>},
+    :sender_address       => %{"WebBTC" <system@webbtc.com>},
     :exception_recipients => %w{info@webbtc.com}
   }
 

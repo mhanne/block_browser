@@ -11,8 +11,25 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+Bundler.setup
+
 module BlockBrowser
   class Application < Rails::Application
+
+
+    begin
+      ::BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml"))
+      Bitcoin::network = BB_CONFIG["network"]
+      backend, db = BB_CONFIG["database"].split("::")
+      ::STORE = Bitcoin::Blockchain.create_store(backend, db: db, index_nhash: true, index_p2sh_type: true)
+    rescue
+      p $!
+      puts "Error loading configuration from config/application.yml; falling back to defaults"
+      ::BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
+    end
+
+    ::WS_CONFIG = BB_CONFIG["websocket"]
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -46,20 +63,14 @@ module BlockBrowser
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    if BB_CONFIG['mailer']
+      config.action_mailer.delivery_method = :smtp
+      config.action_mailer.perform_deliveries = true
+      config.action_mailer.raise_delivery_errors = true
+      config.action_mailer.default_options = { from: BB_CONFIG['mailer']['from'] }
+      config.action_mailer.smtp_settings = BB_CONFIG['mailer'].symbolize_keys
+    end
+
   end
 end
-
-require 'bundler'
-Bundler.setup
-
-begin
-  BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml"))
-  Bitcoin::network = BB_CONFIG["network"]
-  backend, config = BB_CONFIG["database"].split("::")
-  STORE = Bitcoin::Blockchain.create_store(backend, db: config, index_nhash: true, index_p2sh_type: true)
-rescue
-  puts "Error loading configuration from config/application.yml; falling back to defaults"
-  BB_CONFIG = YAML::load_file(File.join(Rails.root, "config/application.yml.sample"))
-end
-
-WS_CONFIG = BB_CONFIG["websocket"]
