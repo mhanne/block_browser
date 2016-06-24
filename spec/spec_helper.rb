@@ -123,6 +123,7 @@ db_path = File.join(Rails.root, "tmp/spec.db")
 FileUtils.mkdir_p File.dirname(db_path)
 # FileUtils.rm_rf db_path
 
+Bitcoin.network = :namecoin
 import = true  unless File.exists?(db_path)
 STORE = Bitcoin::Blockchain.create_store(:archive, db: "sqlite://#{db_path}",
   skip_validation: true, index_nhash: true, index_p2sh_type: true)
