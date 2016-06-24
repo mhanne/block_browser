@@ -60,4 +60,7 @@ BlockBrowser::Application.configure do
 
   config.eager_load = true
 
+  # Output pretty-printed JSON responses
+  config.middleware.use PrettyJsonResponse
+
 end
