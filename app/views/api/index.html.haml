@@ -7,11 +7,13 @@
 %p
   Blocks and Transactions are available in raw binary format (.bin) or the inofficial json format established by #{link_to "blockexplorer.com", "http://blockexplorer.com"} (.json).
 
-%h3= link_to "Blocks", block_api_path
+%p All JSON responses are pretty-printed by default. You can add a parameter "raw" to get the unformatted JSON.
+
+%h3= link_to "Block", block_api_path
 
 Get a block by hash in either .json or .bin format.
 
-%h3= link_to "Transactions", tx_api_path
+%h3= link_to "Transaction", tx_api_path
 
 Get a transaction by hash in either .json or .bin format.
 
@@ -20,11 +22,10 @@ Get a transaction by hash in either .json or .bin format.
 Get transactions relevant to an address.
 
 - if Bitcoin.network[:project] == :namecoin
+
   %h3= link_to "Name", name_api_path
 
   Get a namecoin record by its name.
-
-  %h3= link_to "Name History", name_history_api_path
 
 %h3= link_to "Relay", relay_api_path
 

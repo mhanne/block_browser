@@ -10,6 +10,30 @@
 
 %pre= "GET /name/<name>.json?history"
 
+%h3 Parameters
+
+The following parameters are accepted to influence the detail of returned data:
+
+%table.details
+  %tr
+    %th history
+    %td Return a list of name operations for the given name
+  %tr
+    %th with_block
+    %td Add the block hash to the name data
+  %tr
+    %th with_height
+    %td Add the block height to the name data
+  %tr
+    %th with_rawtx
+    %td Add the raw transaction the name operation appears in (in hex)
+  %tr
+    %th with_mrkl_branch
+    %td Add the merkle branch linking the transaction to the block
+  %tr
+    %th with_all
+    %td Add all of the extra data fields
+
 %h3 Response
 
 %p
@@ -49,6 +73,14 @@
     %th height
     %td Height of the block this name was registered in
     %td 23406
+  %tr
+    %th rawtx
+    %td The raw transaction in which this name operation appears (in hex)
+    %td "0071000002c732d0a60876de87d40d284f8a8bdbe92f6..."
+  %tr
+    %th mrkl_branch
+    %td The merkle branch linking the transaction hash to the block hash
+    %td [ "dd8fdca4fbeb8d40dea5f0dfcbd88849c2ed7709da832adb2db595c71c0d0b2b" ]
 
 %h3 Error
 
@@ -60,11 +92,11 @@
 %p Looking up a namecoin record:
 
 .example
-  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json"
+  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json?with_all"
   %pre= render partial: "name_d_mysite.json"
 
 %p Retrieving the history of a name record:
 
 .example
-  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json?history=true"
+  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json?history"
   %pre= render partial: "name_history_d_mysite.json"

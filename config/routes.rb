@@ -16,6 +16,7 @@ BlockBrowser::Application.routes.draw do
   get 'scripts/:type' => 'scripts#index', as: :scripts
   get 'p2sh_scripts/:type' => 'scripts#p2sh_index', as: :p2sh_scripts
   get 'names' => 'names#index', as: :names
+  get 'name/heights/*name' => 'names#heights', as: :name_heights
   get 'name/*name' => 'names#show', as: :name
 
   get 'relay_tx' => 'relay#relay_tx'

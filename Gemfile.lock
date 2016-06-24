@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-blockchain
-  revision: 0c736f0ebaaaa80568036a3f0da1aaa7ed8012f1
+  revision: 96fc2f741fc203087d1ef6de07fa157938327def
   specs:
     bitcoin-ruby-blockchain (0.0.1)
 
@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: git://github.com/mhanne/bitcoin-ruby-node
-  revision: a4f54ae56d659822d1e7ce1a07eedd1a8a270600
+  revision: 74bcee331fb8c153d2a8fbf11a7ca3f3e61859ed
   specs:
     bitcoin-ruby-node (0.0.1)
 
@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: git://github.com/mhanne/namecoin-ruby
-  revision: a9063cb9e01e51bc87cdf8bc2311927ef492bcd6
+  revision: fa34c3432710e8281b31ae9e107a1cd83115d714
   specs:
     namecoin-ruby (0.0.1)
 
