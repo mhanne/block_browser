@@ -1,0 +1,70 @@
+- @page_title = "Name API"
+
+%h2 Name
+
+%p Get namecoin records or history by their name.
+
+%pre= "GET /name/<name>.json"
+
+%p Get the history of all records that have been registered to a name.
+
+%pre= "GET /name/<name>.json?history"
+
+%h3 Response
+
+%p
+  Returns the name record (or a list of them, when the "history" parameter is specified),
+  along with information about its position in the blockchain.
+
+%table.details
+  %tr
+    %th Field
+    %th Description
+    %th Example
+  %tr
+    %th name
+    %td The given name
+    %td "d/mysite"
+  %tr
+    %th value
+    %td The value stored under that name
+    %td "{\"ip\":\"0.0.0.0\",\"map\":{\"*\":{\"ip\":\"0.0.0.0\"}}}"
+  %tr
+    %th expires_in
+    %td Number of blocks before this name expires
+    %td 30466
+  %tr
+    %th address
+    %td The address this name operation was sent to
+    %td "mw3MrjSTETgLWP3x2Wro7bTx2QvdsL7idP"
+  %tr
+    %th txid
+    %td ID of the transaction that registered this name
+    %td "0dc5b261eae6dd0c16c73025b59ac4f024464676dd4f020d0808bf7c086d2472"
+  %tr
+    %th block
+    %td Hash of the block this name was registered in
+    %td "aa5f96aaac5b7447f5229a401689b98bea130f35646f65e266584d3213477761"
+  %tr
+    %th height
+    %td Height of the block this name was registered in
+    %td 23406
+
+%h3 Error
+
+%p When the name wasn't found, the response will include an "error" message.
+
+
+%h3 Example
+
+%p Looking up a namecoin record:
+
+.example
+  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json"
+  %pre= render partial: "name_d_mysite.json"
+
+%p Retrieving the history of a name record:
+
+.example
+  %pre= "curl http://#{BB_CONFIG['domain']}/name/d/mysite.json?history=true"
+  %pre= render partial: "name_history_d_mysite.json"

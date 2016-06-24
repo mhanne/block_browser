@@ -19,6 +19,13 @@ Get a transaction by hash in either .json or .bin format.
 
 Get transactions relevant to an address.
 
+- if Bitcoin.network[:project] == :namecoin
+  %h3= link_to "Name", name_api_path
+
+  Get a namecoin record by its name.
+
+  %h3= link_to "Name History", name_history_api_path
+
 %h3= link_to "Relay", relay_api_path
 
 Relay a transaction to the network.

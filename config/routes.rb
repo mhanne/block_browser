@@ -25,6 +25,7 @@ BlockBrowser::Application.routes.draw do
   get 'api/block' => 'api#block', as: :block_api
   get 'api/tx' => 'api#tx', as: :tx_api
   get 'api/address' => 'api#address', as: :address_api
+  get 'api/name' => 'api#name', as: :name_api
   get 'api/relay' => 'api#relay', as: :relay_api
   get 'api/stats' => 'api#stats', as: :stats_api
   get 'api/schema' => 'api#schema', as: :schema_api
