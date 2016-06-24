@@ -3,7 +3,7 @@ class AddressController < ApplicationController
   def show
     @address = params[:id]
     unless Bitcoin.valid_address?(@address)
-      return render_error("Address #{params[:id]} is invalid.")
+      return render_error("Address #{params[:id]} is invalid.", 404)
     end
     @hash160 = Bitcoin.hash160_from_address(@address)
     @type = Bitcoin.address_type(@address)

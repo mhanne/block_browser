@@ -31,7 +31,7 @@ RSpec.describe AddressController, type: :controller do
 
   it "should fail on invalid address" do
     get :show, id: "invalid_address"
-    response.status.should == 200
+    response.status.should == 404
     assigns(:error).should == "Address invalid_address is invalid."
   end
 
