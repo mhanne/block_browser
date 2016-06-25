@@ -35,7 +35,7 @@ class NamesController < ApplicationController
 
   def parse_output_options
     @opts = Hash[params.keys.grep(/^with_(.*?)$/).map {|n| [n.to_sym, true] }]
-    [:block, :height, :rawtx, :mrkl_branch].each {|n|
+    [:block, :height, :tx_idx, :rawtx, :mrkl_branch].each {|n|
       @opts["with_#{n}".to_sym] = true }  if params.keys.include?('with_all')
   end
 

@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: git://github.com/mhanne/namecoin-ruby
-  revision: fa34c3432710e8281b31ae9e107a1cd83115d714
+  revision: 4f3a23aea4564c9b552de2b88ca1b0788539baaf
   specs:
     namecoin-ruby (0.0.1)
 
