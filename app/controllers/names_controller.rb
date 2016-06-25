@@ -28,7 +28,7 @@ class NamesController < ApplicationController
     txs = STORE.db[:tx].where(id: txouts.map {|o| o[:tx_id] })
     blk_txs = STORE.db[:blk_tx].where(tx_id: txs.map {|t| t[:id]})
     blocks = STORE.db[:blk].where(id: blk_txs.map {|b| b[:blk_id] }, chain: 0)
-    respond_with(blocks.map {|b| b[:height] })
+    respond_with(blocks.map {|b| { height: b[:height] } })
   end
 
   private
