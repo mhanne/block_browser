@@ -9,8 +9,7 @@
   %tr
     %th Owner
     %td
-      - addr = @current.get_address
-      = link_to addr, address_path(addr)
+      = address_link(@current.get_address)
   %tr
     %th Expires In
     %td #{@current.expires_in} blocks
@@ -40,5 +39,4 @@
       %td= name.txout.type
       %td
         %pre= name.txout.type == :name_new ? name.hash : name.value
-      - addr = name.address
-      %td= link_to addr, address_path(addr)
+      %td= address_link(name.address)

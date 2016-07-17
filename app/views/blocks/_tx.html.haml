@@ -12,7 +12,7 @@
           - if prev_out
             %tr
               - addr = Bitcoin::Script.new(prev_out[:pk_script]).get_address
-              %td= link_to(addr, address_path(addr))
+              %td= address_link(addr)
               %td (#{format_amount prev_out[:value]})
           - else
             %tr

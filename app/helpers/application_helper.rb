@@ -25,7 +25,7 @@ module ApplicationHelper
     if addr
       link_to(addr, address_path(addr)).html_safe
     else
-      "<span class='error'>Error decoding address from pubkey</span>".html_safe
+      "<span class='error'>Error decoding address</span>".html_safe
     end
   end
 

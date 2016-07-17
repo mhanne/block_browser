@@ -142,17 +142,13 @@
         %td
           - case type
           - when :pubkey, :pubkey_hash, :script_hash
-            - addr = txout.parsed_script.get_address
-            = link_to(addr, address_path(addr))
+            = address_link(txout.parsed_script.get_address)
           - when :multisig
             - addrs = script.get_multisig_addresses
             multisig (#{script.get_signatures_required} of #{script.get_keys_provided}):
             %br/
             - addrs.each do |address|
-              - if address
-                = link_to(address, address_path(address))
-              - else
-                %span.error Error decoding address from pubkey
+              = address_link(address)
               %br
           - when :op_return
             - if script.get_op_return_data
@@ -166,8 +162,7 @@
             - else
               Hash: #{name.hash}
             %br
-            - addr = txout.get_address
-            = link_to(addr, address_path(addr))
+            = address_link(txout.get_address)
           - if script.type == :unknown
             %span{class: "error"} Unknown script type
         %td
